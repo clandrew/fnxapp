@@ -28,7 +28,7 @@ START   CLC                         ; Make sure we're native mode
         JSL PUTS                    ; And ask the kernel to print it
                                     ; Note: PUTS scrambles X.
 
-;_done   NOP                         ; Infinite loop when we're finished  
-;        BRA _done
+_done   NOP                         ; Infinite loop when we're finished  
+        BRA _done                   ; Reason for doing this: if we don't, it will start executing the string. lol.
 
 GREET   .null "Hello, world!", 13   ; The text to display. Will include a terminal NUL 
