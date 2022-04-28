@@ -1,4 +1,0 @@
-RESET		= $00fffc
-START		= $002000
-PUTS		= $00101c
-GREET		= $002011
