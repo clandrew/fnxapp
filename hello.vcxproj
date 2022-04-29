@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetExt>.pgx</TargetExt>
+    <TargetExt>.hex</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -97,7 +97,7 @@
     <CustomBuild>
       <Command>
       </Command>
-      <Outputs>$(TargetDir)hello.pgx;$(TargetDir)hello.lst</Outputs>
+      <Outputs>$(TargetDir)hello.hex;$(TargetDir)hello.lst</Outputs>
     </CustomBuild>
     <PostBuildEvent>
       <Command>
@@ -176,13 +176,13 @@
   <ItemGroup>
     <CustomBuild Include="hello.s">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">d:\64tass\64tass --long-address --flat -b --m65816  -o $(TargetPath) --list=$(TargetDir)hello.lst --labels=$(TargetDir)hello.lbl $(ProjectDir)hello.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)hello.hex --list=$(TargetDir)hello.lst --labels=$(TargetDir)hello.lbl $(ProjectDir)hello.s
 echo ==============
 echo Copying result:
-echo copy /Y $(TargetPath) "D:\card"
-copy /Y $(TargetPath) "D:\card"
+echo copy /Y $(TargetPath) "D:\Program Files\C256 Foenix Project\FoenixIDE Setup"
+copy /Y $(TargetPath) "D:\Program Files\C256 Foenix Project\FoenixIDE Setup"
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">d:\64tass\64tass --long-address --flat -b --m65816  -o $(TargetPath) --list=$(TargetDir)hello.lst --labels=$(TargetDir)hello.lbl $(ProjectDir)hello.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)hello.hex --list=$(TargetDir)hello.lst --labels=$(TargetDir)hello.lbl $(ProjectDir)hello.s
 echo ==============
 echo Copying result:
 echo copy /Y $(TargetPath) "D:\Program Files\C256 Foenix Project\FoenixIDE Setup"
