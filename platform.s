@@ -11,7 +11,3 @@
 ;		X is scrambled.
 
 PUTS = $00101C                     
-
-; Hardware RESET vector
-* = $00FFFC
-RESET   .word <>START               ; Over-ride the RESET vector with the start of our code

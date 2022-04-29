@@ -3,12 +3,19 @@
 ; Platform-specific functions
 .include "platform.s"
 
-; Code
-
-* = $002000                         ; Set the origin for the file
-
+; Stick global variables at $2000
+* = $2000
 GREET   .null "Hello, world!", 13   ; The text to display. Will include a terminal NUL 
 
+; PGX header
+* = START - 8
+        .text "PGX"
+        .byte $01
+        .dword START
+
+; Code
+
+* = $3000
 START   CLC                         ; Make sure we're native mode
         XCE
 
@@ -30,5 +37,3 @@ START   CLC                         ; Make sure we're native mode
         JSL PUTS                    ; And ask the kernel to print it
                                     ; Note: PUTS scrambles X.
 
-; Jump to BOOTBASIC
-        jmp $3a0000
