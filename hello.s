@@ -30,5 +30,3 @@ START   CLC                         ; Make sure we're native mode
         JSL PUTS                    ; And ask the kernel to print it
                                     ; Note: PUTS scrambles X.
 
-; Jump to BOOTBASIC
-        jmp $3a0000
