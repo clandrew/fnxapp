@@ -1,0 +1,84 @@
+Keeps hitting BRK.
+kernel.CPU.CurrentOpcode.Value == 0
+
+Executes ff20->ff27, then 1008, then brk
+
+Looks independent of change. can't even get back to working state now.  
+
+===========================================
+Expected:
+00FF00	18	CLC
+00FF01	FB	XCE
+00FF02	5C 00 10 00	JMP $001000
+001000	5C 00 04 39	JMP $390400
+390400	18		CLC
+390401	FB		XCE
+390402	78		SEI
+390403	C2 30		REP #$30
+390405	A9 FF FE	LDA #$FEFF
+
+===========================================
+
+Actual:
+00FF00	18	CLC
+00FF01	FB	XCE
+00FF02	5C 00 10 00	JMP $001000
+001000	5C 00 04 39	JMP $390400	??
+
+Reads 00 from address 1000!
+But, 1000 is supposed to contain 5C 00 04 39
+When we read the kernel datafile, it only ever sets ram at 0xFFxx.
+...
+???
+
+00FF20	C2 30	REP #$30
+00FF22	88	PHB
+00FF23	0B	PHD
+00FF24	48	PHA
+00FF25	DA	PHX
+00FF26	5A	PHY
+00FF27	5C 08 10 00	JMP $001008
+001008	00 00	BRK $00
+
+
+===========================================
+
+;******  Processing file: src\kernel_jumptable.asm
+
+.381000	1000	5c 00 04 39	jmp $390400	BOOT            JML IBOOT
+
+It's supposed to get copied in with this hex directive
+:201000005C0004395CA605395C3A06395C8106395CB410395CB510395C3D07395C260739B8
+
+at line 12 in the kernel file.
+	
+Computed bank is 0x00380000
+Why is bank 0x00380000?
+Because in line index 1, it says
+:      02       0000     04      00 38           C2
+mark  reclen   offset  rectype   data(bank)    checksum
+
+The bank data it reads is 0038, shifted left.
+
+Line 3
+:       02      0000      04     0000            FA
+mark  reclen    offset  rectype  data(bank)     checksum
+$00:1000..$3F:FFFF	RAM
+
+
+Line 11
+:020000040038C2
+:      02       0000     04      00 38           C2
+mark  reclen   offset  rectype   data(bank)    checksum
+
+
+For line 2, it doesn't get ignored because ram length is ram.Length is 0x00400000.
+		ram.Length	0x00400000	int
+
+Why is MemMgr.RAM a different size??
+	If it's BoardVersion.RevC, the mesize should be 0x00400000.
+	
+Break at public FoenixSystem(BoardVersion version, string DefaultKernel)
+	Check that BoardVersion is RevC.
+	
+Answer: it loaded the wrong board version at startup
