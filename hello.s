@@ -1,37 +1,39 @@
-.cpu "65816"                        ; Tell 64TASS that we are using a 65816
-
-; Platform-specific functions
 .include "platform.s"
 
-; Code
+; PGX header
+* = START - 8
+                .text "PGX"
+                .byte $01
+                .dword START
 
-* = $002000                         ; Set the origin for the file
+; Main code
+* = $02000
 
-GREET   .null "Hello, world!", 13   ; The text to display. Will include a terminal NUL 
+START           PHB
+                PHP
 
-START   CLC                         ; Make sure we're native mode
-        XCE
+                REP #$30                ; A, X, and Y are 16-bit
+                .al
+                .xl
 
-        ; This would normally be done with a macro "setas"
-        SEP #$20                    ; Set M to 1 for 8-bit accumulator
-        .as                         ; Tell 64TASS that the accumulator is 8-bit
+                SEP #$20                ; A is 8-bit
+                .as
+                REP #$10                ;X, and Y are 16-bit
+                .xl
 
-        ; This would normally be done with a macro "setxl"
-        REP #$10                    ; Set X to 0 for 16-bit index registers
-        .xl                         ; Tell 64TASS that the index registers are 16-bit
+                LDX #<>GREETING         ; Point to GREETING
+                LDA #`GREETING
+                PHA
+                PLB
+                JSL PUTS                ; And print it
 
-        ; Set the data bank register to this bank. This might normally be done by a macro "setdbr"
-        LDA #`GREET                 ; Set the data bank register to be the current bank of the program
-        PHA
-        PLB
-        .databank `GREET            ; Tell 64TASS which data bank we're using
+                REP #$20                ; A is 16-bit
+                .al
 
-        LDX #<>GREET                ; Point to the message in an ASCIIZ string
-        JSL PUTS                    ; And ask the kernel to print it
-                                    ; Note: PUTS scrambles X.
+                LDA #$1234              ; Set a return value of $1234
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; .001124   5C DC 54 39 FK_RUN  JMP $3954DC    
+                PLP
+                PLB
+                RTL                     ; Go back to the caller
 
-; .00FF60   C2 30               REP #$30
-; .00FF62   8B                  PHB
+GREETING        .null "Hello, world!", 13
