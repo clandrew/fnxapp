@@ -30,3 +30,8 @@ START   CLC                         ; Make sure we're native mode
         JSL PUTS                    ; And ask the kernel to print it
                                     ; Note: PUTS scrambles X.
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; .001124   5C DC 54 39 FK_RUN  JMP $3954DC    
+
+; .00FF60   C2 30               REP #$30
+; .00FF62   8B                  PHB
