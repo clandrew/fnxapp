@@ -60,13 +60,9 @@ PRE   .null "This is in "
 SUF   .null "-bit mode.     "
 
 * = $0020E0
-        NOP
         RTS
 
 * = $0020EA
-        NOP
-        NOP
-        NOP
         JSL PUTC
         REP #$30
         .al
@@ -81,8 +77,6 @@ MSG1    LDA #`PRE
         PLB
         LDX #<>PRE
         JSL PUTS 
-        NOP
-        NOP
         RTS
 
 MSG2    LDA #`SUF
