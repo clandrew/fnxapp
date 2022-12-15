@@ -10,25 +10,27 @@
 START   CLC                         ; Make sure we're native mode
         XCE
 
-        ; This would normally be done with a macro "setas"
-        SEP #$20                    ; Set M to 1 for 8-bit accumulator
-        .as                         ; Tell 64TASS that the accumulator is 8-bit
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-        ; This would normally be done with a macro "setxl"
-        REP #$10                    ; Set X to 0 for 16-bit index registers
-        .xl                         ; Tell 64TASS that the index registers are 16-bit
+; SEP #$30  ; Set 8bit axy
+.byte $E2
+.byte $30
 
-        ; Set the data bank register to this bank. This might normally be done by a macro "setdbr"
-        LDA #`GREET                 ; Set the data bank register to be the current bank of the program
-        PHA
-        PLB
-        .databank `GREET            ; Tell 64TASS which data bank we're using
+; LDA #$46  ; ASCII F
+.byte $A9
+.byte $46
 
-        LDX #<>GREET                ; Point to the message in an ASCIIZ string
-        JSL PUTS                    ; And ask the kernel to print it
-                                    ; Note: PUTS scrambles X.
+; JSL PUTC  ; Prints a character to the screen, based on 8bit acc.
+.byte $22
+.byte $18   ; CLC
+.byte $10   ; BPL
+.byte $00   ; BRK
 
-_done   NOP                         ; Infinite loop when we're finished 
-        BRA _done
+; NOP
+.byte $EA
 
-GREET   .null "Hello 1234567", 13   ; The text to display. Will include a terminal NUL 
+; BRA above ; infinite loop
+.byte $80
+.byte $FD
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
