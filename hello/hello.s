@@ -12,11 +12,9 @@ START   CLC                         ; Make sure we're native mode
         REP #$30
         .al
         .xl
-
         JSR MSG1
 
         SEP #$30  ; Set 8bit axy
-
 DIV
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -44,14 +42,11 @@ DIV
 .byte $20    ; 
 
         TAX
-        LDA #$0000
-        PHA
-        PLB
-        PLB
+        JSR CLRB
         JSL PUTS 
         JSR MSG2
 
-DONE    NOP
+DONE    NOP         ; Spin
         BRA DONE
 
 * = $002038
@@ -71,41 +66,18 @@ SUF   .null "-bit mode.     "
         JSR MSG1
         JMP DIV   ; Can change this later to a screwy return.
 
-MSG1    LDA #`PRE
+CLRB    LDA #$0000
         PHA
         PLB
         PLB
+        RTS
+
+MSG1    JSR CLRB
         LDX #<>PRE
         JSL PUTS 
         RTS
 
-MSG2    LDA #`SUF
-        PHA
-        PLB
-        PLB
+MSG2    JSR CLRB
         LDX #<>SUF
         JSL PUTS 
         RTS
-
-
-; Common opcodes which are also valid ASCII
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-; Note that ASCII goes from 0x30 to 0x7E.
-;
-; Mnemonic       Value
-; --------       -----
-; BMI near       30 __
-; SEC            38
-; DEC            3A
-; PHA            48
-; LSR A          4A
-; RTS            60
-; PLA            68
-; ADC imm        69 __ (__)
-; ROR            6A
-; BVS near       70 __
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;.2014	a2 1e 20	ldx #$201e	        LDX #<>MSG8                ; The X register needs to be 16 bits for this to work.
