@@ -54,18 +54,6 @@ MODE16 .null "16"
 PRE   .null "This is in "
 SUF   .null "-bit mode.     "
 
-* = $0020E0
-        RTS
-
-* = $0020EA
-        JSL PUTC
-        REP #$30
-        .al
-        .xl
-        JSR MSG2
-        JSR MSG1
-        JMP DIV   ; Can change this later to a screwy return.
-
 CLRB    LDA #$0000
         PHA
         PLB
@@ -81,3 +69,15 @@ MSG2    JSR CLRB
         LDX #<>SUF
         JSL PUTS 
         RTS
+
+* = $0020E0
+        RTS
+
+* = $0020EA
+        JSL PUTC
+        REP #$30
+        .al
+        .xl
+        JSR MSG2
+        JSR MSG1
+        JMP DIV   ; Can change this later to a screwy return.
