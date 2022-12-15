@@ -13,13 +13,11 @@ START   CLC                         ; Make sure we're native mode
         .al
         .xl
 
-        LDA #`PRE
-        PHA
-        PLB
-        LDX #<>PRE
-        JSL PUTS 
+        JSR MSG1
 
         SEP #$30  ; Set 8bit axy
+
+DIV
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
@@ -30,46 +28,70 @@ START   CLC                         ; Make sure we're native mode
 .byte $3A         ;           
 .byte $3A         ;        DEC A         A:39 '9'        
 
-.byte $29         ;        AND #$39                                      AND #$0939          ; A:0838
+.byte $29         ;        AND #$39                                      AND #$3A39          ; A:3A38
 .byte $39
-.byte $09         ;        ORA #$38      A:38 '8'
-.byte $38         ;                                                      SEC               
 
-.byte $E9         ;        SBC #$00                                      SBC #$1800          : A:F038
-.byte $00         ;
-.byte $18         ;        CLC
+.byte $3A         ;        DEC A         A:38 '8'                                               
 
-.byte $09         ;        ORA $#30                                      ORA #$2030          ; A:2037
-.byte $30
+.byte $29         ;        AND #$38                                      AND #$2038          : A:2038
+.byte $38
 
-.byte $20         ;        JSR $20EA                                     NOP
-.byte $EA
-.byte $20
+.byte $20         ;        JSR $20EA                                     
+.byte $EA         ;                                                      NOP
 
+.byte $20         ;                                                      JSR $20E0
+.byte $E0         ; 
+.byte $20         ; 
+
+        TAX
+        LDA #$0000
+        PHA
+        PLB
+        PLB
+        JSL PUTS 
+        JSR MSG2
 
 DONE    NOP
         BRA DONE
 
-* = $002037
-MODE16 .null "16", 2
-PRE   .null "This is in ", 11
-SUF   .null "-bit mode.\n", 12
+* = $002038
+MODE16 .null "16"
+PRE   .null "This is in "
+SUF   .null "-bit mode.     "
+
+* = $0020E0
+        NOP
+        RTS
 
 * = $0020EA
         NOP
         NOP
         NOP
-        DEC A
         JSL PUTC
         REP #$30
         .al
         .xl
-        LDA #`SUF
+        JSR MSG2
+        JSR MSG1
+        JMP DIV   ; Can change this later to a screwy return.
+
+MSG1    LDA #`PRE
         PHA
+        PLB
+        PLB
+        LDX #<>PRE
+        JSL PUTS 
+        NOP
+        NOP
+        RTS
+
+MSG2    LDA #`SUF
+        PHA
+        PLB
         PLB
         LDX #<>SUF
         JSL PUTS 
-        JMP $2012   ; Can change this later to a screwy return.
+        RTS
 
 
 ; Common opcodes which are also valid ASCII
