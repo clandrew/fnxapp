@@ -19,29 +19,29 @@ START   CLC                         ; Make sure we're native mode
 
 DIV
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-; Value           |        8bit interpretation               |            16bit interpretation
-;;;;;;;;;;;;;;;;;;|;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;|;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-.byte $A9         ;        LDA #$3A      A:3A ':'                        LDA #$3A3A                    
-.byte $3A         ;           
-.byte $3A         ;        DEC A         A:39 '9'        
-
-.byte $29         ;        AND #$39                                      AND #$3A39          ; A:3A38
-.byte $39
-
-.byte $3A         ;        DEC A         A:38 '8'                                               
-
-.byte $29         ;        AND #$38                                      AND #$2038          : A:2038
-.byte $38
-
-.byte $20         ;        JSR $20EA                                     
-.byte $EA         ;                                                      NOP
-
-.byte $20         ;                                                      JSR $20E0
-.byte $E0         ; 
-.byte $20         ; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Value      ; 8bit interpretation    ; 16bit interpretation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;            ;                        ;
+.byte $A9    ; LDA #$3A               ; LDA #$3A3A                    
+.byte $3A    ;                        ;
+.byte $3A    ; DEC A                  ;       
+;            ;                        ;        
+.byte $29    ; AND #$39               ; AND #$3A39         
+.byte $39    ;                        ;   
+;            ;                        ;      
+.byte $3A    ; DEC A                  ;       
+;            ;                        ;      
+.byte $29    ; AND #$38               ; AND #$2038       
+.byte $38    ;                        ;   
+;            ;                        ;      
+.byte $20    ; JSR $20EA              ;                                    
+.byte $EA    ;                        ; NOP
+;            ;                        ;      
+.byte $20    ;                        ; JSR $20E0
+;            ;                        ;      
+.byte $E0    ; 
+.byte $20    ; 
 
         TAX
         LDA #$0000
