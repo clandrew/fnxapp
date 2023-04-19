@@ -5,3 +5,6 @@
 /div/.vs/*
 /div/Debug/*
 /sd
+/exec/.vs*
+/exec/Debug
+/exec/Release
