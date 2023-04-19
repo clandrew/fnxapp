@@ -124,8 +124,9 @@
       </Command>
     </PostBuildEvent>
     <CustomBuild>
-      <Command>$(ProjectDir)Build.cmd</Command>
-      <Outputs>$(TargetDir)ball.hex;$(TargetDir)ball.lst</Outputs>
+      <Command>
+      </Command>
+      <Outputs>$(TargetDir)ball.pgx;$(TargetDir)ball.lst</Outputs>
     </CustomBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -176,8 +177,8 @@
   <ItemGroup>
     <CustomBuild Include="ball.s">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816  -o $(TargetPath) --list=$(TargetDir)ball.lst --labels=$(TargetDir)ball.lbl $(ProjectDir)ball.s
-d:\64tass\64tass --long-address --flat -b --m65816  -o $(TargetPath) --list=$(TargetDir)ball.lst --labels=$(TargetDir)ball.lbl $(ProjectDir)ball.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816  -o $(TargetPath) -D FILETYPE=1 --list=$(TargetDir)ball.lst --labels=$(TargetDir)ball.lbl $(ProjectDir)ball.s
+d:\64tass\64tass --long-address --flat -b --m65816  -o $(TargetPath) -D FILETYPE=1 --list=$(TargetDir)ball.lst --labels=$(TargetDir)ball.lbl $(ProjectDir)ball.s
 echo ==============
 echo Copying result:
 echo copy /Y $(TargetPath) "$(ProjectDir)..\sd"

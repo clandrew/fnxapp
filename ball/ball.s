@@ -38,9 +38,13 @@ Y_BOTTOM = 240                              ; Maximum Y value for sprites
 DEFAULT_TIMER = $02                         ; Number of SOF ticks to wait between sprite updates
 HIRQ = $FFEE                                ; IRQ vector
 
-KEY_BUFFER_RPOS  = $000F8B                  ;  2 Byte, position of the character to read from the KEY_BUFFER
-KEY_BUFFER_WPOS  = $000F8D                  ;  2 Byte, position of the character to write to the KEY_BUFFER
-KEYBOARD_SC_FLG  = $000F87 ;1 Bytes that indicate the Status of Left Shift, Left CTRL, Left ALT, Right Shift
+.if FILETYPE = F_HEX
+;
+; For loading through the debug port, bootstrap the code through the RESET vector
+;
+* = $FFFC
+HRESET          .word <>START               ; Bootstrapping vector
+.endif
 
 ;
 ; Global variables
@@ -58,6 +62,7 @@ DY              .word ?                 ; The change in Y for an update (either 
 TIMER           .word ?                 ; The timer for controlling speed of motion (decremented on SOF interrupts)
 IRQJMP          .fill 4                 ; Code for the IRQ handler vector
 
+.if FILETYPE = F_PGX
 ;
 ; Header for the PGX file
 ;
@@ -66,6 +71,7 @@ IRQJMP          .fill 4                 ; Code for the IRQ handler vector
                 .text "PGX"
                 .byte $01
                 .dword START
+.endif
 
 ;
 ; Code to run
@@ -75,29 +81,21 @@ IRQJMP          .fill 4                 ; Code for the IRQ handler vector
 START           CLC
                 XCE
 
-spin2
-                NOP
-                BRA spin2
-
                 setdbr `START
                 setdp <>GLOBALS
 
-
                 JSR SETUPBANK0              ; Copy BANK0 data
-
-
-                ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Problem is not above this line
 
                 setas
                 LDA #0
                 STA @l BORDER_CTRL_REG      ; Disable the border
                 STA @l MOUSE_PTR_CTRL_REG_L ; Disable the mouse pointer
-                                
+
                 setaxl
                 ; Switch on sprite graphics mode, 320x200
                 LDA #Mstr_Ctrl_Graph_Mode_En | Mstr_Ctrl_Sprite_En | $0200
                 STA @l MASTER_CTRL_REG_L
-                
+
                 PHB
                 LDA #LUT_END - LUT_START    ; Copy the palette to Vicky LUT#1
                 LDX #<>LUT_START
@@ -109,7 +107,7 @@ spin2
                 LDY #<>VRAM
                 MVN `IMG_START,`VRAM
                 PLB
-                
+
                 MOVEI_L SP00_ADDY_PTR_L, 0  ; Set SPRITE0 to use the pixmap
 
                 setaxl
@@ -121,35 +119,24 @@ spin2
                 LDA #%00000001              ; Turn on SPRITE0, layer 0, LUT#0
                 STA @lSP00_CONTROL_REG
 
-                ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                                
-                setdp $0F00
-                setaxl
+                SEI
 
-spin            NOP                         ; And just sit here waiting
-                NOP
-                NOP
+                setal
+                LDA HIRQ                    ; Get the current handler
+                STA NEXTHANDLER             ; And save it to call it
 
-                LDA KEYBOARD_SC_FLG
-                CMP #$0000
-                BEQ SPIN
+                LDA #<>IRQJMP               ; Replace it with our handler
+                STA HIRQ
 
-done
-                LDA #$00
-                STA @l MASTER_CTRL_REG_L    ; Exit sprite graphics mode. Needed for cleanup before entering text mode
-
-                ; Clean up state here. Go back to text mode?
                 setas
+                LDA @l INT_MASK_REG0        ; Enable SOF interrupts
+                AND #~FNX0_INT00_SOF
+                STA @l INT_MASK_REG0
 
-                LDA #Mstr_Ctrl_Text_Mode_En ; Enable text mode
-                STA MASTER_CTRL_REG_L
-                                
-                LDA #Border_Ctrl_Enable     ; Enable the Border
-                STA BORDER_CTRL_REG
+                CLI                         ; Make sure interrupts are enabled
 
-                setaxl        ; Set Acc back to 16bits before setting the Cursor Position
-
-                RTL
+lock            NOP                         ; And just sit here waiting
+                BRA lock
 
 ;
 ; Copy the Bank 0 data down to bank 0
@@ -180,6 +167,59 @@ SETUPBANK0      .proc
 ; 
 HANDLEIRQ       PHP
                 PHD
+
+                setdbr `START
+                setdp GLOBALS
+
+                setas
+                LDA @l INT_PENDING_REG0     ; Check to see if we got a SOF interrupt
+                AND #FNX0_INT00_SOF
+                CMP #FNX0_INT00_SOF
+                BNE yield                   ; No: call the next handler in the chain
+                STA @l INT_PENDING_REG0     ; Yes: clear the pending interrupt status
+
+update_pos      setal
+                LDA XCOORD                  ; Set SPRITE0's position
+                STA @l SP00_X_POS_L
+
+                LDA YCOORD
+                STA @l SP00_Y_POS_L
+
+                DEC TIMER                   ; Decrement the timer
+                BNE yield                   ; If not zero, skip the update
+
+                LDA #<>DEFAULT_TIMER        ; Reset the timer
+                STA TIMER
+
+                CLC                         ; XCOORD += DX
+                LDA XCOORD
+                ADC DX
+                STA XCOORD
+
+                CMP #X_LEFT                 ; if XCOORD == X_LEFT or XCOORD == X_RIGHT
+                BEQ invert_dx
+                CMP #X_RIGHT
+                BNE calc_Y
+
+invert_dx       LDA DX                      ; THEN DX = -DX
+                EOR #$FFFF
+                INC A
+                STA DX
+
+calc_Y          CLC                         ; YCOORD += DY
+                LDA YCOORD
+                ADC DY
+                STA YCOORD
+
+                CMP #Y_TOP                  ; if YCOORD == T_TOP or YCOORD == Y_BOTTOM
+                BEQ invert_dy
+                CMP #Y_BOTTOM
+                BNE yield
+
+invert_dy       LDA DY                      ; THEN DY = -DY
+                EOR #$FFFF
+                INC A
+                STA DY
 
 yield           PLD                         ; Restore DP and status
                 PLP
