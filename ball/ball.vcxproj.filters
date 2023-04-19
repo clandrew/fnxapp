@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="hello.s">
+    <CustomBuild Include="ball.s">
       <Filter>Source Files</Filter>
     </CustomBuild>
   </ItemGroup>

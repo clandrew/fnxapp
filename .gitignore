@@ -8,3 +8,6 @@
 /exec/.vs*
 /exec/Debug
 /exec/Release
+/ball/.vs/*
+/ball/Debug
+/ball/Release

@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{733cae12-e50f-498a-81bf-67a2426bb033}</ProjectGuid>
-    <RootNamespace>hello</RootNamespace>
+    <RootNamespace>ball</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -97,7 +97,7 @@
     <CustomBuild>
       <Command>
       </Command>
-      <Outputs>$(TargetDir)hello.pgx;$(TargetDir)hello.lst</Outputs>
+      <Outputs>$(TargetDir)ball.pgx;$(TargetDir)ball.lst</Outputs>
     </CustomBuild>
     <PostBuildEvent>
       <Command>
@@ -125,7 +125,7 @@
     </PostBuildEvent>
     <CustomBuild>
       <Command>$(ProjectDir)Build.cmd</Command>
-      <Outputs>$(TargetDir)hello.hex;$(TargetDir)hello.lst</Outputs>
+      <Outputs>$(TargetDir)ball.hex;$(TargetDir)ball.lst</Outputs>
     </CustomBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -142,7 +142,7 @@
     <CustomBuild>
       <Command>
       </Command>
-      <Outputs>$(TargetDir)hello.hex;$(TargetDir)hello.lst</Outputs>
+      <Outputs>$(TargetDir)ball.hex;$(TargetDir)ball.lst</Outputs>
     </CustomBuild>
     <PostBuildEvent>
       <Command>
@@ -170,25 +170,30 @@
     </PostBuildEvent>
     <CustomBuild>
       <Command>$(ProjectDir)Build.cmd</Command>
-      <Outputs>$(TargetDir)hello.hex;$(TargetDir)hello.lst</Outputs>
+      <Outputs>$(TargetDir)ball.hex;$(TargetDir)ball.lst</Outputs>
     </CustomBuild>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="hello.s">
+    <CustomBuild Include="ball.s">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816  -o $(TargetPath) --list=$(TargetDir)hello.lst --labels=$(TargetDir)hello.lbl $(ProjectDir)hello.s
-d:\64tass\64tass --long-address --flat -b --m65816  -o $(TargetPath) --list=$(TargetDir)hello.lst --labels=$(TargetDir)hello.lbl $(ProjectDir)hello.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816  -o $(TargetPath) --list=$(TargetDir)ball.lst --labels=$(TargetDir)ball.lbl $(ProjectDir)ball.s
+d:\64tass\64tass --long-address --flat -b --m65816  -o $(TargetPath) --list=$(TargetDir)ball.lst --labels=$(TargetDir)ball.lbl $(ProjectDir)ball.s
 echo ==============
 echo Copying result:
-echo copy /Y $(TargetPath) "D:\card"
-copy /Y $(TargetPath) "D:\card"
-</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">d:\64tass\64tass --long-address --flat -b --m65816  -o $(TargetPath) --list=$(TargetDir)hello.lst --labels=$(TargetDir)hello.lbl $(ProjectDir)hello.s
+echo copy /Y $(TargetPath) "$(ProjectDir)..\sd"
+copy /Y $(TargetPath) "$(ProjectDir)..\sd"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">d:\64tass\64tass --long-address --flat -b --m65816  -o $(TargetPath) --list=$(TargetDir)ball.lst --labels=$(TargetDir)ball.lbl $(ProjectDir)ball.s
 echo ==============
 echo Copying result:
 echo copy /Y $(TargetPath) "D:\Program Files\C256 Foenix Project\FoenixIDE Setup"
 copy /Y $(TargetPath) "D:\Program Files\C256 Foenix Project\FoenixIDE Setup"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816  -o $(TargetPath) --list=$(TargetDir)ball.lst --labels=$(TargetDir)ball.lbl $(ProjectDir)ball.s
+d:\64tass\64tass --long-address --flat -b --m65816  -o $(TargetPath) --list=$(TargetDir)ball.lst --labels=$(TargetDir)ball.lbl $(ProjectDir)ball.s
+echo ==============
+echo Copying result:
+echo copy /Y $(TargetPath) "$(ProjectDir)..\sd"
+copy /Y $(TargetPath) "$(ProjectDir)..\sd"</Command>
     </CustomBuild>
     <None Include="platform.s">
       <FileType>Document</FileType>
