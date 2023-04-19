@@ -4,3 +4,4 @@
 *.lbl
 /div/.vs/*
 /div/Debug/*
+/sd
