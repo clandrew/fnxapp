@@ -27,6 +27,6 @@ The program outputs a message then exits cleanly back into Basic.
 
 These applications were set up using Visual Studio 2019.
 
-These applications are built using Visual Studio custom build steps which call into the [64tass](https://tass64.sourceforge.net) assembler. You may need to update them to point to wherever the 64tass executable lives on your machine. If there is an error when assembling, the message pointing to the line number get conveniently reported through to the IDE that way.
+These applications are built using Visual Studio custom build steps which call into the [64tass](https://tass64.sourceforge.net) assembler. You may need to update them to point to wherever the 64tass executable lives on your machine. If there is an error when assembling, the message pointing to the line number gets conveniently reported through to the IDE that way.
 
 For a best experience, consider using [this Visual Studio extension](https://github.com/clandrew/vscolorize65c816) for 65c816-based syntax highlighting.
