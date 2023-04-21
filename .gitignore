@@ -14,3 +14,7 @@
 /img/.vs
 /img/Debug
 /img/Release
+/img/ImageTranscoder/.vs/*
+/img/ImageTranscoder/Debug/*
+/img/ImageTranscoder/Release/*
+/img/ImageTranscoder/x64/
