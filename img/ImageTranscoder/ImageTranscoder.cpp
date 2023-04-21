@@ -43,7 +43,7 @@ int main(int argc, void** argv)
 
 	VerifyHR(spConverter->Initialize(
 		spSource.Get(),
-		GUID_WICPixelFormat32bppPBGRA,
+		GUID_WICPixelFormat8bppIndexed,
 		WICBitmapDitherTypeNone,
 		NULL,
 		0.f,
@@ -54,21 +54,26 @@ int main(int argc, void** argv)
 
 	assert(srcImageWidth == 640);
 
-	std::vector<UINT> rgbBuffer;
+	std::vector<unsigned char> indexedBuffer;
 
-	rgbBuffer.resize(srcImageWidth * srcImageHeight);
+	indexedBuffer.resize(srcImageWidth * srcImageHeight);
 	VerifyHR(spConverter->CopyPixels(
 		NULL,
-		srcImageWidth * sizeof(UINT),
-		static_cast<UINT>(rgbBuffer.size()) * sizeof(UINT),
-		reinterpret_cast<BYTE*>(rgbBuffer.data())));
+		srcImageWidth,
+		static_cast<UINT>(indexedBuffer.size()),
+		reinterpret_cast<BYTE*>(indexedBuffer.data())));
 
-	// Figure out the set of unique colors
-	std::set<UINT> pallette;
-	for (int i = 0; i < srcImageWidth * srcImageHeight; ++i)
-	{
-		pallette.insert(rgbBuffer[i]);
-	}
+	ComPtr<IWICPalette > spPalette;
+	VerifyHR(m_wicImagingFactory->CreatePalette(&spPalette));
+	VerifyHR(spConverter->CopyPalette(spPalette.Get()));
+
+	UINT uiColorCount = 0;
+	VerifyHR(spPalette->GetColorCount(&uiColorCount));
+
+	std::vector<WICColor> colors;
+	colors.resize(uiColorCount);
+	UINT uiActualColorCount = 0;
+	VerifyHR(spPalette->GetColors(uiColorCount, colors.data(), &uiActualColorCount));
 
 	std::vector<byte> result;
 	int trancodedDataSize = (srcImageWidth * srcImageHeight);
@@ -80,25 +85,12 @@ int main(int argc, void** argv)
 		result[i] = 0;
 	}
 
-	int resultIndex = 0;
-	for (int y = 0; y < srcImageHeight; ++y)
 	{
-		for (int x = 0; x < srcImageWidth; ++x)
-		{
-			UINT srcRgb = rgbBuffer[(y * srcImageWidth) + x];
-
-			// Look up result in pallette
-			auto it = pallette.find(srcRgb);
-			int color = std::distance(pallette.begin(), it);
-			result[resultIndex] = color;
-			++resultIndex;
-		}
-	}
-	{
+		// Dump the palette
 		std::string outputFile = "D:\\repos\\fnxapp\\img\\rsrc\\colors.s";
 		std::ofstream out(outputFile);
 		out << "LUT_START\n";
-		for (auto it = pallette.begin(); it != pallette.end(); ++it)
+		for (auto it = colors.begin(); it != colors.end(); ++it)
 		{
 			UINT rgb = *it;
 
@@ -111,7 +103,7 @@ int main(int argc, void** argv)
 
 			out << ".byte " << b << ", " << g << ", " << r << ", 0\n";
 		}
-		int fillerColors = 256 - pallette.size();
+		int fillerColors = 256 - colors.size();
 		for (int i = 0; i < fillerColors; ++i)
 		{
 			out << ".byte 255, 0, 255, 0\n";
@@ -151,7 +143,7 @@ int main(int argc, void** argv)
 
 			for (int j = 0; j < lineLength; ++j)
 			{
-				out << (int)(result[i + j]);
+				out << (int)(indexedBuffer[i + j]);
 				if (j < lineLength - 1)
 				{
 					out << ", ";
