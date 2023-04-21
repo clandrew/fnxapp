@@ -94,47 +94,74 @@ int main(int argc, void** argv)
 			++resultIndex;
 		}
 	}
-
-	std::string outputFile = "D:\\repos\\fnxapp\\img\\rsrc\\pixmap.s";
-	std::ofstream out(outputFile);
-
-	out << "\n";
-
-	int bank = 2;
-	int lineLength = 16;
-	int lineCount = 0;
-	assert(result.size() % lineLength == 0);
-	for (int i = 0; i < result.size(); i += lineLength)
 	{
-		if (lineCount % 4096 == 0)
+		std::string outputFile = "D:\\repos\\fnxapp\\img\\rsrc\\colors.s";
+		std::ofstream out(outputFile);
+		out << "LUT_START\n";
+		for (auto it = pallette.begin(); it != pallette.end(); ++it)
 		{
-			out << "* = $";
-			if (lineCount == 0)
-			{
-				out << "0";
-			}
-			out << bank << "0000\n";
-			bank++;
+			UINT rgb = *it;
+
+			int b = rgb & 0xFF;
+			rgb >>= 8;
+			int g = rgb & 0xFF;
+			rgb >>= 8;
+			int r = rgb & 0xFF;
+			rgb >>= 8;
+
+			out << ".byte " << r << ", " << g << ", " << b << ", 0\n";
 		}
-		if (lineCount == 0)
+		int fillerColors = 256 - pallette.size();
+		for (int i = 0; i < fillerColors; ++i)
 		{
-			out << "IMG_START = *\n";
+			out << ".byte 255, 0, 255, 0\n";
 		}
 
-		out << ".byte ";
+		out << "\n";
+		out << "LUT_END = *";
+	}
+	{
+		std::string outputFile = "D:\\repos\\fnxapp\\img\\rsrc\\pixmap.s";
+		std::ofstream out(outputFile);
 
-		for (int j = 0; j < lineLength; ++j)
-		{
-			out << (int)(result[i + j]);
-			if (j < lineLength - 1)
-			{
-				out << ", ";
-			}
-		}
 		out << "\n";
 
-		lineCount++;
-	}
+		int bank = 2;
+		int lineLength = 16;
+		int lineCount = 0;
+		assert(result.size() % lineLength == 0);
+		for (int i = 0; i < result.size(); i += lineLength)
+		{
+			if (lineCount % 4096 == 0)
+			{
+				out << "* = $";
+				if (lineCount == 0)
+				{
+					out << "0";
+				}
+				out << bank << "0000\n";
+				bank++;
+			}
+			if (lineCount == 0)
+			{
+				out << "IMG_START = *\n";
+			}
 
-	out << "IMG_END = *";
+			out << ".byte ";
+
+			for (int j = 0; j < lineLength; ++j)
+			{
+				out << (int)(result[i + j]);
+				if (j < lineLength - 1)
+				{
+					out << ", ";
+				}
+			}
+			out << "\n";
+
+			lineCount++;
+		}
+
+		out << "IMG_END = *";
+	}
 }
