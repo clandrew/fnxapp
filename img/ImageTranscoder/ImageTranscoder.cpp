@@ -109,7 +109,7 @@ int main(int argc, void** argv)
 			int r = rgb & 0xFF;
 			rgb >>= 8;
 
-			out << ".byte " << r << ", " << g << ", " << b << ", 0\n";
+			out << ".byte " << b << ", " << g << ", " << r << ", 0\n";
 		}
 		int fillerColors = 256 - pallette.size();
 		for (int i = 0; i < fillerColors; ++i)
