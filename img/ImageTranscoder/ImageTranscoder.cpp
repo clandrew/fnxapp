@@ -99,14 +99,28 @@ int main(int argc, void** argv)
 	std::ofstream out(outputFile);
 
 	out << "\n";
-	out << "* = $020000\n";
-	out << "IMG_START = *\n";
 
-	// Output the result as hex directives. Hex pseudo-op is limited to 64 characters, or 32 bytes; need to pick lineLength <= 32
+	int bank = 2;
 	int lineLength = 16;
+	int lineCount = 0;
 	assert(result.size() % lineLength == 0);
 	for (int i = 0; i < result.size(); i += lineLength)
 	{
+		if (lineCount % 4096 == 0)
+		{
+			out << "* = $";
+			if (lineCount == 0)
+			{
+				out << "0";
+			}
+			out << bank << "0000\n";
+			bank++;
+		}
+		if (lineCount == 0)
+		{
+			out << "IMG_START = *\n";
+		}
+
 		out << ".byte ";
 
 		for (int j = 0; j < lineLength; ++j)
@@ -118,6 +132,8 @@ int main(int argc, void** argv)
 			}
 		}
 		out << "\n";
+
+		lineCount++;
 	}
 
 	out << "IMG_END = *";
