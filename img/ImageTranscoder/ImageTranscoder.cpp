@@ -119,4 +119,6 @@ int main(int argc, void** argv)
 		}
 		out << "\n";
 	}
+
+	out << "IMG_END = *";
 }
