@@ -11,10 +11,10 @@
 /ball/.vs/*
 /ball/Debug
 /ball/Release
-/img/.vs
-/img/Debug
-/img/Release
-/img/BitmapEmbedder/.vs/*
-/img/BitmapEmbedder/Debug/*
-/img/BitmapEmbedder/Release/*
-/img/BitmapEmbedder/x64/
+/wormhole/.vs
+/wormhole/Debug
+/wormhole/Release
+/wormhole/BitmapEmbedder/.vs/*
+/wormhole/BitmapEmbedder/Debug/*
+/wormhole/BitmapEmbedder/Release/*
+/wormhole/BitmapEmbedder/x64/
