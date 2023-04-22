@@ -319,6 +319,26 @@ LOOP2
     ;    pe[k+240].peRed=reg[k];
     ;}
 
+                LDX #0
+                LDY #240*4
+LOOP3
+                LDA regb,X
+                STA LUT_START,Y
+                INY
+                LDA regg,X
+                STA LUT_START,Y
+                INY
+                LDA regr,X
+                STA LUT_START,Y
+                INY
+                LDA rega,X
+                STA LUT_START,Y
+                INY ; Should alpha be ignored?
+
+                INX
+                CPX #15
+                BNE LOOP3
+
     ; Now the last part. We don't need the backups any more.
     ;for(i=0;i<15;i++)
     ;{
