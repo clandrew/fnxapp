@@ -15,7 +15,6 @@ F_HEX = 0                                   ; FILETYPE value for a HEX file to r
 F_PGX = 1                                   ; FILETYPE value for a PGX file to run from storage
 VRAM = $B00000                              ; Base address for video RAM
 HIRQ = $FFEE                                ; IRQ vector
-DEFAULT_TIMER = $02                         ; Number of SOF ticks to wait between sprite updates
 
 .if FILETYPE = F_HEX
 ;
@@ -31,7 +30,6 @@ GLOBALS = *
 JMPHANDLER      .byte ?                 ; JMP opcode for the NEXTHANDLER
 NEXTHANDLER     .word ?                 ; Pointer to the next IRQ handler in the chain
 DESTPTR         .dword ?                ; Pointer used for writing data
-TIMER           .word ?                 ; The timer for controlling speed of motion (decremented on SOF interrupts)
 IRQJMP          .fill 4                 ; Code for the IRQ handler vector
 
 ; Data buffers used during palette rotation. It'd be possible to reorganize the code to simply use
@@ -477,7 +475,6 @@ yield           PLD                         ; Restore DP and status
 BEGIN_BANK0 = *
 D_JMPHANDLER    JMP 0                   ; JMP and Pointer to the next IRQ handler in the chain
 D_DESTPTR       .dword 0                ; Pointer used for writing data
-D_TIMER         .word DEFAULT_TIMER     ; The timer for controlling speed of motion (decremented on SOF interrupts)
                 JML HANDLEIRQ           ; Code to start the interrupt handler
 END_BANK0 = *
 
