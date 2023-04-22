@@ -425,8 +425,9 @@ INNER
                 STA LUT_START, X
 
                 INC @w regr ; Check if i>15, for outer loop
-                LDA @w regr
-                CMP #15
+                INC @w regr
+                LDX @w regr
+                CPX #30
                 BNE LOOP4
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
