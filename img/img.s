@@ -40,6 +40,13 @@ SOURCE          .dword ?                    ; A pointer to copy from
 DEST            .dword ?                    ; A pointer to copy to
 SIZE            .dword ?                    ; The number of bytes to copy
 
+regr .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+regg .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+regb .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+
+;indcache .word 44, 58, 72, 86, 100, 114, 128, 142, 156, 170, 184, 196, 212, 226, 240
+indcache .word 176, 232, 288, 344, 400, 456, 512, 568, 624, 680, 736, 784, 848, 904, 960
+
 .if FILETYPE = F_PGX
 ;
 ; Header for the PGX file
@@ -237,19 +244,167 @@ HANDLEIRQ
                 setdbr 0
                 setdp GLOBALS
 
+
+                
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Update palette here.
+    
+    ; For each channel,
+    ; Back up pe[30..45].
+    ;
+    ;for(k=0;k<15;k++)
+    ;{
+    ;    regr[k]=pe[k+30].peRed;
+    ;}
                 setas
                 setxl
 
-                ; Update palette here.
-                LDX #$0000
-
-EACHPE
-                LDA LUT_START,X
-                INA
-                STA @l LUT_START,X
+                LDX #0
+                LDY #30*4
+LOOP1
+                LDA LUT_START,Y 
+                STA @l regr,X
+                INY
+                LDA LUT_START,Y
+                STA @l regg,X
+                INY
+                LDA LUT_START,Y
+                STA @l regb,X
+                INY
+                INY         ; Alpha ignored
+                
                 INX
-                CPX #$400
-                BNE EACHPE
+                CPX #15
+                BNE LOOP1
+
+    ; For each channel,
+    ; Overwrite pe[30..230] with pe[45..255]
+    ;
+    ;for(k=45;k<255;k++)
+    ;{                                                            
+    ;    pe[k-15].peRed=pe[k].peRed;
+    ;}
+    
+                LDX #30
+                LDY #45*4
+LOOP2
+                LDA LUT_START,Y
+                STA LUT_START,X
+                INY
+                LDA LUT_START,Y
+                STA LUT_START,X
+                INY
+                LDA LUT_START,Y
+                STA LUT_START,X
+                INY
+                INY             ; Alpha ignored
+                INX
+                CPX #225
+                BNE LOOP2
+
+
+    ; For each channel,
+    ; Take the old pe[30..45] that we backed up and store it at the end.
+    ;
+    ;for(k=0;k<15;k++)
+    ;{
+    ;    pe[k+240].peRed=reg[k];
+    ;}
+                LDX #0
+                LDY #240*4
+LOOP3
+                LDA regr,X
+                STA LUT_START,Y
+                INY
+                LDA regg,X
+                STA LUT_START,Y
+                INY
+                LDA regb,X
+                STA LUT_START,Y
+                INY
+                INX
+                CPX #15
+                BNE LOOP3
+
+    ; Now the last part. We don't need the backups any more.
+    ;for(i=0;i<15;i++)
+    ;{
+    ;    int k = i + 2;
+    ;
+    ;    int cur = 15 * k + 14;
+    ;    int pre = cur - 1;
+    ;
+    ;    tmp = pe[cur];
+    ;    for(j=0; j<14; j++)
+    ;    {
+    ;        pe[cur] = pe[pre];
+    ;        cur--;
+    ;        pre--;
+    ;    }
+    ;    pe[pre] = tmp;
+    ;}
+
+    LDA #$0
+    STA regr[0] ; i=0
+
+LOOP4
+    LDX regr[0]
+    LDA indcache, X         ; cur=indcache[i]
+    TAY                     ; cur stored in Y
+    DEC A
+    DEC A
+    DEC A
+    DEC A
+    PHX
+    TAX                     ; pre stored in X
+    
+    LDA #$0
+    STA regr[1] ;j=0
+
+    ; tmp = pe[cur];
+    LDA LUT_START, Y
+    STA regr[2]
+
+    ; set j: 14->0
+    LDA #15
+    STA regr[3]
+
+LP4IN
+    LDA LUT_START, X        ; load pe[pre]; 
+    STA LUT_START, Y        ; store it in pe[cur]
+    INX
+    INY
+    LDA LUT_START, X        ; load pe[pre]; 
+    STA LUT_START, Y        ; store it in pe[cur]
+    INX
+    INY
+    LDA LUT_START, X        ; load pe[pre]; 
+    STA LUT_START, Y        ; store it in pe[cur]
+    DEX
+    DEX
+    DEX
+    DEX
+    DEX
+    DEX
+    DEY
+    DEY
+    DEY
+    DEY
+    DEY
+    DEY
+
+    DEC regr[3]
+    BNE LP4IN
+
+    ; pe[pre] = tmp;
+    LDA regr[2]
+    STA LUT_START, X
+
+    DEC regr[0]
+    CMP regr[0]
+    BNE LOOP4
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
                 setaxl
                 LDA #LUT_END - LUT_START    ; Copy the palette to Vicky LUT0
