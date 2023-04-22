@@ -40,14 +40,14 @@ regb .fill 16
 
 ; These aren't used at the same time as reg*, so they're aliased on top.
 * = regr
+SOURCE          .dword ?                    ; A pointer to copy the bitmap from
+DEST            .dword ?                    ; A pointer to copy the bitmap to
+SIZE            .dword ?                    ; The number of bytes to copy
 tmpr .byte ?            ; A backed-up-and-restored color, separated by channels
 tmpg .byte ?            ; used during the 4th loop.
 tmpb .byte ?
 iter_i .byte ?          ; Couple counters used for the 4th loop.
 iter_j .byte ?
-SOURCE          .dword ?                    ; A pointer to copy the bitmap from
-DEST            .dword ?                    ; A pointer to copy the bitmap to
-SIZE            .dword ?                    ; The number of bytes to copy
 
 .if FILETYPE = F_PGX
 ;
