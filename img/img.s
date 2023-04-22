@@ -43,15 +43,19 @@ regr .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 regg .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 regb .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
+; Easier to simply not have to do this programmatically.
+indcache .word 176, 236, 296, 356, 416, 476, 536, 596, 656, 716, 776, 836, 896, 956, 1016
+
 tmpr .byte ?
 tmpg .byte ?
 tmpb .byte ?
+
+; These aren't used at the same time as reg*, so they're aliased on top.
+* = regr
 SOURCE          .dword ?                    ; A pointer to copy from
 DEST            .dword ?                    ; A pointer to copy to
 SIZE            .dword ?                    ; The number of bytes to copy
 
-; Easier to simply not have to do this programmatically.
-indcache .word 176, 236, 296, 356, 416, 476, 536, 596, 656, 716, 776, 836, 896, 956, 1016
 
 .if FILETYPE = F_PGX
 ;
