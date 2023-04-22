@@ -339,7 +339,7 @@ LOOP3
                 CPX #15
                 BNE LOOP3
 
-    ; Now the last part. We don't need the backups any more.
+  ; Now the last part. We don't need the backups any more.
     ;for(i=0;i<15;i++)
     ;{
     ;    int k = i + 2;
@@ -357,6 +357,77 @@ LOOP3
     ;    pe[pre] = tmp;
     ;}
 
+                LDX #$0
+                LDY #$0
+                STX @w regr ; i=0
+
+LOOP4
+                setal
+                LDA @w indcache, X         ; cur=indcache[i] 
+                TAY
+                DEC A
+                DEC A
+                DEC A
+                DEC A
+                TAX                     ; pre stored in X
+                setas
+                ; pre and cur indices are stored in X and Y now.
+
+                ; tmp = pe[cur];
+                LDA LUT_START, Y
+                STA @w regg
+
+                ; Now initialize the inner loop.
+                LDA #14
+                STA @w regb; j=14
+INNER
+                LDA LUT_START, X        ; Load pe[pre]
+                STA LUT_START, Y        ; Store it in pe[cur]
+                INX
+                INY
+                LDA LUT_START, X
+                STA LUT_START, Y
+                INX
+                INY
+                LDA LUT_START, X
+                STA LUT_START, Y
+                INX
+                INY
+                LDA LUT_START, X
+                STA LUT_START, Y
+                INX
+                INY
+
+                ; Now decrement pre and cur
+                DEX
+                DEX
+                DEX
+                DEX
+                DEX
+                DEX
+                DEX
+                DEX
+
+                DEY
+                DEY
+                DEY
+                DEY
+                DEY
+                DEY
+                DEY
+                DEY
+
+                DEC @w regb   ; j--
+                BNE INNER
+
+                ; pe[pre] = tmp;
+                LDA @w regg
+                STA LUT_START, X
+
+                INC @w regr ; Check if i>15, for outer loop
+                LDA @w regr
+                CMP #15
+                BNE LOOP4
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
