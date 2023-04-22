@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{e3b333a3-57de-47f9-ba24-48de78b9dd12}</ProjectGuid>
-    <RootNamespace>ImageTranscoder</RootNamespace>
+    <RootNamespace>BitmapEmbedder</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>BitmapEmbedder</ProjectName>
   </PropertyGroup>
