@@ -33,7 +33,7 @@ DESTPTR         .dword ?                ; Pointer used for writing data
 IRQJMP          .fill 4                 ; Code for the IRQ handler vector
 
 ; Data buffers used during palette rotation. It'd be possible to reorganize the code to simply use
-; one channel of these, but this opts for a bit of a memory/performance tradeoff and chooses perf.
+; one channel of these, but there's a memory/performance tradeoff and this chooses perf.
 regr .fill 16
 regg .fill 16
 regb .fill 16
@@ -457,7 +457,6 @@ yield           PLD                         ; Restore DP and status
 
 ;
 ; Bank 0 data (to be copied on startup)
-
 ;
 
 BEGIN_BANK0 = *
