@@ -8,10 +8,13 @@
 .include "vicky_ii_def.s"
 .include "macros.s"
 .include "page_00_inc.s"
+.include "interrupt_def.s"
 
 F_HEX = 0                                   ; FILETYPE value for a HEX file to run through the debug port
 F_PGX = 1                                   ; FILETYPE value for a PGX file to run from storage
 VRAM = $B00000                              ; Base address for video RAM
+HIRQ = $FFEE                                ; IRQ vector
+DEFAULT_TIMER = $02                         ; Number of SOF ticks to wait between sprite updates
 
 .if FILETYPE = F_HEX
 ;
@@ -23,6 +26,16 @@ HRESET          .word <>START               ; Bootstrapping vector
 
 * = $002000
 GLOBALS = *
+JMPHANDLER      .byte ?                 ; JMP opcode for the NEXTHANDLER
+NEXTHANDLER     .word ?                 ; Pointer to the next IRQ handler in the chain
+DESTPTR         .dword ?                ; Pointer used for writing data
+XCOORD          .word ?                 ; The X coordinate (column) for the sprite
+YCOORD          .word ?                 ; The Y coordinate (row) for the sprite
+DX              .word ?                 ; The change in X for an update (either 1/-1)
+DY              .word ?                 ; The change in Y for an update (either 1/-1)
+TIMER           .word ?                 ; The timer for controlling speed of motion (decremented on SOF interrupts)
+IRQJMP          .fill 4                 ; Code for the IRQ handler vector
+
 SOURCE          .dword ?                    ; A pointer to copy from
 DEST            .dword ?                    ; A pointer to copy to
 SIZE            .dword ?                    ; The number of bytes to copy
@@ -49,6 +62,8 @@ START           CLC
                 setdbr 0
                 setdp GLOBALS
                 setaxl
+
+                JSR SETUPBANK0              ; Copy BANK0 data
 
                 ; Switch on bitmap graphics mode
                 LDA #Mstr_Ctrl_Graph_Mode_En | Mstr_Ctrl_Bitmap_En
@@ -80,7 +95,26 @@ START           CLC
 
                 JSR COPYS2V                 ; Request the DMA to copy the image data
 
+                ; Set up the interrupt handler
+
+                SEI
+
+                setal
+                LDA HIRQ                    ; Get the current handler
+                STA NEXTHANDLER             ; And save it to call it
+
+                LDA #<>IRQJMP               ; Replace it with our handler
+                STA HIRQ
+
+                setas
+                LDA @l INT_MASK_REG0        ; Enable SOF interrupts
+                AND #~FNX0_INT00_SOF
+                STA @l INT_MASK_REG0
+
+                CLI                         ; Make sure interrupts are enabled
+
 lock            NOP                         ; Otherwise pause
+
                 BRA lock
 
 ;
@@ -172,6 +206,81 @@ INITLUT         .proc
                 PLB
                 RTS
                 .pend
+
+;
+; Copy the Bank 0 data down to bank 0
+;
+SETUPBANK0      .proc
+                PHB
+                PHP
+
+                setaxl
+                LDX #<>BEGIN_BANK0
+                LDY #<>GLOBALS
+                LDA #(END_BANK0 - BEGIN_BANK0)
+                MVN #`BEGIN_BANK0, #`GLOBALS
+
+                PLP
+                PLB
+                RTS
+                .pend
+
+; Interrupt handler
+HANDLEIRQ       
+                PHD
+                PHB
+                PHA
+                PHX
+                PHY
+                PHP
+
+                setdbr 0
+                setdp GLOBALS
+
+                setas
+                setxl
+
+                ; Update palette here.
+                LDX #$0000
+
+EACHPE
+                LDA LUT_START,X
+                INA
+                STA @l LUT_START,X
+                INX
+                CPX #$400
+                BNE EACHPE
+
+                setaxl
+                LDA #LUT_END - LUT_START    ; Copy the palette to Vicky LUT0
+                LDX #<>LUT_START
+                LDY #<>GRPH_LUT1_PTR
+                MVN `START,`GRPH_LUT1_PTR
+                
+                PLP
+                PLY
+                PLX
+                PLA
+                PLB
+yield           PLD                         ; Restore DP and status
+                
+                JML JMPHANDLER              ; Then transfer control to the next handler
+
+;
+; Bank 0 data (to be copied on startup)
+
+;
+
+BEGIN_BANK0 = *
+D_JMPHANDLER    JMP 0                   ; JMP and Pointer to the next IRQ handler in the chain
+D_DESTPTR       .dword 0                ; Pointer used for writing data
+D_XCOORD        .word 100               ; The X coordinate (column) for the sprite
+D_YCOORD        .word 100               ; The Y coordinate (row) for the sprite
+D_DX            .word 1                 ; The change in X for an update (either 1/-1)
+D_DY            .word 1                 ; The change in Y for an update (either 1/-1)
+D_TIMER         .word DEFAULT_TIMER     ; The timer for controlling speed of motion (decremented on SOF interrupts)
+                JML HANDLEIRQ           ; Code to start the interrupt handler
+END_BANK0 = *
 
 .include "rsrc/colors.s"
 .include "rsrc/pixmap.s"
