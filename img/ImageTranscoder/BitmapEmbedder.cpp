@@ -1,6 +1,3 @@
-// ImageTranscoder.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include "pch.h"
 
 using namespace Microsoft::WRL;
@@ -15,9 +12,9 @@ void VerifyHR(HRESULT hr)
 
 void PrintUsage()
 {
-	std::cout << "Usage: ImageTrancoder [source] [dest pallette source file] [dest image source file]\n";
+	std::cout << "Usage: BitmapEmbedder [source] [dest pallette source file] [dest image source file]\n";
 	std::cout << "For example, \n";
-	std::cout << "    ImageTrancoder wormhole.bmp colors.s pixmap.s\n";
+	std::cout << "    BitmapEmbedder wormhole.bmp colors.s pixmap.s\n";
 }
 
 int main(int argc, void** argv)
@@ -96,8 +93,7 @@ int main(int argc, void** argv)
 	VerifyHR(spPalette->GetColors(uiColorCount, colors.data(), &uiActualColorCount));
 
 	std::vector<byte> result;
-	int trancodedDataSize = (srcImageWidth * srcImageHeight);
-	result.resize(trancodedDataSize);
+	result.resize(srcImageWidth * srcImageHeight);
 
 	// Zero out
 	for (size_t i = 0; i < result.size(); ++i)
