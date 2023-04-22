@@ -43,6 +43,7 @@ SIZE            .dword ?                    ; The number of bytes to copy
 regr .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 regg .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 regb .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+rega .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
 ;indcache .word 44, 58, 72, 86, 100, 114, 128, 142, 156, 170, 184, 196, 212, 226, 240
 indcache .word 176, 232, 288, 344, 400, 456, 512, 568, 624, 680, 736, 784, 848, 904, 960
@@ -243,8 +244,6 @@ HANDLEIRQ
 
                 setdbr 0
                 setdp GLOBALS
-
-
                 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Update palette here.
@@ -263,19 +262,23 @@ HANDLEIRQ
                 LDY #30*4
 LOOP1
                 LDA LUT_START,Y 
-                STA @l regr,X
+                STA @w regb,X   ; Force 16bit address
                 INY
                 LDA LUT_START,Y
-                STA @l regg,X
+                STA @w regg,X
                 INY
                 LDA LUT_START,Y
-                STA @l regb,X
+                STA @w regr,X
                 INY
+                LDA LUT_START,Y
+                STA @w rega,X
                 INY         ; Alpha ignored
                 
                 INX
                 CPX #15
                 BNE LOOP1
+
+              
 
     ; For each channel,
     ; Overwrite pe[30..230] with pe[45..255]
@@ -285,21 +288,26 @@ LOOP1
     ;    pe[k-15].peRed=pe[k].peRed;
     ;}
     
-                LDX #30
-                LDY #45*4
+                LDX #30*4   ; 0x78
+                LDY #45*4   ; 0xB4
 LOOP2
                 LDA LUT_START,Y
                 STA LUT_START,X
-                INY
-                LDA LUT_START,Y
-                STA LUT_START,X
-                INY
-                LDA LUT_START,Y
-                STA LUT_START,X
-                INY
-                INY             ; Alpha ignored
                 INX
-                CPX #225
+                INY
+                LDA LUT_START,Y
+                STA LUT_START,X
+                INX
+                INY
+                LDA LUT_START,Y
+                STA LUT_START,X
+                INX
+                INY
+                LDA LUT_START,Y ; Should alpha be ignored?
+                STA LUT_START,X
+                INX             
+                INY             
+                CPX #$3C0 ; 240 * 4
                 BNE LOOP2
 
 
@@ -310,21 +318,6 @@ LOOP2
     ;{
     ;    pe[k+240].peRed=reg[k];
     ;}
-                LDX #0
-                LDY #240*4
-LOOP3
-                LDA regr,X
-                STA LUT_START,Y
-                INY
-                LDA regg,X
-                STA LUT_START,Y
-                INY
-                LDA regb,X
-                STA LUT_START,Y
-                INY
-                INX
-                CPX #15
-                BNE LOOP3
 
     ; Now the last part. We don't need the backups any more.
     ;for(i=0;i<15;i++)
@@ -344,65 +337,6 @@ LOOP3
     ;    pe[pre] = tmp;
     ;}
 
-    LDA #$0
-    STA regr[0] ; i=0
-
-LOOP4
-    LDX regr[0]
-    LDA indcache, X         ; cur=indcache[i]
-    TAY                     ; cur stored in Y
-    DEC A
-    DEC A
-    DEC A
-    DEC A
-    PHX
-    TAX                     ; pre stored in X
-    
-    LDA #$0
-    STA regr[1] ;j=0
-
-    ; tmp = pe[cur];
-    LDA LUT_START, Y
-    STA regr[2]
-
-    ; set j: 14->0
-    LDA #15
-    STA regr[3]
-
-LP4IN
-    LDA LUT_START, X        ; load pe[pre]; 
-    STA LUT_START, Y        ; store it in pe[cur]
-    INX
-    INY
-    LDA LUT_START, X        ; load pe[pre]; 
-    STA LUT_START, Y        ; store it in pe[cur]
-    INX
-    INY
-    LDA LUT_START, X        ; load pe[pre]; 
-    STA LUT_START, Y        ; store it in pe[cur]
-    DEX
-    DEX
-    DEX
-    DEX
-    DEX
-    DEX
-    DEY
-    DEY
-    DEY
-    DEY
-    DEY
-    DEY
-
-    DEC regr[3]
-    BNE LP4IN
-
-    ; pe[pre] = tmp;
-    LDA regr[2]
-    STA LUT_START, X
-
-    DEC regr[0]
-    CMP regr[0]
-    BNE LOOP4
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
