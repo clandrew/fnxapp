@@ -33,7 +33,7 @@ DESTPTR         .dword ?                ; Pointer used for writing data
 IRQJMP          .fill 4                 ; Code for the IRQ handler vector
 
 ; Data buffers used during palette rotation. It'd be possible to reorganize the code to simply use
-; one of these, but this opts for a bit of a memory/performance tradeoff and chooses perf.
+; one channel of these, but this opts for a bit of a memory/performance tradeoff and chooses perf.
 regr .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 regg .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 regb .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -44,6 +44,8 @@ indcache .word 176, 236, 296, 356, 416, 476, 536, 596, 656, 716, 776, 836, 896, 
 tmpr .byte ?
 tmpg .byte ?
 tmpb .byte ?
+iter_i .byte ?
+iter_j .byte ?
 
 ; These aren't used at the same time as reg*, so they're aliased on top.
 * = regr
@@ -393,7 +395,7 @@ LOOP3
 
                 LDX #$0
                 LDY #$0
-                STX @w regr ; i=0
+                STX @w iter_i ; i=0
 
 LOOP4
                 setal
@@ -422,11 +424,11 @@ LOOP4
 
                 ; Now initialize the inner loop.
                 LDA #14
-                STA @w regb; j=14
+                STA @w iter_j; j=14
 INNER
                 JSR INNERIMPL
 
-                DEC @w regb   ; j--
+                DEC @w iter_j   ; j--
                 BNE INNER
 
                 INX
@@ -444,9 +446,9 @@ INNER
                 LDA @w tmpb
                 STA LUT_START, X
 
-                INC @w regr ; Check if i>15, for outer loop
-                INC @w regr
-                LDX @w regr
+                INC @w iter_i ; Check if i>15, for outer loop
+                INC @w iter_i
+                LDX @w iter_i
                 CPX #30
                 BNE LOOP4
 
