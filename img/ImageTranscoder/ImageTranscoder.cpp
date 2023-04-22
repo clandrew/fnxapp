@@ -13,9 +13,29 @@ void VerifyHR(HRESULT hr)
 	}
 }
 
+void PrintUsage()
+{
+	std::cout << "Usage: ImageTrancoder [source] [dest pallette source file] [dest image source file]\n";
+	std::cout << "For example, \n";
+	std::cout << "    ImageTrancoder wormhole.bmp colors.s pixmap.s\n";
+}
+
 int main(int argc, void** argv)
 {
-	std::wstring filename = L"D:\\repos\\fnxapp\\wormhole\\rsrc\\wormhole.bmp";
+	if (argc < 4)
+	{
+		PrintUsage();
+		return 1;
+	}
+
+	std::string sourceFilenameCmdLine = (char*)argv[1];
+	std::wstring sourceFilename(sourceFilenameCmdLine.begin(), sourceFilenameCmdLine.end());
+
+	std::string destPaletteFilenameCmdLine = (char*)argv[2];
+	std::wstring destPaletteFilename(destPaletteFilenameCmdLine.begin(), destPaletteFilenameCmdLine.end());
+
+	std::string destImageFilenameCmdLine = (char*)argv[3];
+	std::wstring destImageFilename(destImageFilenameCmdLine.begin(), destImageFilenameCmdLine.end());
 
 	ComPtr<IWICImagingFactory> m_wicImagingFactory;
 
@@ -30,7 +50,7 @@ int main(int argc, void** argv)
 
 	ComPtr<IWICBitmapDecoder> decoder;
 	VerifyHR(m_wicImagingFactory->CreateDecoderFromFilename(
-		filename.c_str(),
+		sourceFilename.c_str(),
 		NULL,
 		GENERIC_READ,
 		WICDecodeMetadataCacheOnLoad, &decoder));
@@ -87,8 +107,8 @@ int main(int argc, void** argv)
 
 	{
 		// Dump the palette
-		std::string outputFile = "D:\\repos\\fnxapp\\wormhole\\rsrc\\colors.s";
-		std::ofstream out(outputFile);
+		std::wstring outputFile = destPaletteFilename;
+		std::wofstream out(outputFile);
 		out << "LUT_START\n";
 		for (auto it = colors.begin(); it != colors.end(); ++it)
 		{
@@ -101,22 +121,22 @@ int main(int argc, void** argv)
 			int r = rgb & 0xFF;
 			rgb >>= 8;
 
-			out << ".byte " << b << ", " << g << ", " << r << ", 0\n";
+			out << L".byte " << b << L", " << g << L", " << r << L", 0\n";
 		}
 		int fillerColors = 256 - colors.size();
 		for (int i = 0; i < fillerColors; ++i)
 		{
-			out << ".byte 255, 0, 255, 0\n";
+			out << L".byte 255, 0, 255, 0\n";
 		}
 
-		out << "\n";
-		out << "LUT_END = *";
+		out << L"\n";
+		out << L"LUT_END = *";
 	}
 	{
-		std::string outputFile = "D:\\repos\\fnxapp\\wormhole\\rsrc\\pixmap.s";
-		std::ofstream out(outputFile);
+		std::wstring outputFile = destImageFilename;
+		std::wofstream out(outputFile);
 
-		out << "\n";
+		out << L"\n";
 
 		int bank = 2;
 		int lineLength = 16;
@@ -126,34 +146,34 @@ int main(int argc, void** argv)
 		{
 			if (lineCount % 4096 == 0)
 			{
-				out << "* = $";
+				out << L"* = $";
 				if (lineCount == 0)
 				{
-					out << "0";
+					out << L"0";
 				}
-				out << bank << "0000\n";
+				out << bank << L"0000\n";
 				bank++;
 			}
 			if (lineCount == 0)
 			{
-				out << "IMG_START = *\n";
+				out << L"IMG_START = *\n";
 			}
 
-			out << ".byte ";
+			out << L".byte ";
 
 			for (int j = 0; j < lineLength; ++j)
 			{
 				out << (int)(indexedBuffer[i + j]);
 				if (j < lineLength - 1)
 				{
-					out << ", ";
+					out << L", ";
 				}
 			}
-			out << "\n";
+			out << L"\n";
 
 			lineCount++;
 		}
 
-		out << "IMG_END = *";
+		out << L"IMG_END = *";
 	}
 }
