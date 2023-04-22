@@ -32,25 +32,26 @@ NEXTHANDLER     .word ?                 ; Pointer to the next IRQ handler in the
 DESTPTR         .dword ?                ; Pointer used for writing data
 IRQJMP          .fill 4                 ; Code for the IRQ handler vector
 
-; Data buffers used during palette rotation. It'd be possible to reorganize the code to simply use
-; one channel of these, but this opts for a bit of a memory/performance tradeoff and chooses perf.
-regr .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-regg .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-regb .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-
 ; Easier to simply not have to do this programmatically.
+; This array gets offset into by multiplying a pointer value by 2
+.align 2
 indcache .word 176, 236, 296, 356, 416, 476, 536, 596, 656, 716, 776, 836, 896, 956, 1016
 
-tmpr .byte ?
-tmpg .byte ?
-tmpb .byte ?
-iter_i .byte ?
-iter_j .byte ?
+; Data buffers used during palette rotation. It'd be possible to reorganize the code to simply use
+; one channel of these, but this opts for a bit of a memory/performance tradeoff and chooses perf.
+regr .fill 16
+regg .fill 16
+regb .fill 16
 
 ; These aren't used at the same time as reg*, so they're aliased on top.
 * = regr
-SOURCE          .dword ?                    ; A pointer to copy from
-DEST            .dword ?                    ; A pointer to copy to
+tmpr .byte ?            ; A backed-up-and-restored color, separated by channels
+tmpg .byte ?            ; used during the 4th loop.
+tmpb .byte ?
+iter_i .byte ?          ; Couple counters used for the 4th loop.
+iter_j .byte ?
+SOURCE          .dword ?                    ; A pointer to copy the bitmap from
+DEST            .dword ?                    ; A pointer to copy the bitmap to
 SIZE            .dword ?                    ; The number of bytes to copy
 
 .if FILETYPE = F_PGX
