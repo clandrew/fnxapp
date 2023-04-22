@@ -15,7 +15,7 @@ void VerifyHR(HRESULT hr)
 
 int main(int argc, void** argv)
 {
-	std::wstring filename = L"D:\\repos\\fnxapp\\img\\rsrc\\wormhole.bmp";
+	std::wstring filename = L"D:\\repos\\fnxapp\\wormhole\\rsrc\\wormhole.bmp";
 
 	ComPtr<IWICImagingFactory> m_wicImagingFactory;
 
@@ -87,7 +87,7 @@ int main(int argc, void** argv)
 
 	{
 		// Dump the palette
-		std::string outputFile = "D:\\repos\\fnxapp\\img\\rsrc\\colors.s";
+		std::string outputFile = "D:\\repos\\fnxapp\\wormhole\\rsrc\\colors.s";
 		std::ofstream out(outputFile);
 		out << "LUT_START\n";
 		for (auto it = colors.begin(); it != colors.end(); ++it)
@@ -113,7 +113,7 @@ int main(int argc, void** argv)
 		out << "LUT_END = *";
 	}
 	{
-		std::string outputFile = "D:\\repos\\fnxapp\\img\\rsrc\\pixmap.s";
+		std::string outputFile = "D:\\repos\\fnxapp\\wormhole\\rsrc\\pixmap.s";
 		std::ofstream out(outputFile);
 
 		out << "\n";

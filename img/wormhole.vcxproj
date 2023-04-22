@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{733cae12-e50f-498a-81bf-67a2426bb033}</ProjectGuid>
-    <RootNamespace>img</RootNamespace>
+    <RootNamespace>wormhole</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -97,7 +97,7 @@
     <CustomBuild>
       <Command>
       </Command>
-      <Outputs>$(TargetDir)img.hex;$(TargetDir)img.lst</Outputs>
+      <Outputs>$(TargetDir)wormhole.hex;$(TargetDir)wormhole.lst</Outputs>
     </CustomBuild>
     <PostBuildEvent>
       <Command>
@@ -125,7 +125,7 @@
     </PostBuildEvent>
     <CustomBuild>
       <Command>$(ProjectDir)Build.cmd</Command>
-      <Outputs>$(TargetDir)img.hex;$(TargetDir)img.lst</Outputs>
+      <Outputs>$(TargetDir)wormhole.hex;$(TargetDir)wormhole.lst</Outputs>
     </CustomBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -142,7 +142,7 @@
     <CustomBuild>
       <Command>
       </Command>
-      <Outputs>$(TargetDir)img.hex;$(TargetDir)img.lst</Outputs>
+      <Outputs>$(TargetDir)wormhole.hex;$(TargetDir)wormhole.lst</Outputs>
     </CustomBuild>
     <PostBuildEvent>
       <Command>
@@ -170,27 +170,27 @@
     </PostBuildEvent>
     <CustomBuild>
       <Command>$(ProjectDir)Build.cmd</Command>
-      <Outputs>$(TargetDir)img.hex;$(TargetDir)img.lst</Outputs>
+      <Outputs>$(TargetDir)wormhole.hex;$(TargetDir)wormhole.lst</Outputs>
     </CustomBuild>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="img.s">
+    <CustomBuild Include="wormhole.s">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)img.hex -D FILETYPE=0 --list=$(TargetDir)img.lst --labels=img.lbl $(ProjectDir)img.s
-d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)img.hex -D FILETYPE=0 --list=$(TargetDir)img.lst --labels=img.lbl $(ProjectDir)img.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)wormhole.hex -D FILETYPE=0 --list=$(TargetDir)wormhole.lst --labels=wormhole.lbl $(ProjectDir)wormhole.s
+d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)wormhole.hex -D FILETYPE=0 --list=$(TargetDir)wormhole.lst --labels=wormhole.lbl $(ProjectDir)wormhole.s
 echo ==============
 echo Copying result:
 echo copy /Y $(TargetPath) "$(ProjectDir)..\sd"
 copy /Y $(TargetPath) "$(ProjectDir)..\sd"
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)img.hex --list=$(TargetDir)img.lst --labels=img.lbl $(ProjectDir)img.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)wormhole.hex --list=$(TargetDir)wormhole.lst --labels=wormhole.lbl $(ProjectDir)wormhole.s
 echo ==============
 echo Copying result:
 echo copy /Y $(TargetPath) "D:\Program Files\C256 Foenix Project\FoenixIDE Setup"
 copy /Y $(TargetPath) "D:\Program Files\C256 Foenix Project\FoenixIDE Setup"
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)img.hex --list=$(TargetDir)img.lst --labels=img.lbl $(ProjectDir)img.s
-d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)img.hex --list=$(TargetDir)img.lst --labels=img.lbl $(ProjectDir)img.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)wormhole.hex --list=$(TargetDir)wormhole.lst --labels=wormhole.lbl $(ProjectDir)wormhole.s
+d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)wormhole.hex --list=$(TargetDir)wormhole.lst --labels=wormhole.lbl $(ProjectDir)wormhole.s
 echo ==============
 echo Copying result:
 echo copy /Y $(TargetPath) "$(ProjectDir)..\sd"
