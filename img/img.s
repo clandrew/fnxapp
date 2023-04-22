@@ -1,5 +1,5 @@
 ;;;
-;;; An image viewer for the C256... displays a bitmap image converted from BMP.
+;;; "Wormhole" graphics demo using palette rotation.
 ;;;
 
 .cpu "65816"
@@ -10,6 +10,7 @@
 .include "page_00_inc.s"
 .include "interrupt_def.s"
 
+; Constants
 F_HEX = 0                                   ; FILETYPE value for a HEX file to run through the debug port
 F_PGX = 1                                   ; FILETYPE value for a PGX file to run from storage
 VRAM = $B00000                              ; Base address for video RAM
@@ -24,6 +25,7 @@ DEFAULT_TIMER = $02                         ; Number of SOF ticks to wait betwee
 HRESET          .word <>START               ; Bootstrapping vector
 .endif
 
+; Data
 * = $002000
 GLOBALS = *
 JMPHANDLER      .byte ?                 ; JMP opcode for the NEXTHANDLER
@@ -48,10 +50,8 @@ rega .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 tmpr .byte ?
 tmpg .byte ?
 tmpb .byte ?
-tmpa .byte ?
 
-;indcache .word 44,  59,  74,  89, 104, 119, 132, 147, 162, 177, 192, 207, 222, 237, 252
-;indcache .word 176, 236, 296, 356, 416, 476, 528, 588, 648, 708, 768, 828, 888, 948, 1008
+; Easier to simply not have to do this programmatically.
 indcache .word 176, 236, 296, 356, 416, 476, 536, 596, 656, 716, 776, 836, 896, 956, 1016
 
 .if FILETYPE = F_PGX
@@ -315,15 +315,11 @@ LOOP1
                 LDA LUT_START,Y
                 STA @w regr,X
                 INY
-                LDA LUT_START,Y
-                STA @w rega,X
                 INY         ; Alpha ignored
                 
                 INX
                 CPX #15
-                BNE LOOP1
-
-              
+                BNE LOOP1              
 
     ; For each channel,
     ; Overwrite pe[30..230] with pe[45..255]
@@ -348,9 +344,7 @@ LOOP2
                 STA LUT_START,X
                 INX
                 INY
-                LDA LUT_START,Y ; Should alpha be ignored?
-                STA LUT_START,X
-                INX             
+                INX        ; Alpha ignored     
                 INY             
                 CPX #$3C0 ; 240 * 4
                 BNE LOOP2
@@ -376,9 +370,7 @@ LOOP3
                 LDA regr,X
                 STA LUT_START,Y
                 INY
-                LDA rega,X
-                STA LUT_START,Y
-                INY ; Should alpha be ignored?
+                INY ; Alpha ignored
 
                 INX
                 CPX #15
@@ -427,10 +419,7 @@ LOOP4
                 INY
                 LDA LUT_START, Y
                 STA @w tmpb
-                INY
-                LDA LUT_START, Y
-                STA @w tmpa
-                DEY
+                ; Alpha ignored
                 DEY
                 DEY
 
@@ -456,9 +445,6 @@ INNER
                 STA LUT_START, X
                 INX
                 LDA @w tmpb
-                STA LUT_START, X
-                INX
-                LDA @w tmpa
                 STA LUT_START, X
 
                 INC @w regr ; Check if i>15, for outer loop
