@@ -32,11 +32,6 @@ NEXTHANDLER     .word ?                 ; Pointer to the next IRQ handler in the
 DESTPTR         .dword ?                ; Pointer used for writing data
 IRQJMP          .fill 4                 ; Code for the IRQ handler vector
 
-; Easier to simply not have to do this programmatically.
-; This array gets offset into by multiplying a pointer value by 2
-.align 2
-indcache .word 176, 236, 296, 356, 416, 476, 536, 596, 656, 716, 776, 836, 896, 956, 1016
-
 ; Data buffers used during palette rotation. It'd be possible to reorganize the code to simply use
 ; one channel of these, but this opts for a bit of a memory/performance tradeoff and chooses perf.
 regr .fill 16
@@ -480,6 +475,9 @@ D_JMPHANDLER    JMP 0                   ; JMP and Pointer to the next IRQ handle
 D_DESTPTR       .dword 0                ; Pointer used for writing data
                 JML HANDLEIRQ           ; Code to start the interrupt handler
 END_BANK0 = *
+
+; Easier to simply not have to do this programmatically.
+indcache .word 176, 236, 296, 356, 416, 476, 536, 596, 656, 716, 776, 836, 896, 956, 1016
 
 .include "rsrc/colors.s"
 .include "rsrc/pixmap.s"
