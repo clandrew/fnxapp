@@ -249,8 +249,6 @@ INNERIMPL       .proc
                 INY
                 LDA LUT_START, X
                 STA LUT_START, Y
-                INX
-                INY
 
                 ; Now decrement pre and cur
                 DEX
@@ -260,9 +258,7 @@ INNERIMPL       .proc
                 DEX
                 DEX
                 DEX
-                DEX
 
-                DEY
                 DEY
                 DEY
                 DEY
@@ -284,25 +280,21 @@ HANDLEIRQ
 
                 setdbr 0
                 setdp GLOBALS
+
+    ; This handler completes palette rotation in four parts. The four parts can run
+    ; separately from each other so it'd be possible to cleanly separate each one
+    ; out along functional lines. But since each function would be called once
+    ; I inline them.
                 
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ; Update palette here.
-    
-    ; For each channel,
-    ; Back up pe[30..45].
-    ;
-    ;for(k=0;k<15;k++)
-    ;{
-    ;    regr[k]=pe[k+30].peRed;
-    ;}
+    ; For each channel, 
+    ;     Back up pe[30..45].
                 setas
                 setxl
-
                 LDX #0
                 LDY #30*4
 LOOP1
                 LDA LUT_START,Y 
-                STA @w regb,X   ; Force 16bit address
+                STA @w regb,X 
                 INY
                 LDA LUT_START,Y
                 STA @w regg,X
@@ -317,15 +309,10 @@ LOOP1
                 BNE LOOP1              
 
     ; For each channel,
-    ; Overwrite pe[30..230] with pe[45..255]
-    ;
-    ;for(k=45;k<255;k++)
-    ;{                                                            
-    ;    pe[k-15].peRed=pe[k].peRed;
-    ;}
-    
-                LDX #30*4   ; 0x78
-                LDY #45*4   ; 0xB4
+    ;     Overwrite pe[30..230] with pe[45..255].
+    ;    
+                LDX #30*4
+                LDY #45*4
 LOOP2
                 LDA LUT_START,Y
                 STA LUT_START,X
@@ -344,15 +331,11 @@ LOOP2
                 CPX #$3C0 ; 240 * 4
                 BNE LOOP2
 
-
     ; For each channel,
-    ; Take the old pe[30..45] that we backed up and store it at the end.
+    ;     Take the old pe[30..45] that we backed up and store it at the end.
+    ;     In other words, 
+    ;     pe[k+240] = reg[k];
     ;
-    ;for(k=0;k<15;k++)
-    ;{
-    ;    pe[k+240].peRed=reg[k];
-    ;}
-
                 LDX #0
                 LDY #240*4
 LOOP3
@@ -371,23 +354,28 @@ LOOP3
                 CPX #15
                 BNE LOOP3
 
-  ; Now the last part. We don't need the backups any more.
-    ;for(i=0;i<15;i++)
-    ;{
-    ;    int k = i + 2;
+    ; Now the last part. The reg buffers are not needed any more.
+    ; Keep shifting pallette entries, replacing the color at N with the color at N-1,
+    ; using modulus math at the boundaries.
+    ; Note that this rolls a loop that the original sample doesn't.
     ;
-    ;    int cur = 15 * k + 14;
-    ;    int pre = cur - 1;
+    ; Pseudo-code:
+    ; for(i=0;i<15;i++)
+    ; {
+    ;     int k = i + 2;
     ;
-    ;    tmp = pe[cur];
-    ;    for(j=0; j<14; j++)
-    ;    {
-    ;        pe[cur] = pe[pre];
-    ;        cur--;
-    ;        pre--;
-    ;    }
-    ;    pe[pre] = tmp;
-    ;}
+    ;     int cur = 15 * k + 14;
+    ;     int pre = cur - 1;
+    ;
+    ;     tmp = pe[cur];
+    ;     for(j=0; j<14; j++)
+    ;     {
+    ;         pe[cur] = pe[pre];
+    ;         cur--;
+    ;         pre--;
+    ;     }
+    ;     pe[pre] = tmp;
+    ; }
 
                 LDX #$0
                 LDY #$0
@@ -418,10 +406,12 @@ LOOP4
                 DEY
                 DEY
 
-                ; Now initialize the inner loop.
+                ; Initialize the inner loop
                 LDA #14
                 STA @w iter_j; j=14
 INNER
+                ; Unfortunately, need a function here because otherwise the branch from 
+                ; the end of the loop back to LOOP4 is too long
                 JSR INNERIMPL
 
                 DEC @w iter_j   ; j--
@@ -442,13 +432,13 @@ INNER
                 LDA @w tmpb
                 STA LUT_START, X
 
+                ; Variable iter_i is used as an offset into an array whose element size is
+                ; 2, so it gets incremented by 2.
                 INC @w iter_i ; Check if i>15, for outer loop
                 INC @w iter_i
                 LDX @w iter_i
                 CPX #30
                 BNE LOOP4
-
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
                 setaxl
                 LDA #LUT_END - LUT_START    ; Copy the palette to Vicky LUT0
