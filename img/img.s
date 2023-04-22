@@ -38,9 +38,6 @@ DY              .word ?                 ; The change in Y for an update (either 
 TIMER           .word ?                 ; The timer for controlling speed of motion (decremented on SOF interrupts)
 IRQJMP          .fill 4                 ; Code for the IRQ handler vector
 
-SOURCE          .dword ?                    ; A pointer to copy from
-DEST            .dword ?                    ; A pointer to copy to
-SIZE            .dword ?                    ; The number of bytes to copy
 
 regr .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 regg .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -50,6 +47,9 @@ rega .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 tmpr .byte ?
 tmpg .byte ?
 tmpb .byte ?
+SOURCE          .dword ?                    ; A pointer to copy from
+DEST            .dword ?                    ; A pointer to copy to
+SIZE            .dword ?                    ; The number of bytes to copy
 
 ; Easier to simply not have to do this programmatically.
 indcache .word 176, 236, 296, 356, 416, 476, 536, 596, 656, 716, 776, 836, 896, 956, 1016
