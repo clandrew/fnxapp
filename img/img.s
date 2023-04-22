@@ -45,8 +45,14 @@ regg .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 regb .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 rega .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
-;indcache .word 44, 58, 72, 86, 100, 114, 128, 142, 156, 170, 184, 196, 212, 226, 240
-indcache .word 176, 232, 288, 344, 400, 456, 512, 568, 624, 680, 736, 784, 848, 904, 960
+tmpr .byte ?
+tmpg .byte ?
+tmpb .byte ?
+tmpa .byte ?
+
+;indcache .word 44,  59,  74,  89, 104, 119, 132, 147, 162, 177, 192, 207, 222, 237, 252
+;indcache .word 176, 236, 296, 356, 416, 476, 528, 588, 648, 708, 768, 828, 888, 948, 1008
+indcache .word 176, 236, 296, 356, 416, 476, 536, 596, 656, 716, 776, 836, 896, 956, 1016
 
 .if FILETYPE = F_PGX
 ;
@@ -233,6 +239,45 @@ SETUPBANK0      .proc
                 RTS
                 .pend
 
+INNERIMPL       .proc
+                LDA LUT_START, X        ; Load pe[pre]
+                STA LUT_START, Y        ; Store it in pe[cur]
+                INX
+                INY
+                LDA LUT_START, X
+                STA LUT_START, Y
+                INX
+                INY
+                LDA LUT_START, X
+                STA LUT_START, Y
+                INX
+                INY
+                LDA LUT_START, X
+                STA LUT_START, Y
+                INX
+                INY
+
+                ; Now decrement pre and cur
+                DEX
+                DEX
+                DEX
+                DEX
+                DEX
+                DEX
+                DEX
+                DEX
+
+                DEY
+                DEY
+                DEY
+                DEY
+                DEY
+                DEY
+                DEY
+                DEY
+                RTS
+                .pend
+
 ; Interrupt handler
 HANDLEIRQ       
                 PHD
@@ -375,53 +420,45 @@ LOOP4
 
                 ; tmp = pe[cur];
                 LDA LUT_START, Y
-                STA @w regg
+                STA @w tmpr
+                INY
+                LDA LUT_START, Y
+                STA @w tmpg
+                INY
+                LDA LUT_START, Y
+                STA @w tmpb
+                INY
+                LDA LUT_START, Y
+                STA @w tmpa
+                DEY
+                DEY
+                DEY
 
                 ; Now initialize the inner loop.
                 LDA #14
                 STA @w regb; j=14
 INNER
-                LDA LUT_START, X        ; Load pe[pre]
-                STA LUT_START, Y        ; Store it in pe[cur]
-                INX
-                INY
-                LDA LUT_START, X
-                STA LUT_START, Y
-                INX
-                INY
-                LDA LUT_START, X
-                STA LUT_START, Y
-                INX
-                INY
-                LDA LUT_START, X
-                STA LUT_START, Y
-                INX
-                INY
-
-                ; Now decrement pre and cur
-                DEX
-                DEX
-                DEX
-                DEX
-                DEX
-                DEX
-                DEX
-                DEX
-
-                DEY
-                DEY
-                DEY
-                DEY
-                DEY
-                DEY
-                DEY
-                DEY
+                JSR INNERIMPL
 
                 DEC @w regb   ; j--
                 BNE INNER
 
+                INX
+                INX
+                INX
+                INX
+
                 ; pe[pre] = tmp;
-                LDA @w regg
+                LDA @w tmpr
+                STA LUT_START, X
+                INX
+                LDA @w tmpg
+                STA LUT_START, X
+                INX
+                LDA @w tmpb
+                STA LUT_START, X
+                INX
+                LDA @w tmpa
                 STA LUT_START, X
 
                 INC @w regr ; Check if i>15, for outer loop
