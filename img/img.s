@@ -31,14 +31,11 @@ GLOBALS = *
 JMPHANDLER      .byte ?                 ; JMP opcode for the NEXTHANDLER
 NEXTHANDLER     .word ?                 ; Pointer to the next IRQ handler in the chain
 DESTPTR         .dword ?                ; Pointer used for writing data
-XCOORD          .word ?                 ; The X coordinate (column) for the sprite
-YCOORD          .word ?                 ; The Y coordinate (row) for the sprite
-DX              .word ?                 ; The change in X for an update (either 1/-1)
-DY              .word ?                 ; The change in Y for an update (either 1/-1)
 TIMER           .word ?                 ; The timer for controlling speed of motion (decremented on SOF interrupts)
 IRQJMP          .fill 4                 ; Code for the IRQ handler vector
 
-
+; Data buffers used during palette rotation. It'd be possible to reorganize the code to simply use
+; one of these, but this opts for a bit of a memory/performance tradeoff and chooses perf.
 regr .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 regg .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 regb .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -55,7 +52,6 @@ tmpb .byte ?
 SOURCE          .dword ?                    ; A pointer to copy from
 DEST            .dword ?                    ; A pointer to copy to
 SIZE            .dword ?                    ; The number of bytes to copy
-
 
 .if FILETYPE = F_PGX
 ;
@@ -481,10 +477,6 @@ yield           PLD                         ; Restore DP and status
 BEGIN_BANK0 = *
 D_JMPHANDLER    JMP 0                   ; JMP and Pointer to the next IRQ handler in the chain
 D_DESTPTR       .dword 0                ; Pointer used for writing data
-D_XCOORD        .word 100               ; The X coordinate (column) for the sprite
-D_YCOORD        .word 100               ; The Y coordinate (row) for the sprite
-D_DX            .word 1                 ; The change in X for an update (either 1/-1)
-D_DY            .word 1                 ; The change in Y for an update (either 1/-1)
 D_TIMER         .word DEFAULT_TIMER     ; The timer for controlling speed of motion (decremented on SOF interrupts)
                 JML HANDLEIRQ           ; Code to start the interrupt handler
 END_BANK0 = *
