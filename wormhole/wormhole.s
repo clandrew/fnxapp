@@ -11,6 +11,7 @@
 .include "interrupt_def.s"
 
 ; Constants
+; Currently only building in F_HEX mode is supported- some organizing will be required to completely support PGX mode.
 F_HEX = 0                                   ; FILETYPE value for a HEX file to run through the debug port
 F_PGX = 1                                   ; FILETYPE value for a PGX file to run from storage
 VRAM = $B00000                              ; Base address for video RAM
