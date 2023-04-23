@@ -5,9 +5,9 @@
 /div/.vs/*
 /div/Debug/*
 /sd
-/exec/.vs*
-/exec/Debug
-/exec/Release
+/exec/pgx/.vs*
+/exec/pgx/Debug
+/exec/pgx/Release
 /ball/.vs/*
 /ball/Debug
 /ball/Release
