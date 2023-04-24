@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="exec.s">
+    <CustomBuild Include="execpgx.s">
       <Filter>Source Files</Filter>
     </CustomBuild>
   </ItemGroup>

@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{733cae12-e50f-498a-81bf-67a2426bb033}</ProjectGuid>
-    <RootNamespace>exec</RootNamespace>
+    <RootNamespace>execpgz</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -72,11 +72,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetExt>.pgx</TargetExt>
+    <TargetExt>.pgz</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetExt>.pgx</TargetExt>
+    <TargetExt>.pgz</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -98,7 +98,7 @@
     <CustomBuild>
       <Command>
       </Command>
-      <Outputs>$(TargetDir)exec.pgx;$(TargetDir)exec.lst</Outputs>
+      <Outputs>$(TargetDir)execpgz.pgz;$(TargetDir)execpgz.lst</Outputs>
     </CustomBuild>
     <PostBuildEvent>
       <Command>
@@ -127,7 +127,7 @@
     <CustomBuild>
       <Command>
       </Command>
-      <Outputs>$(TargetDir)exec.pgx;$(TargetDir)exec.lst</Outputs>
+      <Outputs>$(TargetDir)execpgz.pgz;$(TargetDir)execpgz.lst</Outputs>
     </CustomBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -144,7 +144,7 @@
     <CustomBuild>
       <Command>
       </Command>
-      <Outputs>$(TargetDir)exec.hex;$(TargetDir)exec.lst</Outputs>
+      <Outputs>$(TargetDir)execpgz.hex;$(TargetDir)execpgz.lst</Outputs>
     </CustomBuild>
     <PostBuildEvent>
       <Command>
@@ -172,31 +172,31 @@
     </PostBuildEvent>
     <CustomBuild>
       <Command>$(ProjectDir)Build.cmd</Command>
-      <Outputs>$(TargetDir)exec.hex;$(TargetDir)exec.lst</Outputs>
+      <Outputs>$(TargetDir)execpgz.hex;$(TargetDir)execpgz.lst</Outputs>
     </CustomBuild>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="exec.s">
+    <CustomBuild Include="execpgz.s">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)exec.pgx --list=$(TargetDir)exec.lst --labels=exec.lbl $(ProjectDir)exec.s
-d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)exec.pgx --list=$(TargetDir)exec.lst --labels=exec.lbl $(ProjectDir)exec.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)execpgz.pgz --list=$(TargetDir)execpgz.lst --labels=execpgz.lbl $(ProjectDir)execpgz.s
+d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)execpgz.pgz --list=$(TargetDir)execpgz.lst --labels=execpgz.lbl $(ProjectDir)execpgz.s
 echo ==============
 echo Copying result:
-echo copy /Y $(TargetPath) "$(ProjectDir)..\sd"
-copy /Y $(TargetPath) "$(ProjectDir)..\sd"
+echo copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
+copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)exec.hex --list=$(TargetDir)exec.lst --labels=exec.lbl $(ProjectDir)exec.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)execpgz.hex --list=$(TargetDir)execpgz.lst --labels=execpgz.lbl $(ProjectDir)execpgz.s
 echo ==============
 echo Copying result:
 echo copy /Y $(TargetPath) "D:\Program Files\C256 Foenix Project\FoenixIDE Setup"
 copy /Y $(TargetPath) "D:\Program Files\C256 Foenix Project\FoenixIDE Setup"
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)exec.pgx --list=$(TargetDir)exec.lst --labels=exec.lbl $(ProjectDir)exec.s
-d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)exec.pgx --list=$(TargetDir)exec.lst --labels=exec.lbl $(ProjectDir)exec.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)execpgz.pgz --list=$(TargetDir)execpgz.lst --labels=execpgz.lbl $(ProjectDir)execpgz.s
+d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)execpgz.pgz --list=$(TargetDir)execpgz.lst --labels=execpgz.lbl $(ProjectDir)execpgz.s
 echo ==============
 echo Copying result:
-echo copy /Y $(TargetPath) "$(ProjectDir)..\sd"
-copy /Y $(TargetPath) "$(ProjectDir)..\sd"
+echo copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
+copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
 </Command>
     </CustomBuild>
     <None Include="platform.s">

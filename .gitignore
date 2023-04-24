@@ -8,6 +8,9 @@
 /exec/pgx/.vs*
 /exec/pgx/Debug
 /exec/pgx/Release
+/exec/pgz/.vs*
+/exec/pgz/Debug
+/exec/pgz/Release
 /ball/.vs/*
 /ball/Debug
 /ball/Release
