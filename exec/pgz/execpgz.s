@@ -1,16 +1,10 @@
 .include "platform.s"
 
-ORG     = $02000
-* =  $02000 - 3*2 - 1 ; start, minus 2 blocks, minus signature byte.
-
-; Place the one-byte PGZ signature before the code section
-                .text "Z"     
-
-; Three-byte address indicating where you want that segment to get loaded into memory
-                .long ORG
-
-; Three-byte segment size. Make sure this DOESN'T include the header.
-                .long MAIN_SEGMENT_END - MAIN_SEGMENT_START
+* =  $02000;
+                ; Main segment metadata
+                .text "Z"                                   ; Place the one-byte PGZ signature before the code section
+                .long MAIN_SEGMENT_START                    ; Three-byte address indicating where you want that segment to get loaded into memory
+                .long MAIN_SEGMENT_END - MAIN_SEGMENT_START ; Three-byte segment size. Make sure this DOESN'T include the header.
 
 MAIN_SEGMENT_START
 
@@ -34,11 +28,10 @@ START           PHB
                 PLB
                 RTL                     ; Go back to the caller
 
-GREETING        .null "Hello, world!", 13 
+GREETING        .null "Hello, it's a PGZ!", 13
 
 MAIN_SEGMENT_END
 
-FINAL_SEGMENT_START
+                ; Entrypoint segment metadata
                 .long START   ; Entrypoint
-                .long 0       ; Dummy value to indicate this is the final segment
-FINAL_SEGMENT_END
+                .long 0       ; Dummy value to indicate this segment is for declaring the entrypoint.
