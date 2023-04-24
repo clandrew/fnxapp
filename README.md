@@ -23,6 +23,14 @@ brun "exec.pgx"
 ```
 The program outputs a message then exits cleanly back into Basic.
 
+-----
+
+### wormhole
+
+Do you remember DirectDraw? The DirectX 5 SDK disc came with a bunch of samples, including one called "Wormhole". 
+
+This is a port of that sample. Some details are described more [in this blog post](http://cml-a.com/content/).
+
 ## Build
 
 These applications were set up using Visual Studio 2019.
