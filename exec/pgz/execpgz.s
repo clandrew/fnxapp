@@ -2,9 +2,17 @@
 
 * =  $02000;
                 ; Main segment metadata
-                .text "Z"                                   ; Place the one-byte PGZ signature before the code section
-                .long MAIN_SEGMENT_START                    ; Three-byte address indicating where you want that segment to get loaded into memory
-                .long MAIN_SEGMENT_END - MAIN_SEGMENT_START ; Three-byte segment size. Make sure this DOESN'T include the header.
+
+                ; Place the one-byte PGZ signature before the code section
+                .text "Z"           
+
+                ; Three-byte address indicating where you want the segment to be loaded into memory at. Up to you. Whatever you do, just make sure it's
+                ; consistent with your compile offset ("* =") directive. If you prefer your segment start to align nicely with a bank or page boundary
+                ; you may want to adjust the compilation offset accordingly. This program doesn't do that- the entrypoint starts at 2007.
+                .long MAIN_SEGMENT_START               
+                
+                ; Three-byte segment size. Make sure the size DOESN'T include this metadata.
+                .long MAIN_SEGMENT_END - MAIN_SEGMENT_START 
 
 MAIN_SEGMENT_START
 
