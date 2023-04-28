@@ -16,14 +16,38 @@ The motive and result of doing this is described more in [this blog post](http:/
 -----
 
 ### exec
-Similar to 'hello', but it's set up as a PGX that can be executed from Basic rather than simply blitted into memory. To execute it using [this kernel](https://github.com/Trinity-11/Kernel_FMX) (others which support a Basic environment may work, this is the one I tested), run it with
+Similar to 'hello', a dead-simple program that outputs a message. Except instead of being blitted into memory, these are organized as proper executables. 
+
+If you're comparing the build process, you'll notice that PGX and PGZ are concepts set up in the source code, they're not for the assembler. They don't really affect how you invoke the assembler. 
+Both executable formats are output the same way from 64tass, using the -o directive. The logistics of setting up the programs as executables is all done in code, not really in how the assembler is invoked. Each format has a header with a signature, and these are set up in the source code.
+
+The C256 kernel understands PGX and PGZ format, and its BASIC can load them.
+
+To execute these using [this kernel](https://github.com/Trinity-11/Kernel_FMX) (others which support a Basic environment may work, this is the one I tested), run it with
 
 ```
-brun "exec.pgx"
+brun "execpgx.pgx"
 ```
-The program outputs a message then exits cleanly back into Basic.
+or
+
+```
+brun "execpgz.pgz"
+```
+
+The program outputs a message then exits cleanly back into BASIC.
 
 -----
+
+
+#### exec/pgx
+
+This is a PGX-format executable. PGX formats are a single segment. For more information on the PGX format, see [here](https://wiki.c256foenix.com/index.php?title=Executable_binary_file#PGX).
+
+#### exec/pgz
+
+This is a PGZ-format executable. PGZ formats can be multiple segments, although this example only has one segment. For more information on the PGZ format, see [here](https://wiki.c256foenix.com/index.php?title=Executable_binary_file#PGZ).
+
+Note that PGZ segments are not like *sections* in many x86-based portable executables, e.g., a Windows portable executable (PE) or Linux executable and linkable format (ELF), in that code does not need to be organized separately from the data. Both code and data can be put in a section together. They can also be intermixed if you prefer to do that.
 
 ### wormhole
 
