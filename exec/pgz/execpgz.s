@@ -14,6 +14,9 @@
                 ; Three-byte segment size. Make sure the size DOESN'T include this metadata.
                 .long MAIN_SEGMENT_END - MAIN_SEGMENT_START 
 
+                ; Note that when your executable is loaded, *only* the data segment after the metadata is loaded into memory. 
+                ; The 'Z' signature above, and the metadata isn't loaded into memory.
+
 MAIN_SEGMENT_START
 
 START           PHB
