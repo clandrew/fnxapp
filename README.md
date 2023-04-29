@@ -18,12 +18,19 @@ The motive and result of doing this is described more in [this blog post](http:/
 ### exec
 Similar to 'hello', a dead-simple program that outputs a message. Except instead of being blitted into memory, these are organized as proper executables.
 
-PGX and PGZ are Foenix executables. The file format names are inspired by Commodore 64 PRG files, where PRG stands for "Program". The concept of PGX came first. Its name comes from "PRG for FMX", shorted to "PGX'. Then the concept of PGZ came second. Its name comes from "PGX, with a Z signature byte", shortened to "PGZ". PGZ are strictly more capable than PGX, so if you're in doubt I recommend using PGZ, but if you're really optimizing for size you may be able to save a couple bytes using PGX.
+PGX and PGZ are Foenix executables. The file format names are meant to make you think of Commodore 64 PRG files, where PRG stands for "Program". The concept of PGX came first. Its name comes from "PRG for FMX", shorted to "PGX'. Then the concept of PGZ came second. Its name comes from "PGX, with a Z signature byte", shortened to "PGZ". 
+
+PGX and PGZ are unrelated to "FNX" files- FNX is a container format used for different types of data, not for executables.
+
+Trivia: when I asked around why the names "PGX" and "PGZ" were chosen, I heard back that they stood for "Peter's Glorious Xylophone" and "Peter's Glorious Zebra". You heard it here, folks.
+
+The main difference between PGX and PGZ is that PGZ can consist of multiple *segments*, where each segment is loaded contiguously into memory. Apparently the benefit of this is more applicable to the 68k-based Foenix systems, less so for 816-based. That said, you might want to have different parts of your program load into different, specific banks to minimize DBR changes, for example, and to do that without patching a bunch of dead space. PGZ are strictly more capable than PGX, so if you're in doubt I recommend using PGZ, but if you're really optimizing for executable size you may be able to save a couple bytes using PGX.
 
 If you're comparing the build process, you'll notice that PGX and PGZ are concepts set up in the source code, they're not for the assembler. They don't really affect how you invoke the assembler. 
+
 Both executable formats are output the same way from 64tass, using the -o directive. The logistics of setting up the programs as executables is all done in code, not really in how the assembler is invoked. Each format has a header with a signature, and these are set up in the source code.
 
-The C256 kernel understands PGX and PGZ format, and its BASIC can load them.
+The C256 kernel understands PGX and PGZ format, and its BASIC can load them. To be more specific, the C256 kernel exposes the functions "F_LOAD" and "F_RUN", and the Foenix's BASIC implementation calls these functions when you use BASIC "BRUN".
 
 To execute these using [this kernel](https://github.com/Trinity-11/Kernel_FMX) (others which support a Basic environment may work, this is the one I tested), run it with
 
@@ -49,7 +56,9 @@ This is a PGX-format executable. PGX formats are a single segment. For more info
 
 This is a PGZ-format executable. PGZ formats can be multiple segments, although this example only has one segment. For more information on the PGZ format, see [here](https://wiki.c256foenix.com/index.php?title=Executable_binary_file#PGZ).
 
-Note that PGZ segments are not like *sections* in many x86-based portable executables, e.g., a Windows portable executable (PE) or Linux executable and linkable format (ELF), in that code does not need to be organized separately from the data. Both code and data can be put in a section together. They can also be intermixed if you prefer to do that.
+Note that PGZ segments are not like *sections* in many x86-based executables, e.g., a Windows portable executable (PE) or Linux executable and linkable format (ELF), in that code does not need to be organized separately from the data. Both code and data can be put in a section together. They can also be intermixed if you prefer to do that. 
+
+Segments are allowed to straddle bank boundaries. You can have one segment take up three banks or however many. Of course, just be careful about code execution that crosses a bank boundary, as crossing out of the program bank isn't allowed by 65816 and 64tass will warn about this (see "-Wno-wrap-pc"). This example is a small executable size that doesn't run into any of that.
 
 ### wormhole
 
