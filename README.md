@@ -16,7 +16,9 @@ The motive and result of doing this is described more in [this blog post](http:/
 -----
 
 ### exec
-Similar to 'hello', a dead-simple program that outputs a message. Except instead of being blitted into memory, these are organized as proper executables. 
+Similar to 'hello', a dead-simple program that outputs a message. Except instead of being blitted into memory, these are organized as proper executables.
+
+PGX and PGZ are Foenix executables. The file format names are inspired by Commodore 64 PRG files, where PRG stands for "Program". The concept of PGX came first. Its name comes from "PRG for FMX", shorted to "PGX'. Then the concept of PGZ came second. Its name comes from "PGX, with a Z signature byte", shortened to "PGZ". PGZ are strictly more capable than PGX, so if you're in doubt I recommend using PGZ, but if you're really optimizing for size you may be able to save a couple bytes using PGX.
 
 If you're comparing the build process, you'll notice that PGX and PGZ are concepts set up in the source code, they're not for the assembler. They don't really affect how you invoke the assembler. 
 Both executable formats are output the same way from 64tass, using the -o directive. The logistics of setting up the programs as executables is all done in code, not really in how the assembler is invoked. Each format has a header with a signature, and these are set up in the source code.
