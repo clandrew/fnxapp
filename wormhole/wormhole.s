@@ -441,7 +441,7 @@ INNER
                 PLB
 yield           PLD                         ; Restore DP and status
                 
-                JML JMPHANDLER              ; Then transfer control to the next handler
+                JMP (NEXTHANDLER)           ; Then transfer control to the next handler
 
 
 ; Easier to simply not have to do this programmatically.
