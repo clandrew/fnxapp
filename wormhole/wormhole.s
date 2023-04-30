@@ -28,9 +28,9 @@ HRESET          .word <>START               ; Bootstrapping vector
 ; Data
 * = $002000
 GLOBALS = *
-JMPHANDLER      .byte ?                 ; JMP opcode for the NEXTHANDLER
+JMPHANDLER      .byte $4C               ; JMP opcode for the NEXTHANDLER
 NEXTHANDLER     .word ?                 ; Pointer to the next IRQ handler in the chain
-IRQJMP          .byte ?                 ; Code for the IRQ handler vector
+IRQJMP          .byte $5C               ; Code for the IRQ handler vector
 IRQADDR         .fill 3
 
 ; Data buffers used during palette rotation. It'd be possible to reorganize the code to simply use
@@ -224,12 +224,6 @@ SETUPBANK0      .proc
                 PHB
                 PHP
 
-                setaxl
-                LDX #<>BEGIN_BANK0 ; Short address of BEGIN_BANK0, the source
-                LDY #<>GLOBALS     ; Short address of GLOBALS, the dest
-                LDA #(END_BANK0 - BEGIN_BANK0) ; 7 bytes
-                MVN #`BEGIN_BANK0, #`GLOBALS   ; Move from bank of GLOBALS, to bank of BEGIN_BANK0
-                
                 setal
                 LDA #<>HANDLEIRQ
                 STA IRQADDR
