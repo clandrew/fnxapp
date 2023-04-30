@@ -2,7 +2,11 @@
 
 This contains some example syntax in case you need to refer to it.
 
-In all the below examples, ```MYVAR``` has the value ```$12:3456```.
+In all the below examples, ```MYVAR``` is a variable located at ```$12:3456```:
+```
+* = $123456
+MYVAR .byte 0
+```
 
 | Assembler syntax         |  Result     | Comment                   |
 | ------------------------ | ----------- | ------------------------- | 
