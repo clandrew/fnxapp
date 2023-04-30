@@ -14,3 +14,4 @@ MYVAR .byte 0
 | ```LDX `MYVAR```         | ae 12 00           | ldx $0012        |  Loads the bank, as an address | 
 | ```LDX #<>MYVAR```       | a2 56 34           | ldx #$3456       |  Loads the short address, as a literal       | 
 | ```LDX <>MYVAR```        | ae 56 34           | ldx $3456        |  Loads whatever's at the short address       | 
+| ```LDA @l MYVAR```       | af 56 34 12        | lda $123456      |  Loads whatever's at the 24bit address       | 
