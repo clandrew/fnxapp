@@ -224,10 +224,10 @@ SETUPBANK0      .proc
                 PHP
 
                 setaxl
-                LDX #<>BEGIN_BANK0
-                LDY #<>GLOBALS
-                LDA #(END_BANK0 - BEGIN_BANK0)
-                MVN #`BEGIN_BANK0, #`GLOBALS
+                LDX #<>BEGIN_BANK0 ; Short address of BEGIN_BANK0, the source
+                LDY #<>GLOBALS     ; Short address of GLOBALS, the dest
+                LDA #(END_BANK0 - BEGIN_BANK0) ; 7 bytes
+                MVN #`BEGIN_BANK0, #`GLOBALS   ; Move from bank of GLOBALS, to bank of BEGIN_BANK0
 
                 PLP
                 PLB
