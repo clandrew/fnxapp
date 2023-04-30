@@ -27,7 +27,6 @@ HRESET          .word <>START               ; Bootstrapping vector
 
 ; Data
 * = $002000
-GLOBALS = *
 
 ; Important this thunk lives in bank 0. All handlers have to.
 ; We use self-modified code here, so that our *actual* handler can be in any bank.
@@ -79,7 +78,6 @@ START           CLC
                 XCE
 
                 setdbr 0
-                setdp GLOBALS
                 
                 setal
                 LDA #<>HANDLEIRQ
@@ -156,7 +154,6 @@ COPYS2V         .proc
                 PHP
 
                 setdbr 0
-                setdp GLOBALS
                 setas
 
                 ; Set SDMA to go from system to video RAM, 1D copy
@@ -211,7 +208,6 @@ INITLUT         .proc
                 PHP
 
                 setdbr 0
-                setdp GLOBALS
 
                 setas
                 LDA #0                      ; Make sure default color is 0,0,0
@@ -276,7 +272,6 @@ HANDLEIRQ
                 PHP
 
                 setdbr 0
-                setdp GLOBALS
 
     ; This handler completes palette rotation in four parts. The four parts can run
     ; separately from each other so it'd be possible to cleanly separate each one
