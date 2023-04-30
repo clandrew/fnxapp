@@ -1,6 +1,6 @@
 # Cheat sheet for 64tass Assembler
 
-This contains some example syntax for working with named variables in case you need to refer to it.
+This contains some example syntax for working with named variables in case you need to refer to it. The syntax is all spelled out in the [reference manual](https://tass64.sourceforge.net) if you want a more exhaustive reference.
 
 In all the below examples, ```MYVAR``` is a variable located at ```$12:3456```:
 ```
