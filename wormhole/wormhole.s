@@ -28,7 +28,6 @@ HRESET          .word <>START               ; Bootstrapping vector
 ; Data
 * = $002000
 GLOBALS = *
-JMPHANDLER      .byte $4C               ; JMP-with-short for the NEXTHANDLER
 NEXTHANDLER     .word ?                 ; Pointer to the next IRQ handler in the chain
 IRQJMP          .byte $5C               ; JML-with-24bit for IRQ handler vector
 IRQADDR         .long ?
