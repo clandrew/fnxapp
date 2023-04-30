@@ -30,7 +30,8 @@ HRESET          .word <>START               ; Bootstrapping vector
 GLOBALS = *
 JMPHANDLER      .byte ?                 ; JMP opcode for the NEXTHANDLER
 NEXTHANDLER     .word ?                 ; Pointer to the next IRQ handler in the chain
-IRQJMP          .fill 4                 ; Code for the IRQ handler vector
+IRQJMP          .byte ?                 ; Code for the IRQ handler vector
+IRQADDR         .fill 3
 
 ; Data buffers used during palette rotation. It'd be possible to reorganize the code to simply use
 ; one channel of these, but there's a memory/performance tradeoff and this chooses perf.
@@ -228,6 +229,14 @@ SETUPBANK0      .proc
                 LDY #<>GLOBALS     ; Short address of GLOBALS, the dest
                 LDA #(END_BANK0 - BEGIN_BANK0) ; 7 bytes
                 MVN #`BEGIN_BANK0, #`GLOBALS   ; Move from bank of GLOBALS, to bank of BEGIN_BANK0
+                
+                setal
+                LDA #<>HANDLEIRQ
+                STA IRQADDR
+
+                setas
+                LDA #`HANDLEIRQ
+                STA IRQADDR+2
 
                 PLP
                 PLB
@@ -461,7 +470,7 @@ yield           PLD                         ; Restore DP and status
 
 BEGIN_BANK0 = *
 D_JMPHANDLER    JMP 0                   ; JMP and Pointer to the next IRQ handler in the chain
-                JML HANDLEIRQ           ; Code to start the interrupt handler
+                JML 0                   ; Code to start the interrupt handler
 END_BANK0 = *
 
 ; Easier to simply not have to do this programmatically.
