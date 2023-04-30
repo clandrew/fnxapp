@@ -30,7 +30,6 @@ HRESET          .word <>START               ; Bootstrapping vector
 GLOBALS = *
 JMPHANDLER      .byte ?                 ; JMP opcode for the NEXTHANDLER
 NEXTHANDLER     .word ?                 ; Pointer to the next IRQ handler in the chain
-DESTPTR         .dword ?                ; Pointer used for writing data
 IRQJMP          .fill 4                 ; Code for the IRQ handler vector
 
 ; Data buffers used during palette rotation. It'd be possible to reorganize the code to simply use
@@ -462,7 +461,6 @@ yield           PLD                         ; Restore DP and status
 
 BEGIN_BANK0 = *
 D_JMPHANDLER    JMP 0                   ; JMP and Pointer to the next IRQ handler in the chain
-D_DESTPTR       .dword 0                ; Pointer used for writing data
                 JML HANDLEIRQ           ; Code to start the interrupt handler
 END_BANK0 = *
 
