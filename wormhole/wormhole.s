@@ -71,9 +71,15 @@ START           CLC
 
                 setdbr 0
                 setdp GLOBALS
-                setaxl
+                
+                setal
+                LDA #<>HANDLEIRQ
+                STA IRQADDR
+                setas
+                LDA #`HANDLEIRQ
+                STA IRQADDR+2
 
-                JSR SETUPBANK0              ; Copy BANK0 data
+                setxl
 
                 ; Switch on bitmap graphics mode
                 LDA #Mstr_Ctrl_Graph_Mode_En | Mstr_Ctrl_Bitmap_En
@@ -211,26 +217,6 @@ INITLUT         .proc
                 LDX #<>LUT_START
                 LDY #<>GRPH_LUT1_PTR
                 MVN `START,`GRPH_LUT1_PTR
-
-                PLP
-                PLB
-                RTS
-                .pend
-
-;
-; Copy the Bank 0 data down to bank 0
-;
-SETUPBANK0      .proc
-                PHB
-                PHP
-
-                setal
-                LDA #<>HANDLEIRQ
-                STA IRQADDR
-
-                setas
-                LDA #`HANDLEIRQ
-                STA IRQADDR+2
 
                 PLP
                 PLB
