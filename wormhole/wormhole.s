@@ -28,10 +28,10 @@ HRESET          .word <>START               ; Bootstrapping vector
 ; Data
 * = $002000
 GLOBALS = *
-JMPHANDLER      .byte $4C               ; JMP opcode for the NEXTHANDLER
+JMPHANDLER      .byte $4C               ; JMP-with-short for the NEXTHANDLER
 NEXTHANDLER     .word ?                 ; Pointer to the next IRQ handler in the chain
-IRQJMP          .byte $5C               ; Code for the IRQ handler vector
-IRQADDR         .fill 3
+IRQJMP          .byte $5C               ; JML-with-24bit for IRQ handler vector
+IRQADDR         .long ?
 
 ; Data buffers used during palette rotation. It'd be possible to reorganize the code to simply use
 ; one channel of these, but there's a memory/performance tradeoff and this chooses perf.
@@ -458,14 +458,6 @@ yield           PLD                         ; Restore DP and status
                 
                 JML JMPHANDLER              ; Then transfer control to the next handler
 
-;
-; Bank 0 data (to be copied on startup)
-;
-
-BEGIN_BANK0 = *
-D_JMPHANDLER    JMP 0                   ; JMP and Pointer to the next IRQ handler in the chain
-                JML 0                   ; Code to start the interrupt handler
-END_BANK0 = *
 
 ; Easier to simply not have to do this programmatically.
 indcache .word 176, 236, 296, 356, 416, 476, 536, 596, 656, 716, 776, 836, 896, 956, 1016
