@@ -1,6 +1,6 @@
 .include "platform.s"
 
-* =  $02000;
+* =  MAIN_SEGMENT_START - 7 ; Metadata is 7 bytes
                 ; Main segment metadata
 
                 ; Place the one-byte PGZ signature before the code section
@@ -16,6 +16,8 @@
 
                 ; Note that when your executable is loaded, *only* the data segment after the metadata is loaded into memory. 
                 ; The 'Z' signature above, and the metadata isn't loaded into memory.
+
+* =  $02000
 
 MAIN_SEGMENT_START
 
