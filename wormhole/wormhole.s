@@ -28,18 +28,27 @@ HRESET          .word <>START               ; Bootstrapping vector
 ; Data
 * = $002000
 GLOBALS = *
-NEXTHANDLER     .word ?                 ; Pointer to the next IRQ handler in the chain
+
+; Important this thunk lives in bank 0. All handlers have to.
+; We use self-modified code here, so that our *actual* handler can be in any bank.
 IRQJMP          .byte $5C               ; JML-with-24bit for IRQ handler vector
 IRQADDR         .long ?
 
+; The rest of these below could be relocated.
+
+; 16bit pointer to the next handler. We can assume the next handler is in bank 0.
+NEXTHANDLER     .word ?                 ; Pointer to the next IRQ handler in the chain
+
 ; Data buffers used during palette rotation. It'd be possible to reorganize the code to simply use
 ; one channel of these, but there's a memory/performance tradeoff and this chooses perf.
+CACHE_BEGIN
 regr .fill 16
 regg .fill 16
 regb .fill 16
+CACHE_END
 
 ; These aren't used at the same time as reg*, so they're aliased on top.
-* = regr
+* = CACHE_BEGIN
 SOURCE          .dword ?                    ; A pointer to copy the bitmap from
 DEST            .dword ?                    ; A pointer to copy the bitmap to
 SIZE            .dword ?                    ; The number of bytes to copy
@@ -48,6 +57,7 @@ tmpg .byte ?            ; used during the 4th loop.
 tmpb .byte ?
 iter_i .byte ?          ; Couple counters used for the 4th loop.
 iter_j .byte ?
+* = CACHE_END
 
 .if FILETYPE = F_PGX
 ;
