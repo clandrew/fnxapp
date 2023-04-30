@@ -85,7 +85,6 @@ START           CLC
                 LDA #Mstr_Ctrl_Graph_Mode_En | Mstr_Ctrl_Bitmap_En
                 STA @l MASTER_CTRL_REG_L
 
-                setas
                 LDA #0
                 STA @l BORDER_CTRL_REG      ; Turn off the border
                 STA @l MOUSE_PTR_CTRL_REG_L ; And turn off the mouse pointer
