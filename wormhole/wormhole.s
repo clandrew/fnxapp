@@ -35,6 +35,8 @@ IRQADDR         .long ?
 
 ; The rest of these below could be relocated.
 
+GLOBALS_ADDR = *
+
 ; 16bit pointer to the next handler. We can assume the next handler is in bank 0.
 NEXTHANDLER     .word ?                 ; Pointer to the next IRQ handler in the chain
 
@@ -77,7 +79,7 @@ iter_j .byte ?
 START           CLC
                 XCE
 
-                setdbr 0
+                setdbr `GLOBALS_ADDR
                 
                 setal
                 LDA #<>HANDLEIRQ
@@ -153,7 +155,7 @@ COPYS2V         .proc
                 PHD
                 PHP
 
-                setdbr 0
+                setdbr `GLOBALS_ADDR
                 setas
 
                 ; Set SDMA to go from system to video RAM, 1D copy
@@ -207,7 +209,7 @@ INITLUT         .proc
                 PHB
                 PHP
 
-                setdbr 0
+                setdbr `GLOBALS_ADDR
 
                 setas
                 LDA #0                      ; Make sure default color is 0,0,0
@@ -271,7 +273,7 @@ HANDLEIRQ
                 PHY
                 PHP
 
-                setdbr 0
+                setdbr `GLOBALS_ADDR
 
     ; This handler completes palette rotation in four parts. The four parts can run
     ; separately from each other so it'd be possible to cleanly separate each one
@@ -445,7 +447,8 @@ INNER
                 PLB
 yield           PLD                         ; Restore DP and status
                 
-                JMP (NEXTHANDLER)           ; Then transfer control to the next handler
+                ; Data bank has been set already
+                JMP (<>NEXTHANDLER)           ; Then transfer control to the next handler
 
 
 ; Easier to simply not have to do this programmatically.
