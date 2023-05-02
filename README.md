@@ -54,7 +54,7 @@ This is a PGX-format executable. PGX formats are a single segment. For more info
 
 #### exec/pgz
 
-This is a PGZ-format executable. PGZ formats can be multiple segments, although this example only has one segment. For more information on the PGZ format, see [here](https://wiki.c256foenix.com/index.php?title=Executable_binary_file#PGZ).
+This is a PGZ-format executable. PGZ formats can be multiple segments like this example has. For more information on the PGZ format, see [here](https://wiki.c256foenix.com/index.php?title=Executable_binary_file#PGZ).
 
 Note that PGZ segments are not like *sections* in many x86-based executables, e.g., a Windows portable executable (PE) or Linux executable and linkable format (ELF), in that code does not need to be organized separately from the data. Both code and data can be put in a section together. They can also be intermixed if you prefer to do that. 
 

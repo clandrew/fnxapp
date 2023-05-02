@@ -1,7 +1,7 @@
 .include "platform.s"
 
+; Main segment metadata
 * =  MAIN_SEGMENT_START - 7 ; Metadata is 7 bytes
-                ; Main segment metadata
 
                 ; Place the one-byte PGZ signature before the code section
                 .text "Z"           
@@ -41,10 +41,17 @@ START           PHB
                 PLB
                 RTL                     ; Go back to the caller
 
-GREETING        .null "Hello, it's a PGZ!", 13
-
+; Leave some dead space, because we want the next segment to begin at $3000.
+* =  $03000
 MAIN_SEGMENT_END
 
-                ; Entrypoint segment metadata
+; Data segment metadata
+                .long DATA_SEGMENT_START
+                .long DATA_SEGMENT_END-DATA_SEGMENT_START
+DATA_SEGMENT_START
+GREETING        .null "Hello, it's a multi-segment PGZ!", 13
+DATA_SEGMENT_END
+
+; Entrypoint segment metadata
                 .long START   ; Entrypoint
                 .long 0       ; Dummy value to indicate this segment is for declaring the entrypoint.
