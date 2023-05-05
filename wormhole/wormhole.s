@@ -125,8 +125,8 @@ START           PHB
 
 lock            NOP                         ; Otherwise pause
 
-                JSL $3977ba                 ; Check if key pressed
-                CMP #$1B
+                JSL FK_GETCH                ; Check if key pressed
+                CMP #$1B                    ; Check for escape key
                 BNE lock
 
                 SEI
