@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetExt>.hex</TargetExt>
+    <TargetExt>.pgz</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -97,7 +97,7 @@
     <CustomBuild>
       <Command>
       </Command>
-      <Outputs>$(TargetDir)wormhole.hex;$(TargetDir)wormhole.lst</Outputs>
+      <Outputs>$(TargetDir)wormhole.pgz;$(TargetDir)wormhole.lst</Outputs>
     </CustomBuild>
     <PostBuildEvent>
       <Command>
@@ -176,8 +176,8 @@
   <ItemGroup>
     <CustomBuild Include="wormhole.s">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)wormhole.hex -D FILETYPE=0 --list=$(TargetDir)wormhole.lst --labels=wormhole.lbl $(ProjectDir)wormhole.s
-d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)wormhole.hex -D FILETYPE=0 --list=$(TargetDir)wormhole.lst --labels=wormhole.lbl $(ProjectDir)wormhole.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)wormhole.pgz -D FILETYPE=1 --list=$(TargetDir)wormhole.lst --labels=wormhole.lbl $(ProjectDir)wormhole.s
+d:\64tass\64tass --long-address --flat -b --m65816  -o $(TargetDir)wormhole.pgz -D FILETYPE=1 --list=$(TargetDir)wormhole.lst --labels=wormhole.lbl $(ProjectDir)wormhole.s
 echo ==============
 echo Copying result:
 echo copy /Y $(TargetPath) "$(ProjectDir)..\sd"
