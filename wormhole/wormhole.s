@@ -57,7 +57,15 @@ iter_j .byte ?
 
 START           PHB
                 PHP
-
+                
+                setdbr `GLOBALS_ADDR
+                
+                setal
+                LDA #<>HANDLEIRQ
+                STA IRQADDR
+                setas
+                LDA #`HANDLEIRQ
+                STA IRQADDR+2
                                 
                 LDA #$0                 ; Set a return value of 0
 
@@ -65,6 +73,26 @@ START           PHB
                 PLB
                 RTL                     ; Go back to the caller
                 
+; Interrupt handler
+HANDLEIRQ       
+                PHD
+                PHB
+                PHA
+                PHX
+                PHY
+                PHP
+
+                setdbr `GLOBALS_ADDR
+                PLP
+                PLY
+                PLX
+                PLA
+                PLB
+yield           PLD                         ; Restore DP and status
+                
+                ; Data bank has been set already
+                JMP (<>NEXTHANDLER)           ; Then transfer control to the next handler
+
 MAIN_SEGMENT_END
 .endlogical
 
