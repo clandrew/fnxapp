@@ -127,19 +127,6 @@ lock            NOP                         ; Otherwise pause
                 CMP #0
                 BEQ lock
 
-                ; Unhook our handler
-                SEI
-                
-                setas
-                LDA @l INT_MASK_REG0        ; Disable SOF interrupts
-                ORA #FNX0_INT00_SOF
-                STA @l INT_MASK_REG0
-
-                LDA NEXTHANDLER
-                STA HIRQ
-
-                CLI 
-
                 ; Go back to text mode
                 LDA #Mstr_Ctrl_Text_Mode_En
                 STA @l MASTER_CTRL_REG_L
