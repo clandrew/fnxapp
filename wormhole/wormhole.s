@@ -27,9 +27,9 @@ THUNK_SEGMENT_START
 IRQJMP          .byte $5C               ; JML-with-24bit for IRQ handler vector
 IRQADDR         .long ?
 
-; This lives in bank 0 because our interrupt handler will try to jump to it, and
-; it'll use an addressing mode that assumes the variable is in the local bank.
-NEXTHANDLER     .word ?                 ; Pointer to the next IRQ handler in the chain
+NEXTJMP         .byte $5C
+NEXTHANDLER     .word ?                 ; Pointer to the next IRQ handler in the chain'
+NEXTBANK        .byte $00
 THUNK_SEGMENT_END
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -437,9 +437,7 @@ INNER
                 PLB
 yield           PLD                         ; Restore DP and status
                 
-                ; Data bank has been set already
-                JMP $00FF60
-                ;JMP (<>NEXTHANDLER)           ; Then transfer control to the next handler
+                JMP NEXTJMP
 
 ; Easier to simply not have to do this programmatically.
 indcache .word 176, 236, 296, 356, 416, 476, 536, 596, 656, 716, 776, 836, 896, 956, 1016
