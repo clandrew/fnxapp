@@ -126,8 +126,8 @@ START           PHB
 lock            NOP                         ; Otherwise pause
 
                 JSL $3977ba                 ; Check if key pressed
-                CMP #0
-                BEQ lock
+                CMP #$1B
+                BNE lock
 
                 SEI
                 setal
