@@ -61,7 +61,7 @@ iter_j .byte ?
 * = CACHE_END
 
 START           PHB
-                PHP
+                PHP                
                 
                 setdbr `GLOBALS_ADDR
                 
@@ -123,7 +123,26 @@ START           PHB
 
 lock            NOP                         ; Otherwise pause
 
-                BRA lock
+                JSL $3977ba                 ; Check if key pressed
+                CMP #0
+                BEQ lock
+
+                ; Unhook our handler
+                SEI
+                
+                setas
+                LDA @l INT_MASK_REG0        ; Disable SOF interrupts
+                ORA #FNX0_INT00_SOF
+                STA @l INT_MASK_REG0
+
+                LDA NEXTHANDLER
+                STA HIRQ
+
+                CLI 
+
+                ; Go back to text mode
+                LDA #Mstr_Ctrl_Text_Mode_En
+                STA @l MASTER_CTRL_REG_L
 
                 LDA #$0                 ; Set a return value of 0
 
