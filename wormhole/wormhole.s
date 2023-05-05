@@ -84,6 +84,7 @@ START           PHB
 
                 JSL FK_SETSIZES             ; Recalculate the screen size information
 
+
                 ; Turn on bitmap #0, LUT#1
                 LDA #%00000011
                 STA @l BM0_CONTROL_REG
@@ -96,13 +97,14 @@ START           PHB
                 STA @l BM0_Y_OFFSET
 
                 JSR INITLUT                 ; Initiliaze the LUT
+                
 
                 MOVEI_L SIZE, (640*480)     ; Set the size of the data to transfer to VRAM
                 MOVEI_L SOURCE, IMG_START   ; Set the source to the image data
                 MOVEI_L DEST, 0             ; Set the destination to the beginning of VRAM
 
                 JSR COPYS2V                 ; Request the DMA to copy the image data
-
+                
                 ; Set up the interrupt handler
 
                 SEI
@@ -119,13 +121,19 @@ START           PHB
                 AND #~FNX0_INT00_SOF
                 STA @l INT_MASK_REG0
 
-                CLI                         ; Make sure interrupts are enabled
+                CLI                         ; Make sure interrupts are enabled                
 
 lock            NOP                         ; Otherwise pause
 
                 JSL $3977ba                 ; Check if key pressed
                 CMP #0
                 BEQ lock
+
+                SEI
+                setal
+                LDA NEXTHANDLER
+                STA HIRQ
+                CLI
 
                 ; Go back to text mode
                 LDA #Mstr_Ctrl_Text_Mode_En
