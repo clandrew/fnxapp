@@ -41,16 +41,16 @@ START           PHB
                 PLB
                 RTL                     ; Go back to the caller
 
-; Leave some dead space, because we want the next segment to begin at $3000.
-* =  $03000
 MAIN_SEGMENT_END
 
 ; Data segment metadata
                 .long DATA_SEGMENT_START
                 .long DATA_SEGMENT_END-DATA_SEGMENT_START
+.logical $3000
 DATA_SEGMENT_START
 GREETING        .null "Hello, it's a multi-segment PGZ!", 13
 DATA_SEGMENT_END
+.endlogical
 
 ; Entrypoint segment metadata
                 .long START   ; Entrypoint

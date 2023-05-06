@@ -31,4 +31,4 @@ START   CLC                         ; Make sure we're native mode
 _done   NOP                         ; Infinite loop when we're finished 
         BRA _done
 
-GREET   .null "Hello 1234567", 13   ; The text to display. Will include a terminal NUL 
+GREET   .null "Hello, this is a test.", 13   ; The text to display. Will include a terminal NUL 

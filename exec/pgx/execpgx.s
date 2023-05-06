@@ -29,4 +29,4 @@ START           PHB
                 PLB
                 RTL                     ; Go back to the caller
 
-GREETING        .null "Hello, world!", 13 
+GREETING        .null "Hello, this is a PGX!", 13 
