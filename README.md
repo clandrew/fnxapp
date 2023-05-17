@@ -6,6 +6,8 @@ This is a repo for hosting experiments and test code for C256 Foenix platform.
 ### hello
 A very simple "kick the tires". It outputs "Hello, world" text output then loops indefinitely. This is loaded by copying it into memory as an [Intel .hex](https://en.wikipedia.org/wiki/Intel_HEX) file.
 
+![alt text](https://raw.githubusercontent.com/clandrew/fnxapp/main/Images/hello.PNG?raw=true)
+
 -----
 
 ### div
@@ -13,6 +15,7 @@ An edge-case test for a 65816 debugger. This program contains code that is execu
 
 The motive and result of doing this is described more in [this blog post](http://cml-a.com/content/2022/12/15/cursed/).
 
+![alt text](https://raw.githubusercontent.com/clandrew/fnxapp/main/Images/div.PNG?raw=true)
 -----
 
 ### exec
@@ -52,6 +55,8 @@ The program outputs a message then exits cleanly back into BASIC.
 
 This is a PGX-format executable. PGX formats are a single segment. For more information on the PGX format, see [here](https://wiki.c256foenix.com/index.php?title=Executable_binary_file#PGX).
 
+![alt text](https://raw.githubusercontent.com/clandrew/fnxapp/main/Images/execpgx.PNG?raw=true)
+
 #### exec/pgz
 
 This is a PGZ-format executable. PGZ formats can be multiple segments like this example has. For more information on the PGZ format, see [here](https://wiki.c256foenix.com/index.php?title=Executable_binary_file#PGZ).
@@ -60,11 +65,15 @@ Note that PGZ segments are not like *sections* in many x86-based executables, e.
 
 Segments are allowed to straddle bank boundaries. You can have one segment take up three banks or however many. Of course, just be careful about code execution that crosses a bank boundary, as crossing out of the program bank isn't allowed by 65816 and 64tass will warn about this (see "-Wno-wrap-pc"). This example is a small executable size that doesn't run into any of that.
 
+![alt text](https://raw.githubusercontent.com/clandrew/fnxapp/main/Images/execpgz.PNG?raw=true)
+
 ### wormhole
 
 Do you remember DirectDraw? The DirectX 5 SDK disc came with a bunch of samples, including one called "Wormhole". 
 
 This is a port of that sample. Some details are described more [in this blog post](http://cml-a.com/content/).
+
+![alt text](https://raw.githubusercontent.com/clandrew/fnxapp/main/Images/wormhole.PNG?raw=true)
 
 ## Build
 
