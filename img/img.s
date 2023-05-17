@@ -11,84 +11,28 @@
 .include "interrupt_def.s"
 
 ; Constants
-; Currently only building in F_HEX mode is supported- some organizing will be required to completely support PGX mode.
-F_HEX = 0                                   ; FILETYPE value for a HEX file to run through the debug port
-F_PGX = 1                                   ; FILETYPE value for a PGX file to run from storage
-VRAM = $B00000                              ; Base address for video RAM
-HIRQ = $FFEE                                ; IRQ vector
 
-.if FILETYPE = F_HEX
 ;
 ; For loading through the debug port, bootstrap the code through the RESET vector
 ;
 * = $FFFC
 HRESET          .word <>START               ; Bootstrapping vector
-.endif
 
 ; Data
 * = $002000
 
-; Important this thunk lives in bank 0. All handlers have to.
-; We use self-modified code here, so that our *actual* handler can be in any bank.
-IRQJMP          .byte $5C               ; JML-with-24bit for IRQ handler vector
-IRQADDR         .long ?
-
-; The rest of these below could be relocated.
-
 GLOBALS_ADDR = *
 
-; 16bit pointer to the next handler. We can assume the next handler is in bank 0.
-NEXTHANDLER     .word ?                 ; Pointer to the next IRQ handler in the chain
-
-; Data buffers used during palette rotation. It'd be possible to reorganize the code to simply use
-; one channel of these, but there's a memory/performance tradeoff and this chooses perf.
-CACHE_BEGIN
-regr .fill 16
-regg .fill 16
-regb .fill 16
-CACHE_END
-
 ; These aren't used at the same time as reg*, so they're aliased on top.
-* = CACHE_BEGIN
 SOURCE          .dword ?                    ; A pointer to copy the bitmap from
 DEST            .dword ?                    ; A pointer to copy the bitmap to
 SIZE            .dword ?                    ; The number of bytes to copy
-tmpr .byte ?            ; A backed-up-and-restored color, separated by channels
-tmpg .byte ?            ; used during the 4th loop.
-tmpb .byte ?
-iter_i .byte ?          ; Couple counters used for the 4th loop.
-iter_j .byte ?
-* = CACHE_END
 
-.if FILETYPE = F_PGX
-;
-; Header for the PGX file
-;
-
-* = START - 8
-                .text "PGX"
-                .byte $01
-                .dword START
-.endif
-
-.if FILETYPE = F_HEX
-* = $003000
-.elsif FILETYPE = F_PGX
-* = $010000
-.endif
 START           CLC
                 XCE
 
-                setdbr `GLOBALS_ADDR
-                
-                setal
-                LDA #<>HANDLEIRQ
-                STA IRQADDR
-                setas
-                LDA #`HANDLEIRQ
-                STA IRQADDR+2
-
-                setxl
+                setdbr `GLOBALS_ADDR                
+                setaxl
 
                 ; Switch on bitmap graphics mode
                 LDA #Mstr_Ctrl_Graph_Mode_En | Mstr_Ctrl_Bitmap_En
@@ -118,27 +62,9 @@ START           CLC
                 MOVEI_L DEST, 0             ; Set the destination to the beginning of VRAM
 
                 JSR COPYS2V                 ; Request the DMA to copy the image data
-
-                ; Set up the interrupt handler
-
-                SEI
-
-                setal
-                LDA HIRQ                    ; Get the current handler
-                STA NEXTHANDLER             ; And save it to call it
-
-                LDA #<>IRQJMP               ; Replace it with our handler
-                STA HIRQ
-
-                setas
-                LDA @l INT_MASK_REG0        ; Enable SOF interrupts
-                AND #~FNX0_INT00_SOF
-                STA @l INT_MASK_REG0
-
-                CLI                         ; Make sure interrupts are enabled
+                
 
 lock            NOP                         ; Otherwise pause
-
                 BRA lock
 
 ;
@@ -228,228 +154,6 @@ INITLUT         .proc
                 PLB
                 RTS
                 .pend
-
-INNERIMPL       .proc
-                LDA LUT_START, X        ; Load pe[pre]
-                STA LUT_START, Y        ; Store it in pe[cur]
-                INX
-                INY
-                LDA LUT_START, X
-                STA LUT_START, Y
-                INX
-                INY
-                LDA LUT_START, X
-                STA LUT_START, Y
-                INX
-                INY
-                LDA LUT_START, X
-                STA LUT_START, Y
-
-                ; Now decrement pre and cur
-                DEX
-                DEX
-                DEX
-                DEX
-                DEX
-                DEX
-                DEX
-
-                DEY
-                DEY
-                DEY
-                DEY
-                DEY
-                DEY
-                DEY
-                RTS
-                .pend
-
-; Interrupt handler
-HANDLEIRQ       
-                PHD
-                PHB
-                PHA
-                PHX
-                PHY
-                PHP
-
-                setdbr `GLOBALS_ADDR
-
-    ; This handler completes palette rotation in four parts. The four parts can run
-    ; separately from each other so it'd be possible to cleanly separate each one
-    ; out along functional lines. But since each function would be called once
-    ; I inline them.
-                
-    ; For each channel, 
-    ;     Back up pe[30..45].
-                setas
-                setxl
-                LDX #0
-                LDY #30*4
-LOOP1
-                LDA LUT_START,Y 
-                STA @w regb,X 
-                INY
-                LDA LUT_START,Y
-                STA @w regg,X
-                INY
-                LDA LUT_START,Y
-                STA @w regr,X
-                INY
-                INY         ; Alpha ignored
-                
-                INX
-                CPX #15
-                BNE LOOP1              
-
-    ; For each channel,
-    ;     Overwrite pe[30..230] with pe[45..255].
-    ;    
-                LDX #30*4
-                LDY #45*4
-LOOP2
-                LDA LUT_START,Y
-                STA LUT_START,X
-                INX
-                INY
-                LDA LUT_START,Y
-                STA LUT_START,X
-                INX
-                INY
-                LDA LUT_START,Y
-                STA LUT_START,X
-                INX
-                INY
-                INX        ; Alpha ignored     
-                INY             
-                CPX #$3C0 ; 240 * 4
-                BNE LOOP2
-
-    ; For each channel,
-    ;     Take the old pe[30..45] that we backed up and store it at the end.
-    ;     In other words, 
-    ;     pe[k+240] = reg[k];
-    ;
-                LDX #0
-                LDY #240*4
-LOOP3
-                LDA regb,X
-                STA LUT_START,Y
-                INY
-                LDA regg,X
-                STA LUT_START,Y
-                INY
-                LDA regr,X
-                STA LUT_START,Y
-                INY
-                INY ; Alpha ignored
-
-                INX
-                CPX #15
-                BNE LOOP3
-
-    ; Now the last part. The reg buffers are not needed any more.
-    ; Keep shifting pallette entries, replacing the color at N with the color at N-1,
-    ; using modulus math at the boundaries.
-    ; Note that this rolls a loop that the original sample doesn't.
-    ;
-    ; Pseudo-code:
-    ; for(i=0;i<15;i++)
-    ; {
-    ;     int k = i + 2;
-    ;
-    ;     int cur = 15 * k + 14;
-    ;     int pre = cur - 1;
-    ;
-    ;     tmp = pe[cur];
-    ;     for(j=0; j<14; j++)
-    ;     {
-    ;         pe[cur] = pe[pre];
-    ;         cur--;
-    ;         pre--;
-    ;     }
-    ;     pe[pre] = tmp;
-    ; }
-
-                LDX #$0
-                LDY #$0
-                STX @w iter_i ; i=0
-
-LOOP4
-                setal
-                LDA @w indcache, X         ; cur=indcache[i] 
-                TAY
-                DEC A
-                DEC A
-                DEC A
-                DEC A
-                TAX                     ; pre stored in X
-                setas
-                ; pre and cur indices are stored in X and Y now.
-
-                ; tmp = pe[cur];
-                LDA LUT_START, Y
-                STA @w tmpr
-                INY
-                LDA LUT_START, Y
-                STA @w tmpg
-                INY
-                LDA LUT_START, Y
-                STA @w tmpb
-                ; Alpha ignored
-                DEY
-                DEY
-
-                ; Initialize the inner loop
-                LDA #14
-                STA @w iter_j; j=14
-INNER
-                ; Unfortunately, need a function here because otherwise the branch from 
-                ; the end of the loop back to LOOP4 is too long
-                JSR INNERIMPL
-
-                DEC @w iter_j   ; j--
-                BNE INNER
-
-                INX
-                INX
-                INX
-                INX
-
-                ; pe[pre] = tmp;
-                LDA @w tmpr
-                STA LUT_START, X
-                INX
-                LDA @w tmpg
-                STA LUT_START, X
-                INX
-                LDA @w tmpb
-                STA LUT_START, X
-
-                ; Variable iter_i is used as an offset into an array whose element size is
-                ; 2, so it gets incremented by 2.
-                INC @w iter_i ; Check if i>15, for outer loop
-                INC @w iter_i
-                LDX @w iter_i
-                CPX #30
-                BNE LOOP4
-
-                setaxl
-                LDA #LUT_END - LUT_START    ; Copy the palette to Vicky LUT0
-                LDX #<>LUT_START
-                LDY #<>GRPH_LUT1_PTR
-                MVN `START,`GRPH_LUT1_PTR
-                
-                PLP
-                PLY
-                PLX
-                PLA
-                PLB
-yield           PLD                         ; Restore DP and status
-                
-                ; Data bank has been set already
-                JMP (<>NEXTHANDLER)           ; Then transfer control to the next handler
-
 
 ; Easier to simply not have to do this programmatically.
 indcache .word 176, 236, 296, 356, 416, 476, 536, 596, 656, 716, 776, 836, 896, 956, 1016

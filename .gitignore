@@ -22,3 +22,6 @@
 /wormhole/BitmapEmbedder/Release/*
 /wormhole/BitmapEmbedder/x64/
 /wormhole/Demo
+/img/.vs/*
+/img/Debug
+/img/Release
