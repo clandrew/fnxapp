@@ -158,6 +158,7 @@ INITLUT         .proc
                 RTS
                 .pend
 
-; Emitted with D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\img\rsrc\vcf.bmp D:\repos\fnxapp\img\rsrc\colors.s D:\repos\fnxapp\img\rsrc\pixmap.s
+; Emitted with 
+;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\img\rsrc\vcf.bmp D:\repos\fnxapp\img\rsrc\colors.s D:\repos\fnxapp\img\rsrc\pixmap.s
 .include "rsrc/colors.s"
 .include "rsrc/pixmap.s"
