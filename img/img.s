@@ -37,7 +37,10 @@ START           CLC
                 ; Switch on bitmap graphics mode
                 LDA #Mstr_Ctrl_Graph_Mode_En | Mstr_Ctrl_Bitmap_En
                 STA @l MASTER_CTRL_REG_L
-
+                                
+                LDA #6
+                STA @l MASTER_CTRL_REG_H ; Set D001 = 2 | 4. Enable 320x200 mode
+                
                 LDA #0
                 STA @l BORDER_CTRL_REG      ; Turn off the border
                 STA @l MOUSE_PTR_CTRL_REG_L ; And turn off the mouse pointer
