@@ -17,11 +17,11 @@
 /wormhole/.vs
 /wormhole/Debug
 /wormhole/Release
-/wormhole/BitmapEmbedder/.vs/*
-/wormhole/BitmapEmbedder/Debug/*
-/wormhole/BitmapEmbedder/Release/*
-/wormhole/BitmapEmbedder/x64/
 /wormhole/Demo
 /img/.vs/*
 /img/Debug
 /img/Release
+/BitmapEmbedder/.vs/*
+/BitmapEmbedder/Debug/*
+/BitmapEmbedder/Release/*
+/BitmapEmbedder/x64/
