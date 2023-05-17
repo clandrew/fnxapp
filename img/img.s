@@ -60,7 +60,7 @@ START           CLC
 
                 JSR INITLUT                 ; Initiliaze the LUT
 
-                MOVEI_L SIZE, (640*480)     ; Set the size of the data to transfer to VRAM
+                MOVEI_L SIZE, (320*240)     ; Set the size of the data to transfer to VRAM
                 MOVEI_L SOURCE, IMG_START   ; Set the source to the image data
                 MOVEI_L DEST, 0             ; Set the destination to the beginning of VRAM
 
