@@ -1,5 +1,7 @@
 .cpu "65816"                        ; Tell 64TASS that we are using a 65816
 
+.include "api.asm"
+
 ; Code
 
 * = $000000 
