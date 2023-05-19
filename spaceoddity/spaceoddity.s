@@ -762,5 +762,16 @@ CLEAR
 .byte $00, $20, $00, $10, $64, $01, $4c, $56, $ef, $53, $70, $61, $63, $65, $20, $4f
 .byte $64, $64, $69, $74, $79, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
-* = $00F7F0
-.byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $40, $f9, $ff, $d5, $e5, $f9, $ff
+; Write the reset vector. Since the binary is loaded at +0x800, this ends up at 
+; 0x0FFFx in memory.
+* = $00F7F8
+.byte $00, $40
+
+* = $00F7FA
+.byte $f9, $ff
+
+* = $00F7FC
+.byte $d5, $e5
+
+* = $00F7FE
+.byte $f9, $ff
