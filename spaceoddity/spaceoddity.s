@@ -661,7 +661,11 @@ CLEAR
 .byte $8d, $22, $d6, $20, $cb, $e5, $a9, $02, $8d, $20, $d6, $a9, $16, $8d, $21, $d6
 .byte $a9, $01, $8d, $22, $d6, $20, $cb, $e5, $a9, $45, $8d, $20, $d6, $a9, $18, $8d
 .byte $21, $d6, $a9, $01, $8d, $22, $d6, $20, $cb, $e5, $60, $ad, $22, $d6, $29, $01
-.byte $c9, $01, $f0, $f7, $60, $18, $78, $a2, $ff, $9a, $64, $00, $a5, $00, $09, $80
+.byte $c9, $01, $f0, $f7, $60
+
+; Entrypoint
+* = $00DDD5 
+.byte $18, $78, $a2, $ff, $9a, $64, $00, $a5, $00, $09, $80
 .byte $85, $00, $64, $01, $a9, $00, $85, $08, $1a, $85, $09, $1a, $85, $0a, $1a, $85
 .byte $0b, $1a, $85, $0c, $1a, $85, $0d, $1a, $85, $0e, $1a, $85, $0f, $a5, $00, $29
 ; de00
@@ -762,7 +766,7 @@ CLEAR
 .byte $00, $20, $00, $10, $64, $01, $4c, $56, $ef, $53, $70, $61, $63, $65, $20, $4f
 .byte $64, $64, $69, $74, $79, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
-; Write the reset vector. Since the binary is loaded at +0x800, this ends up at 
+; Write the system vectors. Since the binary is loaded at +0x800, these end up at 
 ; 0x0FFFx in memory.
 * = $00F7F8
 .byte $00, $40
@@ -770,6 +774,7 @@ CLEAR
 * = $00F7FA
 .byte $f9, $ff
 
+; Reset vector set to 0xE5D5 = compile offset DDD5
 * = $00F7FC
 .byte $d5, $e5
 
