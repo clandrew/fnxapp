@@ -774,9 +774,12 @@ CLEAR
 
 ; Write the system vectors. Since the binary is loaded at +0x800, these end up at 
 ; 0x0FFFx in memory.
+
+; Abort vector
 * = $00F7F8
 .byte $00, $40
 
+; NMI vector
 * = $00F7FA
 .byte $f9, $ff
 
@@ -784,5 +787,6 @@ CLEAR
 * = $00F7FC
 .byte $d5, $e5
 
+; IRQ/BRK
 * = $00F7FE
 .byte $f9, $ff
