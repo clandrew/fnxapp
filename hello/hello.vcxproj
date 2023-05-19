@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetExt>.hex</TargetExt>
+    <TargetExt>.bin</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -176,8 +176,8 @@
   <ItemGroup>
     <CustomBuild Include="hello.s">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)hello.hex --list=$(TargetDir)hello.lst --labels=hello.lbl $(ProjectDir)hello.s
-d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)hello.hex --list=$(TargetDir)hello.lst --labels=hello.lbl $(ProjectDir)hello.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)hello.bin --list=$(TargetDir)hello.lst --labels=hello.lbl $(ProjectDir)hello.s
+d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)hello.bin --list=$(TargetDir)hello.lst --labels=hello.lbl $(ProjectDir)hello.s
 echo ==============
 echo Copying result:
 echo copy /Y $(TargetPath) "$(ProjectDir)..\sd"
