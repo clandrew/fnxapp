@@ -2,6 +2,19 @@
 
 .include "api.asm"
 
+; Constants
+MMU_MEM_CTRL = $0000
+MMU_EDIT_EN = $80
+MMU_IO_CTRL = $0001
+MMU_MEM_BANK_0 = $0008
+MMU_MEM_BANK_1 = $0009
+MMU_MEM_BANK_2 = $000A
+MMU_MEM_BANK_3 = $000B
+MMU_MEM_BANK_4 = $000C
+MMU_MEM_BANK_5 = $000D
+MMU_MEM_BANK_6 = $000E
+MMU_MEM_BANK_7 = $000F
+
 ; Code
 
 * = $000000 
@@ -667,11 +680,24 @@ CLEAR
 
 ; Entrypoint
 * = $00DDD5 
-    CLC
+    CLC     ; disable interrupts
     SEI
     LDX #$FF
-.byte $9a, $64, $00, $a5, $00, $09, $80
-.byte $85, $00, $64, $01, $a9, $00, $85, $08, $1a, $85, $09, $1a, $85, $0a, $1a, $85
+    TXS     ; initialize stack
+
+    ; initialize mmu
+    STZ MMU_MEM_CTRL
+    LDA MMU_MEM_CTRL
+    ORA #MMU_EDIT_EN
+
+    ; enable mmu edit, edit mmu lut 0, activate mmu lut 0 ;<<<="UnlockMMU	; enable mmu edit, edit mmu lut 0, activate mmu lut 0"
+    STA MMU_MEM_CTRL
+    STZ MMU_IO_CTRL
+
+    LDA #$00
+    STA MMU_MEM_BANK_0
+
+.byte $1a, $85, $09, $1a, $85, $0a, $1a, $85
 .byte $0b, $1a, $85, $0c, $1a, $85, $0d, $1a, $85, $0e, $1a, $85, $0f, $a5, $00, $29
 
 * = $00DE00
