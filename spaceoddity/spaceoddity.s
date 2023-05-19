@@ -777,16 +777,16 @@ CLEAR
 
 ; Abort vector
 * = $00F7F8
-.byte $00, $40
+.word $4000
 
 ; NMI vector
 * = $00F7FA
-.byte $f9, $ff
+.word $FFF9
 
 ; Reset vector set to 0xE5D5 = compile offset DDD5
 * = $00F7FC
-.byte $d5, $e5
+.word $E5D5
 
 ; IRQ/BRK
 * = $00F7FE
-.byte $f9, $ff
+.word $FFF9
