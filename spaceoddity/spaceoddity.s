@@ -773,7 +773,7 @@ ENTRYPOINT
     JSR $E495   ; Init_Graphics
     JSR $E200   ; Init_Keyboard
     CLI
-    JMP $EF07   ; JMP Main
+    JMP MAIN
 
 .byte $00
 
@@ -792,13 +792,7 @@ ENTRYPOINT
 .byte $34, $12, $8d, $21, $43, $ee, $e0, $e6, $d0, $03, $ee, $e1, $e6, $ee, $e3, $e6
 .byte $d0, $03, $ee, $e4, $e6, $ad, $e0, $e6, $c9, $07, $d0, $e3, $ad, $e1, $e6, $c9
 ; df00
-.byte $ef, $d0, $dc, $68, $85, $01, $60, $00, $00, $00, $00, $00, $00, $00, $00, $00
-.byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-.byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-.byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-.byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-.byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-.byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+.byte $ef, $d0, $dc, $68, $85, $01, $60
 
 .endlogical
 
@@ -871,6 +865,7 @@ ENTRYPOINT
 * = $00E707
 .logical $EF07
 ; Main
+MAIN
     LDA #MMU_EDIT_EN
     STA MMU_MEM_CTRL
     STZ MMU_IO_CTRL ;<<<="SetMMUIO"
@@ -911,10 +906,10 @@ ENTRYPOINT
     LDA #$70
     STA $48
 
-    LDA #$59 ; LDA #<TX_GAMETITLE
+    LDA #<TX_GAMETITLE
     STA $30  ; STA TempSrc
 
-    LDA #$EF ; LDA #>TX_GAMETITLE
+    LDA #>TX_GAMETITLE
     STA $31  ; STA TempSrc+1
     
     JSR $E08C ; JSR PrintAnsiString
