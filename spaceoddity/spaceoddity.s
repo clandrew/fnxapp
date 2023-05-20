@@ -597,7 +597,8 @@ TEST1
 .byte $4c, $a9, $02, $85, $01, $a2, $20, $20, $71, $e0, $9c, $73, $e0, $a9, $c0, $8d
 .byte $74, $e0, $a9, $03, $85, $01, $a6, $48, $20, $71, $e0, $68, $85, $01, $fa, $68
 .byte $60, $8a, $8d, $34, $12, $ee, $73, $e0, $d0, $03, $ee, $74, $e0, $ad, $73, $e0
-.byte $c9, $c0, $d0, $ed, $ad, $74, $e0, $c9, $d2, $d0, $e6, $60
+.byte $c9, $c0, $d0, $ed, $ad, $74, $e0, $c9, $d2, $d0, $e6
+    RTS
 
 ; Procedure: PrintAnsiString
 ; parameters:
@@ -700,7 +701,7 @@ CLEAR
 .byte $00, $38, $55, $00, $71, $6c, $c4, $00, $4a, $4a, $4a, $00, $7b, $7b, $7b, $00
 .byte $9f, $ff, $a9, $00, $eb, $6d, $70, $00, $b2, $b2, $b2, $00
 
-; Init_Sound around here
+; Init_CODEC
     LDA #$00
     STA $D620
 
@@ -780,9 +781,11 @@ CLEAR
 
     RTS
 
-
-.byte $ad, $22, $d6, $29, $01
-.byte $c9, $01, $f0, $f7
+    WriteCodecWait
+    LDA $D622 ; CODEC_CTRL
+    AND #$01
+    CMP #$01
+    BEQ WriteCodecWait
     RTS
 
 ; Entrypoint
