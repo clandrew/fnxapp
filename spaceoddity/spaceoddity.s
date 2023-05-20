@@ -694,6 +694,7 @@ CLEAR
 
 ; Entrypoint
 * = $00DDD5 
+.logical $E5D5
     CLC     ; disable interrupts
     SEI
     LDX #$FF
@@ -781,6 +782,8 @@ CLEAR
 .byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 .byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
+.endlogical
+
 * = $00E000
 .byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $1c
 .byte $1c, $1c, $1c, $00, $1c, $1c, $00, $33, $33, $66, $00, $00, $00, $00, $00, $36
@@ -857,21 +860,11 @@ CLEAR
 .byte $00, $20, $00, $10, $64, $01, $4c, $56, $ef, $53, $70, $61, $63, $65, $20, $4f
 .byte $64, $64, $69, $74, $79, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
-; Write the system vectors. Since the binary is loaded at +0x800, these end up at 
-; 0x0FFFx in memory.
-
-; Abort vector
-
+; Write the system vectors
 * = $00F7F8
 .logical $FFF8
-.word $4000
-
-; NMI vector
-.word $FFF9
-
-; Reset vector set to 0xE5D5 = compile offset DDD5
-.word $E5D5
-
-; IRQ/BRK
-.word $FFF9
+.word $4000    ; Abort vector
+.word $FFF9    ; NMI vector
+.word $E5D5    ; Reset vector set to 0xE5D5 = compile offset DDD5
+.word $FFF9    ; IRQ/BRK
 .endlogical
