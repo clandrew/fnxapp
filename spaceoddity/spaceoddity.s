@@ -750,12 +750,15 @@ CLEAR
     LDA INT_PENDING_REG1
     STA INT_PENDING_REG1
 
-    JSR $E54C
-    JSR $E495
-    JSR $E200
+    JSR $E54C   ; Init_Sound
+    JSR $E495   ; Init_Graphics
+    JSR $E200   ; Init_Keyboard
     CLI
     JMP $EF07   ; JMP Main
 
+.byte $00
+
+    ; From ;include 'sid.asm'
 .byte $00, $a9, $05, $c9, $06, $f0, $09, $ce, $37
 .byte $e6, $d0, $04, $8d, $37, $e6, $60, $20, $03, $10, $60, $08, $48, $da, $5a, $d8
 .byte $a5, $00, $48, $a5, $01, $48, $64, $01, $ad, $60, $d6, $85, $20, $89, $01, $f0
