@@ -889,9 +889,15 @@ ENTRYPOINT
     STA $4B ; CursorPointer
 
 .byte $a9, $c0, $85, $4c, $a9, $70, $85, $48, $a9, $59, $85
-.byte $30, $a9, $ef, $85, $31, $20, $8c, $e0, $64, $01, $a9, $01, $8d, $37, $e6, $a9
-.byte $00, $20, $00, $10, $64, $01, $4c, $56, $ef, $53, $70, $61, $63, $65, $20, $4f
-.byte $64, $64, $69, $74, $79, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+.byte $30, $a9, $ef, $85, $31, $20, $8c, $e0, $64, $01, $a9, $01, $8d, $37, $e6
+
+    LDA #$00
+    JSR $1000
+    STZ $01
+    JMP $EF56
+
+; String for stylized title
+.text "Space Oddity"
 
 ; Write the system vectors
 * = $00F7F8
