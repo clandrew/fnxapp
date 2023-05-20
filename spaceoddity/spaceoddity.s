@@ -551,6 +551,7 @@ INT_MASK_REG1 = $D66D
 .byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
 * = $00D800
+.logical $E000
     PHA
     PHY
     TAY
@@ -604,6 +605,7 @@ TEST1
 ; parameters:
 ;	<TempSrc>	=	word address of string to print
 ;	<CursorPointer>	=	word address of screen character/color memory
+PrintAnsiString
     LDY #$00
 .byte $80, $0c
 .byte $c9, $1b, $90, $0d, $20, $00, $e0, $c8, $d0, $02, $e6, $31, $b1, $30, $d0, $f0
@@ -621,9 +623,11 @@ TEST1
 .byte $00
     INY
 .byte $d0, $02, $e6, $31, $b1, $30
-    RTS
+    RTS    
+.endlogical
 
 * = $00DA00
+.logical $E200
     ; 8-bit accumulator, X, Y
     STZ $01
     LDA #$30
@@ -658,6 +662,7 @@ CLEAR
 .byte $f0, $04, $e0, $c5, $d0, $0a, $ad, $6f, $e1, $09, $04, $8d, $6f, $e1, $80, $2e
 .byte $e0, $c6, $f0, $04, $e0, $c7, $d0, $0a, $ad, $6f, $e1, $09, $08, $8d, $6f, $e1
 .byte $80, $1c, $e0, $cf, $d0, $0a, $ad, $6f, $e1, $49, $10, $8d, $6f, $e1, $80, $0e
+.endlogical
 
 ; db00
 * = $00DB00
@@ -992,7 +997,7 @@ MAIN
     LDA #>TX_GAMETITLE
     STA $31  ; STA TempSrc+1
     
-    JSR $E08C ; JSR PrintAnsiString
+    JSR PrintAnsiString
 
     STZ $01
     LDA #$01
