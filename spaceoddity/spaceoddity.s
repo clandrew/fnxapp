@@ -600,11 +600,21 @@ TEST1
 .byte $c9, $c0, $d0, $ed, $ad, $74, $e0, $c9, $d2, $d0, $e6, $60
 
 ; Procedure: PrintAnsiString
-.byte $a0, $00, $80, $0c
+; parameters:
+;	<TempSrc>	=	word address of string to print
+;	<CursorPointer>	=	word address of screen character/color memory
+    LDY #$00
+.byte $80, $0c
 .byte $c9, $1b, $90, $0d, $20, $00, $e0, $c8, $d0, $02, $e6, $31, $b1, $30, $d0, $f0
 .byte $60, $c9, $02, $d0, $0f, $a5, $48, $29, $f0, $85, $48, $20, $e1, $e0, $05, $48
 .byte $85, $48, $80, $e3, $c9, $03, $d0, $07, $20, $e1, $e0, $85, $48, $80, $d8, $c9
-.byte $06, $d0, $13, $a5, $48, $29, $0f, $85, $48, $20, $e1, $e0, $0a, $0a, $0a, $0a
+.byte $06, $d0, $13, $a5, $48, $29, $0f, $85, $48, $20, $e1, $e0
+
+    ASL
+    ASL
+    ASL
+    ASL
+
 .byte $05, $48, $85, $48, $80, $c1, $c9, $0c, $d0, $05, $20, $40, $e0, $80, $b8
     RTS
 .byte $00
@@ -858,7 +868,8 @@ ENTRYPOINT
 ; e700
 .byte $28, $10, $10, $aa, $ee, $44, $00
 
-; e707
+* = $00E707
+.logical $EF07
 ; Main
     LDA #MMU_EDIT_EN
     STA MMU_MEM_CTRL
@@ -894,8 +905,17 @@ ENTRYPOINT
     LDA #$00 ; #<(VKY_TEXT_MEMORY+val(copy('#0',2))*40)
     STA $4B ; CursorPointer
 
-.byte $a9, $c0, $85, $4c, $a9, $70, $85, $48, $a9, $59, $85
-.byte $30, $a9, $ef, $85, $31
+    LDA #$C0
+    STA $4C
+    
+    LDA #$70
+    STA $48
+
+    LDA #$59 ; LDA #<TX_GAMETITLE
+    STA $30  ; STA TempSrc
+
+    LDA #$EF ; LDA #>TX_GAMETITLE
+    STA $31  ; STA TempSrc+1
     
     JSR $E08C ; JSR PrintAnsiString
 
@@ -909,8 +929,9 @@ ENTRYPOINT
     JMP $EF56
 
 ; String for stylized title
-TITLE_TEXT
+TX_GAMETITLE
 .text "Space Oddity"
+.endlogical
 
 ; Write the system vectors
 * = $00F7F8
