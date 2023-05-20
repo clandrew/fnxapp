@@ -15,6 +15,12 @@ MMU_MEM_BANK_5 = $000D
 MMU_MEM_BANK_6 = $000E
 MMU_MEM_BANK_7 = $000F
 
+VIA_ORB_IRB = $DC00
+VIA_ORB_IRA = $DC01
+
+RNG_CTRL    = $D6A6
+RNG_ENABLE  = $01
+
 ; Code
 
 * = $000000 
@@ -714,10 +720,25 @@ CLEAR
     AND #~(MMU_EDIT_EN)
     STA MMU_MEM_CTRL  ; disable mmu edit, use mmu lut 0 ;<<<="LockMMU	; disable mmu edit, use mmu lut 0"
 
-.byte $64, $01, $9c, $00, $dc, $9c, $01, $dc, $a9, $01, $8d, $a6, $d6
+                        ; initialize via registers
+                        ; reset via registers a/b
+    STZ $01
+    STZ VIA_ORB_IRB     ; set via i/o port a to read
+    STZ VIA_ORB_IRA     ; set via i/o port b to read
+
+    ; enable random number generator
+    LDA #RNG_ENABLE
+    STA RNG_CTRL
+
 .byte $a9, $ff, $8d, $68, $d6, $8d, $69, $d6, $8d, $6c, $d6, $8d, $6d, $d6, $ad, $60
 .byte $d6, $8d, $60, $d6, $ad, $61, $d6, $8d, $61, $d6, $20, $4c, $e5, $20, $95, $e4
-.byte $20, $00, $e2, $58, $4c, $07, $ef, $00, $a9, $05, $c9, $06, $f0, $09, $ce, $37
+.byte $20, $00, $e2
+
+
+    CLI
+    JMP $EF07
+
+.byte $00, $a9, $05, $c9, $06, $f0, $09, $ce, $37
 .byte $e6, $d0, $04, $8d, $37, $e6, $60, $20, $03, $10, $60, $08, $48, $da, $5a, $d8
 .byte $a5, $00, $48, $a5, $01, $48, $64, $01, $ad, $60, $d6, $85, $20, $89, $01, $f0
 .byte $08, $8d, $60, $d6, $20, $38, $e6, $a5, $20, $89, $04, $f0, $08, $8d, $60, $d6
