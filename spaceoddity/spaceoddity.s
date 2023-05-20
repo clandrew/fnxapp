@@ -871,6 +871,11 @@ ENTRYPOINT
 .byte $a9, $fa, $8d, $6c, $d6, $a9, $00, $85, $4d, $a9, $00, $92, $4d, $a9, $00, $92
 .byte $4d, $a9, $00, $92, $4d, $58, $68, $85, $01, $60, $a5, $01, $48, $64, $01, $a2
 .byte $00, $9e, $00, $d4, $9e, $00, $d5, $e8, $e0, $20, $d0, $f5, $68, $85, $01, $60
+
+.endlogical
+
+* = $00DEC0
+.logical $e6c0
 .byte $a5, $01, $48, $64, $01, $a9, $01, $85, $01, $a9, $07, $8d, $e0, $e6, $a9, $e7
 .byte $8d, $e1, $e6, $a9, $00, $8d, $e3, $e6, $a9, $c0, $8d, $e4, $e6, $a0, $00, $ad
 .byte $34, $12, $8d, $21, $43, $ee, $e0, $e6, $d0, $03, $ee, $e1, $e6, $ee, $e3, $e6
@@ -1006,7 +1011,9 @@ MAIN
     LDA #$00
     JSR $1000
     STZ $01
-    JMP $EF56
+
+Lock
+    JMP Lock
 
 ; String for stylized title
 TX_GAMETITLE
