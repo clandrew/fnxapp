@@ -876,12 +876,54 @@ ENTRYPOINT
 
 * = $00DEC0
 .logical $e6c0
-.byte $a5, $01, $48, $64, $01, $a9, $01, $85, $01, $a9, $07, $8d, $e0, $e6, $a9, $e7
-.byte $8d, $e1, $e6, $a9, $00, $8d, $e3, $e6, $a9, $c0, $8d, $e4, $e6, $a0, $00, $ad
-.byte $34, $12, $8d, $21, $43, $ee, $e0, $e6, $d0, $03, $ee, $e1, $e6, $ee, $e3, $e6
-.byte $d0, $03, $ee, $e4, $e6, $ad, $e0, $e6, $c9, $07, $d0, $e3, $ad, $e1, $e6, $c9
-; df00
-.byte $ef, $d0, $dc, $68, $85, $01
+Init_GameFont
+    LDA MMU_IO_CTRL
+    PHA
+    STZ MMU_IO_CTRL
+
+    LDA #$01
+    STA $01
+
+    LDA #$07
+    STA $E6E0
+
+    LDA #$E7
+    STA $E6E1
+    
+    LDA #$00
+    STA $E6E3
+    
+    LDA #$C0
+    STA $E6E4
+
+    LDY #$00
+    LDA $1234
+    STA $4321
+
+    INC $E6E0
+
+.byte $d0, $03 ; BNE
+
+    INC $E6E1
+    INC $E6E3
+
+.byte $d0, $03
+
+    INC $E6E4
+
+    LDA $E6E0 ; from .srcaddr
+    CMP #$07 ; #<(FONT_FANTASY+sizeof(FONT_FANTASY))  [217/$D9/"U"]
+
+.byte $d0, $e3 ; BNE
+
+    LDA $E6E1 ; from .srcaddr+1
+
+    CMP #$EF ; #>(FONT_FANTASY+sizeof(FONT_FANTASY))  [247/$F7/"ö"]
+
+.byte $d0, $dc ; BNE
+
+    PLA
+    STA MMU_IO_CTRL ;<<<="PullMMUIO"
     RTS
 
 .endlogical
