@@ -21,6 +21,14 @@ VIA_ORB_IRA = $DC01
 RNG_CTRL    = $D6A6
 RNG_ENABLE  = $01
 
+; Interrupt-related
+INT_PENDING_REG0 = $D660
+INT_PENDING_REG1 = $D661
+INT_EDGE_REG0 = $D668
+INT_EDGE_REG1 = $D669
+INT_MASK_REG0 = $D66C
+INT_MASK_REG1 = $D66D
+
 ; Code
 
 * = $000000 
@@ -730,13 +738,23 @@ CLEAR
     LDA #RNG_ENABLE
     STA RNG_CTRL
 
-.byte $a9, $ff, $8d, $68, $d6, $8d, $69, $d6, $8d, $6c, $d6, $8d, $6d, $d6, $ad, $60
-.byte $d6, $8d, $60, $d6, $ad, $61, $d6, $8d, $61, $d6, $20, $4c, $e5, $20, $95, $e4
-.byte $20, $00, $e2
+                        ; initialize interrupts
+    LDA #$FF            ; mask off all interrupts
+    STA INT_EDGE_REG0
+    STA INT_EDGE_REG1
+    STA INT_MASK_REG0
+    STA INT_MASK_REG0
 
+    LDA INT_PENDING_REG0 ; clear all existing interrupts
+    STA INT_PENDING_REG0
+    LDA INT_PENDING_REG1
+    STA INT_PENDING_REG1
 
+    JSR $E54C
+    JSR $E495
+    JSR $E200
     CLI
-    JMP $EF07
+    JMP $EF07   ; JMP Main
 
 .byte $00, $a9, $05, $c9, $06, $f0, $09, $ce, $37
 .byte $e6, $d0, $04, $8d, $37, $e6, $60, $20, $03, $10, $60, $08, $48, $da, $5a, $d8
@@ -824,7 +842,11 @@ CLEAR
 .byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $80
 .byte $80, $80, $80, $80, $80, $c0, $7f, $02, $02, $02, $02, $02, $02, $06, $fc, $6c
 ; e700
-.byte $28, $10, $10, $aa, $ee, $44, $00, $a9, $80, $85, $00, $64, $01, $64, $00, $a9
+.byte $28, $10, $10, $aa, $ee, $44, $00
+
+; e707
+; Main
+.byte $a9, $80, $85, $00, $64, $01, $64, $00, $a9
 .byte $3f, $8d, $00, $d0, $a9, $06, $8d, $01, $d0, $20, $c0, $e6, $20, $aa, $e6, $20
 .byte $80, $e6, $a9, $e0, $85, $48, $20, $40, $e0, $a9, $00, $85, $49, $a9, $00, $85
 .byte $4a, $a9, $00, $85, $4b, $a9, $c0, $85, $4c, $a9, $70, $85, $48, $a9, $59, $85
