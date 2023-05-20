@@ -1,6 +1,7 @@
 .cpu "65816"                        ; Tell 64TASS that we are using a 65816
 
 .include "api.asm"
+.include "TinyVicky_Def.asm"
 
 ; Constants
 MMU_MEM_CTRL = $0000
@@ -695,6 +696,7 @@ CLEAR
 ; Entrypoint
 * = $00DDD5 
 .logical $E5D5
+ENTRYPOINT
     CLC     ; disable interrupts
     SEI
     LDX #$FF
@@ -852,8 +854,16 @@ CLEAR
 
 ; e707
 ; Main
-.byte $a9, $80, $85, $00, $64, $01, $64, $00, $a9
-.byte $3f, $8d, $00, $d0, $a9, $06, $8d, $01, $d0, $20, $c0, $e6, $20, $aa, $e6, $20
+    LDA #MMU_EDIT_EN
+    STA MMU_MEM_CTRL
+    STZ MMU_IO_CTRL ;<<<="SetMMUIO"
+    STZ MMU_MEM_CTRL
+    LDA #$3F ; #(Mstr_Ctrl_Text_Mode_En|Mstr_Ctrl_Text_Overlay|Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En|Mstr_Ctrl_TileMap_En|Mstr_Ctrl_Sprite_En)
+    STA @w $D000 ; MASTER_CTRL_REG_L
+    LDA #$06 ; #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
+    STA @w $D001 ; MASTER_CTRL_REG_H
+
+.byte $20, $c0, $e6, $20, $aa, $e6, $20
 .byte $80, $e6, $a9, $e0, $85, $48, $20, $40, $e0, $a9, $00, $85, $49, $a9, $00, $85
 .byte $4a, $a9, $00, $85, $4b, $a9, $c0, $85, $4c, $a9, $70, $85, $48, $a9, $59, $85
 .byte $30, $a9, $ef, $85, $31, $20, $8c, $e0, $64, $01, $a9, $01, $8d, $37, $e6, $a9
@@ -865,6 +875,6 @@ CLEAR
 .logical $FFF8
 .word $4000    ; Abort vector
 .word $FFF9    ; NMI vector
-.word $E5D5    ; Reset vector set to 0xE5D5 = compile offset DDD5
+.word ENTRYPOINT 
 .word $FFF9    ; IRQ/BRK
 .endlogical
