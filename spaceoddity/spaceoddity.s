@@ -695,10 +695,24 @@ CLEAR
     STZ MMU_IO_CTRL
 
     LDA #$00
-    STA MMU_MEM_BANK_0
+    STA MMU_MEM_BANK_0 ; map $000000 to bank 0
+    INA
+    STA MMU_MEM_BANK_1 ; map $002000 to bank 1
+    INA
+    STA MMU_MEM_BANK_2 ; map $004000 to bank 2
+    INA
+    STA MMU_MEM_BANK_3 ; map $006000 to bank 3
+    INA
+    STA MMU_MEM_BANK_4 ; map $008000 to bank 4
+    INA
+    STA MMU_MEM_BANK_5 ; map $00a000 to bank 5
+    INA
+    STA MMU_MEM_BANK_6 ; map $00c000 to bank 6
+    INA
+    STA MMU_MEM_BANK_7 ; map $00e000 to bank 7
+    LDA MMU_MEM_CTRL
 
-.byte $1a, $85, $09, $1a, $85, $0a, $1a, $85
-.byte $0b, $1a, $85, $0c, $1a, $85, $0d, $1a, $85, $0e, $1a, $85, $0f, $a5, $00, $29
+.byte $29
 
 * = $00DE00
 .byte $7f, $85, $00, $64, $01, $9c, $00, $dc, $9c, $01, $dc, $a9, $01, $8d, $a6, $d6
