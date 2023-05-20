@@ -858,10 +858,10 @@ ENTRYPOINT
     STA MMU_MEM_CTRL
     STZ MMU_IO_CTRL ;<<<="SetMMUIO"
     STZ MMU_MEM_CTRL
-    LDA #$3F ; #(Mstr_Ctrl_Text_Mode_En|Mstr_Ctrl_Text_Overlay|Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En|Mstr_Ctrl_TileMap_En|Mstr_Ctrl_Sprite_En)
-    STA @w $D000 ; MASTER_CTRL_REG_L
-    LDA #$06 ; #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
-    STA @w $D001 ; MASTER_CTRL_REG_H
+    LDA #(Mstr_Ctrl_Text_Mode_En|Mstr_Ctrl_Text_Overlay|Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En|Mstr_Ctrl_TileMap_En|Mstr_Ctrl_Sprite_En)
+    STA @w MASTER_CTRL_REG_L 
+    LDA #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
+    STA @w MASTER_CTRL_REG_H 
 
 .byte $20, $c0, $e6, $20, $aa, $e6, $20
 .byte $80, $e6, $a9, $e0, $85, $48, $20, $40, $e0, $a9, $00, $85, $49, $a9, $00, $85
