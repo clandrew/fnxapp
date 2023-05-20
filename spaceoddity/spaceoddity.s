@@ -743,7 +743,7 @@ CLEAR
     STA INT_EDGE_REG0
     STA INT_EDGE_REG1
     STA INT_MASK_REG0
-    STA INT_MASK_REG0
+    STA INT_MASK_REG1
 
     LDA INT_PENDING_REG0 ; clear all existing interrupts
     STA INT_PENDING_REG0
@@ -759,7 +759,7 @@ CLEAR
 .byte $00
 
     ; From ;include 'sid.asm'
-.byte $00, $a9, $05, $c9, $06, $f0, $09, $ce, $37
+.byte $a9, $05, $c9, $06, $f0, $09, $ce, $37
 .byte $e6, $d0, $04, $8d, $37, $e6, $60, $20, $03, $10, $60, $08, $48, $da, $5a, $d8
 .byte $a5, $00, $48, $a5, $01, $48, $64, $01, $ad, $60, $d6, $85, $20, $89, $01, $f0
 .byte $08, $8d, $60, $d6, $20, $38, $e6, $a5, $20, $89, $04, $f0, $08, $8d, $60, $d6
