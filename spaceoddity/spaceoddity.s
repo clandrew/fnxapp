@@ -698,16 +698,92 @@ CLEAR
 .byte $ff, $ff, $ff, $00, $38, $33, $81, $00, $c8, $ce, $75, $00, $97, $3c, $8e, $00
 .byte $4d, $ac, $56, $00, $9b, $2c, $2e, $00, $71, $f1, $ed, $00, $29, $50, $8e, $00
 .byte $00, $38, $55, $00, $71, $6c, $c4, $00, $4a, $4a, $4a, $00, $7b, $7b, $7b, $00
-.byte $9f, $ff, $a9, $00, $eb, $6d, $70, $00, $b2, $b2, $b2, $00, $a9, $00, $8d, $20
-.byte $d6, $a9, $1a, $8d, $21, $d6, $a9, $01, $8d, $22, $d6, $20, $cb, $e5, $a9, $03
-.byte $8d, $20, $d6, $a9, $2a, $8d, $21, $d6, $a9, $01, $8d, $22, $d6, $20, $cb, $e5
-.byte $a9, $01, $8d, $20, $d6, $a9, $23, $8d, $21, $d6, $a9, $01, $8d, $22, $d6, $20
-.byte $cb, $e5, $a9, $07, $8d, $20, $d6, $a9, $2c, $8d, $21, $d6, $a9, $01, $8d, $22
-.byte $d6, $20, $cb, $e5, $a9, $02, $8d, $20, $d6, $a9, $14, $8d, $21, $d6, $a9, $01
-.byte $8d, $22, $d6, $20, $cb, $e5, $a9, $02, $8d, $20, $d6, $a9, $16, $8d, $21, $d6
-.byte $a9, $01, $8d, $22, $d6, $20, $cb, $e5, $a9, $45, $8d, $20, $d6, $a9, $18, $8d
-.byte $21, $d6, $a9, $01, $8d, $22, $d6, $20, $cb, $e5, $60, $ad, $22, $d6, $29, $01
-.byte $c9, $01, $f0, $f7, $60
+.byte $9f, $ff, $a9, $00, $eb, $6d, $70, $00, $b2, $b2, $b2, $00
+
+; Init_Sound around here
+    LDA #$00
+    STA $D620
+
+    LDA #$1A
+    STA $D621
+    
+    LDA #$01
+    STA $D622
+
+    JSR $E5CB
+    
+    LDA #$03
+    STA $D620
+    
+    LDA #$2A
+    STA $D621
+    
+    LDA #$01
+    STA $D622
+    
+    JSR $E5CB
+    
+    LDA #$01
+    STA $D620
+    
+    LDA #$23
+    STA $D621
+    
+    LDA #$01
+    STA $D622
+    
+    JSR $E5CB
+    
+    LDA #$07
+    STA $D620
+    
+    LDA #$2C
+    STA $D621
+    
+    LDA #$01
+    STA $D622
+    
+    JSR $E5CB
+    
+    LDA #$02
+    STA $D620
+    
+    LDA #$14
+    STA $D621
+    
+    LDA #$01
+    STA $D622
+    
+    JSR $E5CB
+    
+    LDA #$02
+    STA $D620
+    
+    LDA #$16
+    STA $D621
+    
+    LDA #$01
+    STA $D622
+    
+    JSR $E5CB
+    
+    LDA #$45
+    STA $D620
+    
+    LDA #$18
+    STA $D621
+    
+    LDA #$01
+    STA $D622
+    
+    JSR $E5CB
+
+    RTS
+
+
+.byte $ad, $22, $d6, $29, $01
+.byte $c9, $01, $f0, $f7
+    RTS
 
 ; Entrypoint
 * = $00DDD5 
@@ -792,7 +868,8 @@ ENTRYPOINT
 .byte $34, $12, $8d, $21, $43, $ee, $e0, $e6, $d0, $03, $ee, $e1, $e6, $ee, $e3, $e6
 .byte $d0, $03, $ee, $e4, $e6, $ad, $e0, $e6, $c9, $07, $d0, $e3, $ad, $e1, $e6, $c9
 ; df00
-.byte $ef, $d0, $dc, $68, $85, $01, $60
+.byte $ef, $d0, $dc, $68, $85, $01
+    RTS
 
 .endlogical
 
