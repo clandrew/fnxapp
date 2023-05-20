@@ -861,10 +861,18 @@ ENTRYPOINT
     LDA #(Mstr_Ctrl_Text_Mode_En|Mstr_Ctrl_Text_Overlay|Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En|Mstr_Ctrl_TileMap_En|Mstr_Ctrl_Sprite_En)
     STA @w MASTER_CTRL_REG_L 
     LDA #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
-    STA @w MASTER_CTRL_REG_H 
+    STA @w MASTER_CTRL_REG_H
+    
+    JSR $E6C0
+    JSR $E6AA
+    JSR $E680
 
-.byte $20, $c0, $e6, $20, $aa, $e6, $20
-.byte $80, $e6, $a9, $e0, $85, $48, $20, $40, $e0, $a9, $00, $85, $49, $a9, $00, $85
+    LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK
+    STA $48 ; CursorColor
+
+    JSR $E040 ; JSR CearScreen
+
+.byte $a9, $00, $85, $49, $a9, $00, $85
 .byte $4a, $a9, $00, $85, $4b, $a9, $c0, $85, $4c, $a9, $70, $85, $48, $a9, $59, $85
 .byte $30, $a9, $ef, $85, $31, $20, $8c, $e0, $64, $01, $a9, $01, $8d, $37, $e6, $a9
 .byte $00, $20, $00, $10, $64, $01, $4c, $56, $ef, $53, $70, $61, $63, $65, $20, $4f
