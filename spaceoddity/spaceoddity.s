@@ -2,7 +2,7 @@
 
 .include "api.asm"
 .include "TinyVicky_Def.asm"
-.include "f256jr_registers.asm"
+.include "includes\f256jr_registers.asm"
 
 ; Constants
 VIA_ORB_IRB = $DC00
@@ -38,6 +38,7 @@ SIDFILE='Space_Oddity_2SID'
         .byte 0
 
 * = $000800 
+    .logical $1000
     JMP $1148
     JMP $11CC
     JMP $12A6
@@ -196,6 +197,7 @@ SIDFILE='Space_Oddity_2SID'
 .byte $26, $10, $9d, $22, $11, $60, $a2, $00, $20, $04, $19, $a2, $07, $20, $0e, $19
 .byte $a2, $0e, $20, $0e, $19, $a2, $15, $20, $0e, $19, $a2, $1c, $20, $0e, $19, $a2
 .byte $23, $20, $0e, $19, $c8, $c8, $c8, $b9, $7a, $2c, $8d, $6c, $2c, $b9, $7b, $2c
+.endlogical
 
 * = $001100 
 .byte $8d, $6d, $2c, $60, $8e, $28, $19, $0a, $0a, $0a, $0a, $8d, $18, $19, $bd, $a2
@@ -798,7 +800,7 @@ CLEAR
 ; Entrypoint
 * = $00DDD5 
 .logical $E5D5
-ENTRYPOINT
+F256_RESET
     CLC     ; disable interrupts
     SEI
     LDX #$FF
@@ -887,19 +889,21 @@ Init_GameFont
     STA MMU_IO_CTRL
 
 CopyMemSmall
-    LDA #$07
-    STA $E6E0
+                    ;		AssignWord(FONT_FANTASY,.asrcaddr)
+    LDA #$07 ; #<(FONT_FANTASY)
+    STA $E6E0 ; .srcaddr
 
-    LDA #$E7
-    STA $E6E1
+    LDA #$E7 ; #>(FONT_FANTASY)
+    STA $E6E1 ; .srcaddr+1
     
-    LDA #$00
-    STA $E6E3
+    LDA #$00 ; #<(FONT_MEM) 
+    STA $E6E3 ; .destaddr
     
-    LDA #$C0
-    STA $E6E4
+    LDA #$C0 ; #>(FONT_MEM)
+    STA $E6E4 ; .destaddr+1
 
     LDY #$00
+
     LDA $1234
     STA $4321
 
@@ -932,6 +936,7 @@ CopyMemSmall
 .endlogical
 
 * = $00E000
+; FONT_FANTASY? 2048 bytes
 .byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $1c
 .byte $1c, $1c, $1c, $00, $1c, $1c, $00, $33, $33, $66, $00, $00, $00, $00, $00, $36
 .byte $7f, $36, $36, $36, $7f, $36, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
@@ -1073,8 +1078,11 @@ TX_GAMETITLE
 ; Write the system vectors
 * = $00F7F8
 .logical $FFF8
-.word $4000    ; Abort vector
-.word $FFF9    ; NMI vector
-.word ENTRYPOINT 
-.word $FFF9    ; IRQ/BRK
+.byte $00
+F256_DUMMYIRQ       ; Abort vector
+    RTI
+
+.word F256_DUMMYIRQ ; nmi
+.word F256_RESET    ; reset
+.word F256_DUMMYIRQ ; irq
 .endlogical
