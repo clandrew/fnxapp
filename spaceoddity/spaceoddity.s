@@ -711,11 +711,10 @@ CLEAR
     INA
     STA MMU_MEM_BANK_7 ; map $00e000 to bank 7
     LDA MMU_MEM_CTRL
+    AND #~(MMU_EDIT_EN)
+    STA MMU_MEM_CTRL  ; disable mmu edit, use mmu lut 0 ;<<<="LockMMU	; disable mmu edit, use mmu lut 0"
 
-.byte $29
-
-* = $00DE00
-.byte $7f, $85, $00, $64, $01, $9c, $00, $dc, $9c, $01, $dc, $a9, $01, $8d, $a6, $d6
+.byte $64, $01, $9c, $00, $dc, $9c, $01, $dc, $a9, $01, $8d, $a6, $d6
 .byte $a9, $ff, $8d, $68, $d6, $8d, $69, $d6, $8d, $6c, $d6, $8d, $6d, $d6, $ad, $60
 .byte $d6, $8d, $60, $d6, $ad, $61, $d6, $8d, $61, $d6, $20, $4c, $e5, $20, $95, $e4
 .byte $20, $00, $e2, $58, $4c, $07, $ef, $00, $a9, $05, $c9, $06, $f0, $09, $ce, $37
