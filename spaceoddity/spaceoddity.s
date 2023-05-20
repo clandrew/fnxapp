@@ -861,17 +861,17 @@ CLEAR
 ; 0x0FFFx in memory.
 
 ; Abort vector
+
 * = $00F7F8
+.logical $FFF8
 .word $4000
 
 ; NMI vector
-* = $00F7FA
 .word $FFF9
 
 ; Reset vector set to 0xE5D5 = compile offset DDD5
-* = $00F7FC
 .word $E5D5
 
 ; IRQ/BRK
-* = $00F7FE
 .word $FFF9
+.endlogical
