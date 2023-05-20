@@ -2,20 +2,9 @@
 
 .include "api.asm"
 .include "TinyVicky_Def.asm"
+.include "f256jr_registers.asm"
 
 ; Constants
-MMU_MEM_CTRL = $0000
-MMU_EDIT_EN = $80
-MMU_IO_CTRL = $0001
-MMU_MEM_BANK_0 = $0008
-MMU_MEM_BANK_1 = $0009
-MMU_MEM_BANK_2 = $000A
-MMU_MEM_BANK_3 = $000B
-MMU_MEM_BANK_4 = $000C
-MMU_MEM_BANK_5 = $000D
-MMU_MEM_BANK_6 = $000E
-MMU_MEM_BANK_7 = $000F
-
 VIA_ORB_IRB = $DC00
 VIA_ORB_IRA = $DC01
 
@@ -29,6 +18,19 @@ INT_EDGE_REG0 = $D668
 INT_EDGE_REG1 = $D669
 INT_MASK_REG0 = $D66C
 INT_MASK_REG1 = $D66D
+
+;const SIDSTART=$a000,SIDINIT=$a000,SIDPLAY=$a003,SIDMODE=5,SIDFILE='toccata_v3.a000'
+;const SIDSTART=$a000,SIDINIT=$a048,SIDPLAY=$a021,SIDMODE=5,SIDFILE='viola_duet.a000'
+;const SIDSTART=$1000,SIDINIT=$1000,SIDPLAY=$1003,SIDMODE=5,SIDFILE='Super_Mario_Bros_2SID'
+;const SIDSTART=$1000,SIDINIT=$1000,SIDPLAY=$1003,SIDMODE=5,SIDFILE='mrdo'
+;const SIDSTART=$4000,SIDINIT=$4000,SIDPLAY=$4003,SIDMODE=5,SIDFILE='Airwolf_2SID'
+;const SIDSTART=$1000,SIDINIT=$1000,SIDPLAY=$1003,SIDMODE=5,SIDFILE='Space_Oddity_2SID'
+;const SIDSTART=$0FF6,SIDINIT=$0FF6,SIDPLAY=$1003,SIDMODE=6,SIDFILE='Girl_from_Tomorrow_2SID'
+SIDSTART=$1000
+SIDINIT=$1000
+SIDPLAY=$1003
+SIDMODE=5
+SIDFILE='Space_Oddity_2SID'
 
 ; Code
 
@@ -878,12 +880,13 @@ ENTRYPOINT
 .logical $e6c0
 Init_GameFont
     LDA MMU_IO_CTRL
-    PHA
-    STZ MMU_IO_CTRL
+    PHA                ;<<<="PushMMUIO"
+    STZ MMU_IO_CTRL    ;<<<="SetMMUIO"
 
-    LDA #$01
-    STA $01
+    LDA #MMU_IO_PAGE_1
+    STA MMU_IO_CTRL
 
+CopyMemSmall
     LDA #$07
     STA $E6E0
 
@@ -1007,7 +1010,7 @@ MAIN
     LDA #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
     STA @w MASTER_CTRL_REG_H
     
-    JSR $E6C0
+    JSR Init_GameFont
     JSR $E6AA
     JSR $E680
 
@@ -1046,13 +1049,18 @@ MAIN
     
     JSR PrintAnsiString
 
-    STZ $01
+    STZ MMU_IO_CTRL         ;<<<="SetMMUIO"
     LDA #$01
-    STA $E637
+    STA $E637 ; SIDSpeed
 
     LDA #$00
-    JSR $1000
-    STZ $01
+    JSR SIDINIT
+
+                            ;	SID_Initialize(0,0)
+                            ;	SID_SetVolume(-1)
+                            ;	SID_Play()
+                            ;<<<="SetMMUIO"
+    STZ MMU_IO_CTRL
 
 Lock
     JMP Lock
