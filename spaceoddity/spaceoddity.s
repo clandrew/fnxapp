@@ -872,8 +872,23 @@ ENTRYPOINT
 
     JSR $E040 ; JSR CearScreen
 
-.byte $a9, $00, $85, $49, $a9, $00, $85
-.byte $4a, $a9, $00, $85, $4b, $a9, $c0, $85, $4c, $a9, $70, $85, $48, $a9, $59, $85
+    ; map in title screen code as $06000
+    ;	lda MMU_MEM_CTRL : ora #MMU_EDIT_EN : sta MMU_MEM_CTRL ;<<<=";	UnlockMMU"
+    ;	lda #(TitleScreenCode/$2000)
+    ;	sta MMU_MEM_BANK_3
+    ;	lda MMU_MEM_CTRL : and #~(MMU_EDIT_EN) : sta MMU_MEM_CTRL ;<<<=";	LockMMU"
+    ;	jsr ShowTitle
+
+    LDA #$00
+    STA $49 ; CursorColumn
+    
+    LDA #$00
+    STA $4A ; CursorLine
+    
+    LDA #$00 ; #<(VKY_TEXT_MEMORY+val(copy('#0',2))*40)
+    STA $4B ; CursorPointer
+
+.byte $a9, $c0, $85, $4c, $a9, $70, $85, $48, $a9, $59, $85
 .byte $30, $a9, $ef, $85, $31, $20, $8c, $e0, $64, $01, $a9, $01, $8d, $37, $e6, $a9
 .byte $00, $20, $00, $10, $64, $01, $4c, $56, $ef, $53, $70, $61, $63, $65, $20, $4f
 .byte $64, $64, $69, $74, $79, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
