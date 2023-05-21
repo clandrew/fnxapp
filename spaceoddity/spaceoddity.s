@@ -3,14 +3,12 @@
 .include "api.asm"
 .include "TinyVicky_Def.asm"
 .include "interrupt_def.asm"
+.include "C256_Jr_SID_def.asm"
 .include "includes/f256jr_registers.asm"
 
 ; Constants
 VIA_ORB_IRB = $DC00
 VIA_ORB_IRA = $DC01
-
-RNG_CTRL    = $D6A6
-RNG_ENABLE  = $01
 
 ;const SIDSTART=$a000,SIDINIT=$a000,SIDPLAY=$a003,SIDMODE=5,SIDFILE='toccata_v3.a000'
 ;const SIDSTART=$a000,SIDINIT=$a048,SIDPLAY=$a021,SIDMODE=5,SIDFILE='viola_duet.a000'
@@ -631,33 +629,55 @@ PrintAnsiString
 * = $00DA00
 .logical $E200
 Init_Keyboard
-    ; 8-bit accumulator, X, Y
     STZ $01
     LDA #$30
     STA $D640
     STZ $D640
     STZ $E0EB
     STZ $E0E9
-
     LDX #$00
 
-CLEAR
+Keyboard_SetScancodeBuffer
     STA $E0EF
     INX
     CPX #$80
-    BNE CLEAR
+    BNE Keyboard_SetScancodeBuffer
 
     LDA #$80
     LDX #$00
-    STA $E170,X       
+    
+    Keyboard_Loop
+    STA $E170,X 
+    INX
+    CPX #$90
+    BNE Keyboard_Loop
 
-.byte $e8, $e0, $90, $d0, $f8, $a9, $00, $8d, $6f, $e1, $60
-
+    LDA #$00
+    STA $E16F
+    RTS
 
 KeyboardIRQ 
-.byte $ad, $44, $d6, $29, $01, $d0
-.byte $1a, $ad, $e9, $e0, $aa, $1a, $29, $7f, $cd, $eb, $e0, $f0, $0b, $8d
-.byte $e9, $e0, $ad, $42, $d6, $9d, $ef, $e0, $80, $e2, $ad, $42, $d6
+    LDA KBD_MS_RD_STATUS
+    AND #KBD_FIFO_Empty
+    BNE KeyboardIRQ_Done
+    LDA $E0E9 ; ScancodeBufferWPos
+    TAX
+    INA
+    AND #$7F
+    CMP $E0EB ; ScancodeBufferRPos
+
+    BEQ KeyboardIRQ_Load
+
+    STA $E0E9 ; ScancodeBufferWPos
+    LDA KBD_RD_SCAN_REG
+    STA $E0EF,x ; ScancodeBuffer,x
+
+    BRA KeyboardIRQ
+
+    KeyboardIRQ_Load
+    LDA KBD_RD_SCAN_REG
+
+    KeyboardIRQ_Done
     RTS
 
 GetScancode
@@ -700,26 +720,34 @@ BufferEmpty
 .byte $d0, $0a, $ad, $6f, $e1, $29, $fd, $8d, $6f, $e1, $80, $24, $e0, $c4, $f0, $04
 .byte $e0, $c5, $d0, $0a, $ad, $6f, $e1, $29, $fb, $8d, $6f, $e1, $80, $12, $e0, $c6
 .byte $f0, $04, $e0, $c7, $d0, $0a, $ad, $6f, $e1, $29, $f7, $8d, $6f, $e1, $80, $00
-.byte $a9, $00, $38, $fa, $60, $00, $92, $00, $8e, $8c, $8a, $8b, $95, $00, $93, $91
-.byte $8f, $8d, $09, $60, $00, $00, $c2, $c0, $00, $c4, $71, $31, $00, $00, $00, $7a
-.byte $73, $61, $77, $32, $c6, $00, $63, $78, $64, $65, $34, $33, $c7, $00, $00, $76
-.byte $66, $74, $72, $35, $00, $00, $6e, $62, $68, $67, $79, $36, $00, $00, $00, $6d
-.byte $6a, $75, $37, $38, $00, $00, $2c, $6b, $69, $6f, $30, $39, $00, $00, $2e, $2f
-.byte $6c, $3b, $70, $2d, $00, $00, $00, $2c, $00, $5b, $3d, $00, $00, $ce, $c1, $0d
-.byte $5d, $00, $5c, $00, $00, $00, $00, $00, $00, $00, $00, $08, $00, $00, $00, $00
-.byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $1b, $cf, $94, $00, $00
-.byte $00, $00, $00, $00, $00, $00, $00, $00, $90, $00, $00, $00, $00, $00, $00, $00
-; dc00
-.byte $00, $00, $00, $00, $00, $00, $9e, $00, $9a, $98, $96, $97, $a1, $00, $9f, $9d
-.byte $9b, $99, $09, $7e, $00, $00, $c2, $c0, $00, $c4, $51, $21, $00, $00, $00, $5a
-.byte $53, $41, $57, $40, $c6, $00, $43, $58, $44, $45, $24, $23, $c7, $00, $00, $56
-.byte $46, $54, $52, $25, $00, $00, $4e, $42, $48, $47, $59, $5e, $00, $00, $00, $4d
-.byte $4a, $55, $26, $2a, $00, $00, $3c, $4b, $49, $4f, $29, $28, $00, $00, $2e, $3f
-.byte $4c, $3a, $50, $5f, $00, $00, $00, $2c, $00, $7b, $2b, $00, $00, $ce, $c1, $0d
-.byte $7d, $00, $7c, $00, $00, $00, $00, $00, $00, $00, $00, $08, $00, $00, $00, $00
-.byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $1b, $cf, $a0, $00, $00
-.byte $00, $00, $00, $00, $00, $00, $00, $00, $9c, $00, $00, $00, $00, $00, $00, $00
-.byte $00, $00, $00, $00, $00
+.byte $a9, $00, $38, $fa, $60
+
+SCSET2
+; function keys f1-f24 = ascii $8a-$a1
+;
+;	   0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
+.byte $00, $92, $00, $8e, $8c, $8a, $8b, $95, $00, $93, $91, $8f, $8d, $09, $60, $00
+.byte $00, $c2, $c0, $00, $c4, $71, $31, $00, $00, $00, $7a, $73, $61, $77, $32, $c6
+.byte $00, $63, $78, $64, $65, $34, $33, $c7, $00, $00, $76, $66, $74, $72, $35, $00
+.byte $00, $6e, $62, $68, $67, $79, $36, $00, $00, $00, $6d, $6a, $75, $37, $38, $00
+.byte $00, $2c, $6b, $69, $6f, $30, $39, $00, $00, $2e, $2f, $6c, $3b, $70, $2d, $00
+.byte $00, $00, $2c, $00, $5b, $3d, $00, $00, $ce, $c1, $0d, $5d, $00, $5c, $00, $00
+.byte $00, $00, $00, $00, $00, $00, $08, $00, $00, $00, $00, $00, $00, $00, $00, $00
+.byte $00, $00, $00, $00, $00, $00, $1b, $cf, $94, $00, $00, $00, $00, $00, $00, $00
+.byte $00, $00, $00, $90, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+
+SCSET21
+; shift
+;	    0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
+.byte $00, $9e, $00, $9a, $98, $96, $97, $a1, $00, $9f, $9d, $9b, $99, $09, $7e, $00
+.byte $00, $c2, $c0, $00, $c4, $51, $21, $00, $00, $00, $5a, $53, $41, $57, $40, $c6
+.byte $00, $43, $58, $44, $45, $24, $23, $c7, $00, $00, $56, $46, $54, $52, $25, $00
+.byte $00, $4e, $42, $48, $47, $59, $5e, $00, $00, $00, $4d, $4a, $55, $26, $2a, $00
+.byte $00, $3c, $4b, $49, $4f, $29, $28, $00, $00, $2e, $3f, $4c, $3a, $50, $5f, $00
+.byte $00, $00, $2c, $00, $7b, $2b, $00, $00, $ce, $c1, $0d, $7d, $00, $7c, $00, $00 
+.byte $00, $00, $00, $00, $00, $00, $08, $00, $00, $00, $00, $00, $00, $00, $00, $00
+.byte $00, $00, $00, $00, $00, $00, $1b, $cf, $a0, $00, $00, $00, $00, $00, $00, $00
+.byte $00, $00, $00, $9c, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
 Init_Graphics
     LDA $01
