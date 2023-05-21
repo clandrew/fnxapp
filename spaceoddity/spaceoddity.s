@@ -759,7 +759,16 @@ SpecialKeyDown
 .byte $e0, $c3, $d0, $0a, $ad, $6f, $e1, $09, $02, $8d, $6f, $e1, $80, $40, $e0, $c4
 .byte $f0, $04, $e0, $c5, $d0, $0a, $ad, $6f, $e1, $09, $04, $8d, $6f, $e1, $80, $2e
 .byte $e0, $c6, $f0, $04, $e0, $c7, $d0, $0a, $ad, $6f, $e1, $09, $08, $8d, $6f, $e1
-.byte $80, $1c, $e0, $cf, $d0, $0a, $ad, $6f, $e1, $49, $10, $8d, $6f, $e1, $80, $0e
+
+.byte $80, $1c ; BRA
+    CPX #$CF
+
+.byte $d0, $0a ; BNE
+
+    LDA $E16F ; KeyboardState
+    EOR #$10 #KEYBOARDSTATES.NUMLK
+    STA $E16F ; KeyboardState
+.byte $80, $0e ; BRA
 .endlogical
 
 ; db00
