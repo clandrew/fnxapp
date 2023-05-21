@@ -124,142 +124,1041 @@ L11B5           LDA   #$FF
                 LDX   #$00
                 JMP   $1BE8
 
-MARKER
-.byte $a5, $fe, $48, $a5
-.byte $ff, $48, $a2, $0e, $20, $f2, $12, $a2, $23, $20, $f2, $12, $a2, $07, $20, $f2
-.byte $12, $a2, $1c, $20, $f2, $12, $a2, $00, $20, $f2, $12, $a2, $15, $20, $f2, $12
-.byte $a2, $0e, $38, $bd, $24, $11, $9d, $06, $d4, $bd, $23, $11, $9d, $05, $d4, $bd
-; a00
-.byte $1e, $11, $9d, $00, $d4, $bd, $1f, $11, $9d, $01, $d4, $bd, $20, $11, $9d, $02
-.byte $d4, $bd, $21, $11, $9d, $03, $d4, $bd, $22, $11, $9d, $04, $d4, $bd, $39, $11
-.byte $9d, $06, $d5, $bd, $38, $11, $9d, $05, $d5, $bd, $33, $11, $9d, $00, $d5, $bd
-.byte $34, $11, $9d, $01, $d5, $bd, $35, $11, $9d, $02, $d5, $bd, $36, $11, $9d, $03
-.byte $d5, $bd, $37, $11, $9d, $04, $d5, $8a, $e9, $07, $aa, $b0, $a6, $a9, $01, $09
-.byte $a0, $8d, $17, $d4, $a9, $0f, $09, $10, $8d, $18, $d4, $18, $a9, $00, $f0, $0a
-.byte $ae, $14, $17, $7d, $78, $10, $a8, $b9, $a4, $19, $69, $0c, $69, $00, $8d, $16
-.byte $d4, $a9, $00, $8d, $15, $d4, $a9, $00, $09, $00, $8d, $17, $d5, $a9, $0f, $09
-.byte $00, $8d, $18, $d5, $18, $a9, $00, $f0, $0a, $ae, $7d, $16, $7d, $78, $10, $a8
-.byte $b9, $a4, $19, $69, $00, $69, $00, $8d, $16, $d5, $a9, $00, $8d, $15, $d5, $68
-.byte $85, $ff, $68, $85, $fe, $60, $a5, $fe, $48, $a5, $ff, $48, $a2, $0e, $20, $cd
-.byte $12, $a2, $23, $20, $cd, $12, $a2, $07, $20, $cd, $12, $a2, $1c, $20, $cd, $12
-.byte $a2, $00, $20, $cd, $12, $a2, $15, $20, $cd, $12, $4c, $f0, $11, $bd, $52, $10
-.byte $30, $d3, $bc, $7a, $10, $b9, $9a, $2c, $85, $fe, $b9, $ad, $2c, $85, $ff, $a0
-.byte $07, $b1, $fe, $30, $0a, $29, $40, $d0, $03, $4c, $18, $18, $4c, $a7, $17, $4c
-.byte $75, $16, $bc, $f5, $10, $bd, $4d, $10, $c8, $38, $f9, $6b, $2c, $f0, $07, $50
-; b00
-.byte $0c, $bc, $f4, $10, $a9, $00, $9d, $4d, $10, $98, $9d, $f5, $10, $bd, $4d, $10
-.byte $fe, $4d, $10, $c9, $00, $f0, $03, $4c, $15, $14, $bc, $76, $10, $b9, $bf, $2c
-.byte $85, $fe, $b9, $27, $2d, $85, $ff, $a9, $00, $9d, $79, $10, $9d, $7b, $10, $a9
-.byte $0f, $8d, $55, $12, $a9, $0f, $8d, $7e, $12, $bd, $a4, $10, $f0, $08, $20, $07
-.byte $1d, $a9, $00, $9d, $a4, $10, $bc, $4f, $10, $bd, $4c, $10, $d0, $0f, $b1, $fe
-.byte $c9, $70, $90, $0e, $c9, $78, $b0, $0a, $e9, $6d, $9d, $4c, $10, $de, $4c, $10
-.byte $a9, $00, $c9, $00, $30, $05, $9d, $77, $10, $10, $24, $29, $7f, $9d, $77, $10
-.byte $c8, $b1, $fe, $30, $05, $9d, $79, $10, $10, $15, $29, $7f, $9d, $79, $10, $c8
-.byte $b1, $fe, $9d, $7b, $10, $29, $e0, $d0, $06, $c8, $b1, $fe, $9d, $7c, $10, $98
-.byte $9d, $4f, $10, $bc, $f5, $10, $b9, $6c, $2c, $29, $7f, $c9, $02, $10, $03, $4c
-.byte $26, $14, $a9, $02, $bc, $77, $10, $f0, $04, $c0, $60, $90, $03, $4c, $c1, $15
-.byte $bc, $7b, $10, $c0, $03, $f0, $f6, $bc, $ca, $10, $c8, $f0, $f0, $bc, $79, $10
-.byte $f0, $06, $c0, $3f, $f0, $e7, $30, $03, $bc, $7a, $10, $48, $b9, $9a, $2c, $85
-.byte $fe, $b9, $ad, $2c, $85, $ff, $68, $a0, $00, $31, $fe, $f0, $28, $a9, $fe, $9d
-.byte $27, $10, $3d, $26, $10, $9d, $26, $10, $a0, $02, $b1, $fe, $9d, $24, $11, $88
-.byte $b1, $fe, $9d, $23, $11, $88, $b1, $fe, $29, $04, $f0, $09, $a9, $18, $9d, $26
-; c00
-.byte $10, $9d, $22, $11, $60, $bc, $7a, $10, $b9, $9a, $2c, $85, $fe, $b9, $ad, $2c
-.byte $85, $ff, $4c, $d1, $15, $c9, $02, $10, $73, $bc, $76, $10, $b9, $bf, $2c, $85
-.byte $fe, $b9, $27, $2d, $85, $ff, $bc, $4f, $10, $bd, $a5, $10, $9d, $d0, $10, $bd
-.byte $4c, $10, $d0, $43, $c8, $b1, $fe, $c9, $ff, $d0, $3c, $bc, $4e, $10, $c8, $20
-.byte $2a, $19, $10, $2a, $c9, $fe, $d0, $06, $de, $4d, $10, $4c, $c1, $15, $c9, $ff
-.byte $f0, $0d, $20, $77, $1a, $c8, $20, $2a, $19, $c9, $ff, $f0, $18, $d0, $e0, $c8
-.byte $20, $2a, $19, $10, $05, $20, $04, $19, $a9, $00, $a8, $4c, $3f, $14, $9d, $76
-.byte $10, $98, $9d, $4e, $10, $a0, $00, $98, $9d, $4f, $10, $bc, $f5, $10, $b9, $6c
-.byte $2c, $29, $7f, $c9, $03, $30, $0a, $a9, $01, $4c, $a4, $13, $f0, $03, $4c, $c1
-.byte $15, $a0, $ff, $bd, $79, $10, $f0, $09, $c9, $1f, $10, $05, $9d, $7a, $10, $a0
-.byte $3f, $8c, $ff, $14, $bc, $7a, $10, $d0, $03, $4c, $f4, $14, $b9, $9a, $2c, $85
-.byte $fe, $b9, $ad, $2c, $85, $ff, $bd, $77, $10, $d0, $06, $20, $2b, $1b, $4c, $d1
-.byte $15, $c9, $60, $30, $06, $20, $a5, $1a, $4c, $d1, $15, $18, $a0, $09, $71, $fe
-.byte $18, $7d, $d0, $10, $9d, $78, $10, $a9, $03, $dd, $7b, $10, $f0, $16, $7d, $ca
-.byte $10, $b0, $0c, $a9, $3f, $dd, $79, $10, $d0, $10, $a9, $7f, $9d, $cc, $10, $a9
-.byte $83, $9d, $ca, $10, $20, $2b, $1b, $4c, $cf, $18, $a0, $00, $b1, $fe, $29, $ff
-; d00
-.byte $8d, $09, $15, $29, $30, $9d, $ca, $10, $a9, $1a, $29, $08, $f0, $10, $bc, $78
-.byte $10, $b9, $af, $19, $9d, $1f, $11, $a0, $0f, $b1, $fe, $9d, $26, $10, $a9, $10
-.byte $9d, $50, $10, $a9, $ff, $9d, $27, $10, $9d, $52, $10, $a0, $07, $b1, $fe, $9d
-.byte $f6, $10, $20, $54, $19, $a0, $08, $b1, $fe, $9d, $f8, $10, $a8, $b9, $8b, $2c
-.byte $9d, $f9, $10, $2c, $09, $15, $70, $07, $a0, $0a, $b1, $fe, $9d, $51, $10, $2c
-.byte $09, $15, $30, $5a, $a0, $0b, $b1, $fe, $a8, $e0, $15, $90, $2a, $b1, $fe, $f0
-.byte $0a, $c9, $ff, $f0, $0e, $8e, $7d, $16, $8c, $81, $16, $bd, $a0, $10, $0d, $77
-.byte $12, $d0, $0e, $ec, $7d, $16, $d0, $03, $8c, $81, $16, $bd, $a1, $10, $2d, $77
-.byte $12, $8d, $77, $12, $4c, $ae, $15, $b1, $fe, $f0, $0a, $c9, $ff, $f0, $0e, $8e
-.byte $14, $17, $8c, $18, $17, $bd, $a0, $10, $0d, $4e, $12, $d0, $0e, $ec, $14, $17
-.byte $d0, $03, $8c, $18, $17, $bd, $a1, $10, $2d, $4e, $12, $8d, $4e, $12, $a0, $04
-.byte $b1, $fe, $9d, $24, $11, $88, $b1, $fe, $9d, $23, $11, $20, $2b, $1b, $4c, $cf
-.byte $18, $bc, $7a, $10, $d0, $01, $60, $b9, $9a, $2c, $85, $fe, $b9, $ad, $2c, $85
-.byte $ff, $bc, $ca, $10, $f0, $4f, $10, $42, $c0, $82, $f0, $6c, $10, $03, $4c, $63
-.byte $16, $c0, $ff, $f0, $26, $bc, $78, $10, $b9, $17, $1a, $fd, $22, $10, $8d, $f9
-.byte $15, $b9, $af, $19, $fd, $23, $10, $a8, $a9, $c7, $b0, $5e, $7d, $cb, $10, $98
-; e00
-.byte $7d, $cc, $10, $90, $43, $20, $d9, $1b, $20, $5b, $19, $bc, $78, $10, $b9, $17
-.byte $1a, $9d, $22, $10, $b9, $af, $19, $4c, $72, $16, $bc, $cd, $10, $30, $15, $de
-.byte $cd, $10, $4c, $75, $16, $bd, $cb, $10, $18, $7d, $cd, $10, $9d, $cb, $10, $90
-.byte $03, $fe, $cc, $10, $bd, $cf, $10, $d0, $03, $bd, $ce, $10, $38, $e9, $01, $9d
-.byte $cf, $10, $0a, $dd, $ce, $10, $90, $1b, $bd, $22, $10, $fd, $cb, $10, $9d, $22
-.byte $10, $bd, $23, $10, $fd, $cc, $10, $4c, $72, $16, $fd, $cb, $10, $98, $fd, $cc
-.byte $10, $90, $a2, $bd, $22, $10, $7d, $cb, $10, $9d, $22, $10, $bd, $23, $10, $7d
-.byte $cc, $10, $9d, $23, $10, $e0, $15, $b0, $03, $4c, $13, $17, $e0, $0f, $d0, $43
-.byte $a0, $00, $b1, $fe, $30, $40, $c8, $c9, $00, $f0, $69, $ee, $88, $16, $18, $b1
-.byte $fe, $10, $17, $09, $f8, $6d, $9b, $12, $08, $29, $07, $8d, $9b, $12, $b1, $fe
-.byte $49, $ff, $4a, $4a, $4a, $49, $ff, $4c, $bc, $16, $29, $07, $6d, $9b, $12, $c9
-.byte $08, $08, $29, $07, $8d, $9b, $12, $b1, $fe, $4a, $4a, $4a, $28, $6d, $94, $12
-.byte $8d, $94, $12, $4c, $10, $17, $c9, $fe, $f0, $04, $90, $0f, $b0, $42, $c8, $b1
-.byte $fe, $cd, $81, $16, $f0, $3a, $a8, $b1, $fe, $10, $2d, $48, $29, $70, $8d, $80
-.byte $12, $68, $0a, $0a, $0a, $0a, $8d, $79, $12, $c8, $b1, $fe, $8d, $94, $12, $a9
-.byte $00, $8d, $9b, $12, $c8, $b1, $fe, $10, $0b, $c9, $90, $b0, $07, $29, $0f, $8d
-; f00
-.byte $77, $12, $a9, $00, $8d, $86, $12, $c8, $8c, $81, $16, $a9, $00, $8d, $88, $16
-.byte $4c, $a7, $17, $e0, $00, $d0, $43, $a0, $36, $b1, $fe, $30, $40, $c8, $c9, $07
-.byte $f0, $69, $ee, $1f, $17, $18, $b1, $fe, $10, $17, $09, $f8, $6d, $72, $12, $08
-.byte $29, $07, $8d, $72, $12, $b1, $fe, $49, $ff, $4a, $4a, $4a, $49, $ff, $4c, $53
-.byte $17, $29, $07, $6d, $72, $12, $c9, $08, $08, $29, $07, $8d, $72, $12, $b1, $fe
-.byte $4a, $4a, $4a, $28, $6d, $6b, $12, $8d, $6b, $12, $4c, $a7, $17, $c9, $fe, $f0
-.byte $04, $90, $0f, $b0, $42, $c8, $b1, $fe, $cd, $18, $17, $f0, $3a, $a8, $b1, $fe
-.byte $10, $2d, $48, $29, $70, $8d, $57, $12, $68, $0a, $0a, $0a, $0a, $8d, $50, $12
-.byte $c8, $b1, $fe, $8d, $6b, $12, $a9, $00, $8d, $72, $12, $c8, $b1, $fe, $10, $0b
-.byte $c9, $90, $b0, $07, $29, $0f, $8d, $4e, $12, $a9, $00, $8d, $5d, $12, $c8, $8c
-.byte $18, $17, $a9, $00, $8d, $1f, $17, $bc, $51, $10, $b1, $fe, $30, $1e, $c8, $dd
-.byte $28, $10, $f0, $38, $fe, $28, $10, $b1, $fe, $10, $03, $de, $25, $10, $18, $7d
-.byte $24, $10, $9d, $24, $10, $90, $35, $fe, $25, $10, $b0, $30, $c9, $fe, $f0, $04
-.byte $90, $0f, $b0, $28, $c8, $b1, $fe, $dd, $51, $10, $f0, $20, $a8, $b1, $fe, $10
-.byte $12, $29, $7f, $9d, $25, $10, $c8, $b1, $fe, $9d, $24, $10, $c8, $b1, $fe, $9d
-.byte $f7, $10, $c8, $98, $9d, $51, $10, $a9, $00, $9d, $28, $10, $18, $bd, $f7, $10
-; 1000
-.byte $f0, $0a, $7d, $78, $10, $a8, $b9, $a4, $19, $f9, $a3, $19, $7d, $25, $10, $9d
-.byte $21, $11, $bd, $24, $10, $9d, $20, $11, $de, $52, $10, $10, $13, $bd, $f6, $10
-.byte $29, $3f, $9d, $52, $10, $bc, $50, $10, $b1, $fe, $c9, $fe, $f0, $0e, $90, $03
-.byte $4c, $be, $18, $c9, $10, $b0, $10, $9d, $52, $10, $90, $11, $c8, $b1, $fe, $30
-.byte $7d, $9d, $50, $10, $a8, $b1, $fe, $3d, $27, $10, $9d, $26, $10, $c8, $b1, $fe
-.byte $c8, $c9, $7f, $f0, $1f, $8d, $67, $18, $b1, $fe, $c9, $ff, $f0, $03, $9d, $a6
-.byte $10, $c8, $98, $9d, $50, $10, $a9, $00, $10, $41, $c9, $80, $f0, $50, $c9, $e0
-.byte $90, $3d, $b0, $37, $b1, $fe, $9d, $a6, $10, $bc, $f9, $10, $b9, $38, $2c, $c9
-.byte $7e, $d0, $14, $bc, $f8, $10, $b9, $8b, $2c, $9d, $f9, $10, $bd, $50, $10, $69
-.byte $02, $9d, $50, $10, $4c, $25, $18, $c9, $7f, $d0, $0d, $bc, $f8, $10, $b9, $8b
-.byte $2c, $9d, $f9, $10, $a8, $b9, $38, $2c, $fe, $f9, $10, $18, $7d, $78, $10, $29
-.byte $7f, $a8, $b9, $17, $1a, $9d, $22, $10, $b9, $af, $19, $9d, $23, $10, $bd, $22
-.byte $10, $7d, $a6, $10, $9d, $1e, $11, $bd, $23, $10, $69, $00, $9d, $1f, $11, $bd
-.byte $26, $10, $9d, $22, $11, $60, $a2, $00, $20, $04, $19, $a2, $07, $20, $0e, $19
-.byte $a2, $0e, $20, $0e, $19, $a2, $15, $20, $0e, $19, $a2, $1c, $20, $0e, $19, $a2
-.byte $23, $20, $0e, $19, $c8, $c8, $c8, $b9, $7a, $2c, $8d, $6c, $2c, $b9, $7b, $2c
 
-.byte $8d, $6d, $2c, $60, $8e, $28, $19, $0a, $0a, $0a, $0a, $8d, $18, $19, $bd, $a2
-.byte $10, $0a, $e9, $02, $aa, $4a, $18, $69, $00, $a8, $b9, $7a, $2c, $9d, $3c, $19
-.byte $c8, $b9, $7a, $2c, $9d, $3d, $19, $a2, $00, $60, $e0, $15, $90, $08, $e0, $1c
-.byte $f0, $1a, $10, $1c, $30, $12, $e0, $07, $f0, $06, $10, $08, $b9, $7f, $1d, $60
-.byte $b9, $af, $1d, $60, $b9, $df, $1d, $60, $b9, $0f, $1e, $60, $b9, $3f, $1e, $60
-.byte $b9, $6f, $1e, $60, $a0, $06, $b1, $fe, $9d, $cd, $10, $a0, $05, $b1, $fe, $48
-.byte $29, $0f, $0a, $9d, $ce, $10, $4a, $bc, $ca, $10, $c0, $20, $10, $01, $4a, $c0
-.byte $30, $d0, $02, $a9, $00, $9d, $cf, $10, $68, $29, $f0, $4a, $f0, $10, $4a, $7d
-.byte $78, $10, $a8, $c0, $cb, $b0, $0e, $c0, $6b, $b0, $0c, $b9, $a4, $19, $9d, $cb
-.byte $10, $a9, $00, $f0, $0b, $a0, $cb, $b9, $ac, $19, $9d, $cb, $10, $b9, $44, $19
-.byte $9d, $cc, $10, $60
+                LDA   $FE
+                PHA
+                LDA   $FF
+                PHA
+                LDX   #$0E
+                JSR   L12F2
+                LDX   #$23
+                JSR   L12F2
+                LDX   #$07
+                JSR   L12F2
+                LDX   #$1C
+                JSR   L12F2
+                LDX   #$00
+                JSR   L12F2
+                LDX   #$15
+                JSR   L12F2
+                LDX   #$0E
+                SEC
+L11F3           LDA   $1124,X
+                STA   $D406,X
+                LDA   $1123,X
+                STA   $D405,X
+                LDA   $111E,X
+                STA   $D400,X
+                LDA   $111F,X
+                STA   $D401,X
+                LDA   $1120,X
+                STA   $D402,X
+                LDA   $1121,X
+                STA   $D403,X
+                LDA   $1122,X
+                STA   $D404,X
+                LDA   $1139,X
+                STA   $D506,X
+                LDA   $1138,X
+                STA   $D505,X
+                LDA   $1133,X
+                STA   $D500,X
+                LDA   $1134,X
+                STA   $D501,X
+                LDA   $1135,X
+                STA   $D502,X
+                LDA   $1136,X
+                STA   $D503,X
+                LDA   $1137,X
+                STA   $D504,X
+                TXA
+                SBC   #$07
+                TAX
+                BCS   L11F3
+L124D           LDA   #$01
+L124F           ORA   #$A0
+                STA   $D417
+L1254           LDA   #$0F
+L1256           ORA   #$10
+                STA   $D418
+                CLC
+L125C           LDA   #$00
+                BEQ   L126A
+
+                .byte  $AE
+                .byte  $14
+                .byte  $17
+                .byte  $7D
+                .byte  $78
+                .byte  $10
+                .byte  $A8
+                .byte  $B9
+                .byte  $A4
+                .byte  $19
+
+L126A           ADC   #$0C
+                ADC   #$00
+                STA   $D416
+L1271           LDA   #$00
+                STA   $D415
+L1276           LDA   #$00
+L1278           ORA   #$00
+                STA   $D517
+L127D           LDA   #$0F
+L127F           ORA   #$00
+                STA   $D518
+                CLC
+L1285           LDA   #$00
+                BEQ   L1293
+
+                .byte  $AE
+                .byte  $7D
+                .byte  $16
+                .byte  $7D
+                .byte  $78
+                .byte  $10
+                .byte  $A8
+                .byte  $B9
+                .byte  $A4
+                .byte  $19
+
+L1293           ADC   #$00
+                ADC   #$00
+                STA   $D516
+L129A           LDA   #$00
+                STA   $D515
+                PLA
+                STA   $FF
+                PLA
+                STA   $FE
+                RTS
+
+                .byte  $A5
+                .byte  $FE
+                .byte  $48
+                .byte  $A5
+                .byte  $FF
+                .byte  $48
+                .byte  $A2
+                .byte  $0E
+                .byte  $20
+                .byte  $CD
+                .byte  $12
+                .byte  $A2
+                .byte  $23
+                .byte  $20
+                .byte  $CD
+                .byte  $12
+                .byte  $A2
+                .byte  $07
+                .byte  $20
+                .byte  $CD
+                .byte  $12
+                .byte  $A2
+                .byte  $1C
+                .byte  $20
+                .byte  $CD
+                .byte  $12
+                .byte  $A2
+                .byte  $00
+                .byte  $20
+                .byte  $CD
+                .byte  $12
+                .byte  $A2
+                .byte  $15
+                .byte  $20
+                .byte  $CD
+                .byte  $12
+                .byte  $4C
+                .byte  $F0
+                .byte  $11
+                .byte  $BD
+                .byte  $52
+                .byte  $10
+                .byte  $30
+                .byte  $D3
+                .byte  $BC
+                .byte  $7A
+                .byte  $10
+                .byte  $B9
+                .byte  $9A
+                .byte  $2C
+                .byte  $85
+                .byte  $FE
+                .byte  $B9
+                .byte  $AD
+                .byte  $2C
+                .byte  $85
+                .byte  $FF
+                .byte  $A0
+                .byte  $07
+                .byte  $B1
+                .byte  $FE
+
+                .byte $30
+                .byte $0A
+                .byte $29
+                .byte $40
+
+                .byte  $D0
+                .byte  $03
+                .byte  $4C
+                .byte  $18
+                .byte  $18
+                .byte  $4C
+                .byte  $A7
+                .byte  $17
+                .byte  $4C
+                .byte  $75
+                .byte  $16
+
+L12F2           LDY   $10F5,X
+                LDA   $104D,X
+                INY
+                SEC
+                SBC   $2C6B,Y
+                BEQ   L1306
+                BVC   L130D
+                LDY   $10F4,X
+                LDA   #$00
+L1306           STA   $104D,X
+                TYA
+                STA   $10F5,X
+L130D           LDA   $104D,X
+                INC   $104D,X
+                CMP   #$00
+                BEQ   L131A
+                JMP   L1415
+
+L131A           LDY   $1076,X
+                LDA   $2CBF,Y
+                STA   $FE
+                LDA   $2D27,Y
+                STA   $FF
+                LDA   #$00
+                STA   $1079,X
+                STA   $107B,X
+                LDA   #$0F
+                STA   L1254+1
+                LDA   #$0F
+                STA   L127D+1
+                LDA   $10A4,X
+                BEQ   L1346
+                JSR   $1D07
+                LDA   #$00
+                STA   $10A4,X
+L1346           LDY   $104F,X
+                LDA   $104C,X
+                BNE   L135D
+                LDA   ($FE),Y
+                CMP   #$70
+                BCC   L1362
+                CMP   #$78
+                BCS   L1362
+                SBC   #$6D
+                STA   $104C,X
+L135D           DEC   $104C,X
+                LDA   #$00
+L1362           CMP   #$00
+                BMI   L136B
+                STA   $1077,X
+                BPL   L138F
+
+L136B           AND   #$7F
+                STA   $1077,X
+                INY
+                LDA   ($FE),Y
+                BMI   L137A
+                STA   $1079,X
+                BPL   L138F
+
+L137A           AND   #$7F
+                STA   $1079,X
+                INY
+                LDA   ($FE),Y
+                STA   $107B,X
+                AND   #$E0
+                BNE   L138F
+                INY
+                LDA   ($FE),Y
+                STA   $107C,X
+L138F           TYA
+                STA   $104F,X
+                LDY   $10F5,X
+                LDA   $2C6C,Y
+                AND   #$7F
+                CMP   #$02
+                BPL   L13A2
+                JMP   L1426
+
+L13A2           LDA   #$02
+L13A4           LDY   $1077,X
+                BEQ   L13AD
+                CPY   #$60
+                BCC   L13B0
+L13AD           JMP   L15C1
+
+L13B0           LDY   $107B,X
+                CPY   #$03
+                BEQ   L13AD
+                LDY   $10CA,X
+                INY
+                BEQ   L13AD
+                LDY   $1079,X
+                BEQ   L13C8
+                CPY   #$3F
+                BEQ   L13AD
+                BMI   L13CB
+L13C8           LDY   $107A,X
+L13CB           PHA
+                LDA   $2C9A,Y
+                STA   $FE
+                LDA   $2CAD,Y
+                STA   $FF
+                PLA
+                LDY   #$00
+                AND   ($FE),Y
+                BEQ   L1405
+                LDA   #$FE
+                STA   $1027,X
+                AND   $1026,X
+                STA   $1026,X
+                LDY   #$02
+                LDA   ($FE),Y
+                STA   $1124,X
+                DEY
+                LDA   ($FE),Y
+                STA   $1123,X
+                DEY
+                LDA   ($FE),Y
+                AND   #$04
+                BEQ   L1405
+                LDA   #$18
+                STA   $1026,X
+                STA   $1122,X
+                RTS
+
+L1405           LDY   $107A,X
+                LDA   $2C9A,Y
+                STA   $FE
+                LDA   $2CAD,Y
+                STA   $FF
+                JMP   L15D1
+
+L1415           CMP   #$02
+                BPL   L148C
+                LDY   $1076,X
+                LDA   $2CBF,Y
+                STA   $FE
+                LDA   $2D27,Y
+                STA   $FF
+L1426           LDY   $104F,X
+                LDA   $10A5,X
+                STA   $10D0,X
+                LDA   $104C,X
+                BNE   L1477
+                INY
+                LDA   ($FE),Y
+                CMP   #$FF
+                BNE   L1477
+                LDY   $104E,X
+                INY
+L143F           JSR   L192A
+                BPL   L146E
+                CMP   #$FE
+                BNE   L144E
+                DEC   $104D,X
+                JMP   L15C1
+
+L144E           CMP   #$FF
+                BEQ   L145F
+                JSR   $1A77
+                INY
+                JSR   L192A
+                CMP   #$FF
+                BEQ   L1475
+                BNE   L143F
+
+L145F           INY
+                JSR   L192A
+                BPL   L146A
+                JSR   L1904
+                LDA   #$00
+L146A           TAY
+                JMP   L143F
+
+L146E           STA   $1076,X
+                TYA
+                STA   $104E,X
+L1475           LDY   #$00
+L1477           TYA
+                STA   $104F,X
+                LDY   $10F5,X
+                LDA   $2C6C,Y
+                AND   #$7F
+                CMP   #$03
+                BMI   L1491
+                LDA   #$01
+                JMP   L13A4
+
+L148C           BEQ   L1491
+                JMP   L15C1
+
+L1491           LDY   #$FF
+                LDA   $1079,X
+                BEQ   L14A1
+                CMP   #$1F
+                BPL   L14A1
+                STA   $107A,X
+                LDY   #$3F
+L14A1           STY   L14FE+1
+                LDY   $107A,X
+                BNE   L14AC
+                JMP   L14F4
+
+L14AC           LDA   $2C9A,Y
+                STA   $FE
+                LDA   $2CAD,Y
+                STA   $FF
+                LDA   $1077,X
+                BNE   L14C1
+                JSR   $1B2B
+                JMP   L15D1
+
+L14C1           CMP   #$60
+                BMI   L14CB
+                JSR   $1AA5
+                JMP   L15D1
+
+L14CB           CLC
+                LDY   #$09
+                ADC   ($FE),Y
+                CLC
+                ADC   $10D0,X
+                STA   $1078,X
+                LDA   #$03
+                CMP   $107B,X
+                BEQ   L14F4
+                ADC   $10CA,X
+                BCS   L14EF
+                LDA   #$3F
+                CMP   $1079,X
+                BNE   L14FA
+                LDA   #$7F
+                STA   $10CC,X
+L14EF           LDA   #$83
+                STA   $10CA,X
+L14F4           JSR   $1B2B
+                JMP   L18CF
+
+L14FA           LDY   #$00
+                LDA   ($FE),Y
+L14FE           AND   #$FF
+                STA   L1508+1
+                AND   #$30
+                STA   $10CA,X
+L1508           LDA   #$1A
+                AND   #$08
+                BEQ   L151E
+                LDY   $1078,X
+                LDA   $19AF,Y
+                STA   $111F,X
+                LDY   #$0F
+                LDA   ($FE),Y
+                STA   $1026,X
+L151E           LDA   #$10
+                STA   $1050,X
+                LDA   #$FF
+                STA   $1027,X
+                STA   $1052,X
+                LDY   #$07
+                LDA   ($FE),Y
+                STA   $10F6,X
+                JSR   L1954
+                LDY   #$08
+                LDA   ($FE),Y
+                STA   $10F8,X
+                TAY
+                LDA   $2C8B,Y
+                STA   $10F9,X
+                BIT   L1508+1
+                BVS   L154F
+                LDY   #$0A
+                LDA   ($FE),Y
+                STA   $1051,X
+L154F           BIT   L1508+1
+                BMI   L15AE
+                LDY   #$0B
+                LDA   ($FE),Y
+                TAY
+                CPX   #$15
+                BCC   L1587
+                LDA   ($FE),Y
+                BEQ   L156B
+                CMP   #$FF
+                BEQ   L1573
+                STX   L167C+1
+                STY   L1680+1
+L156B           LDA   $10A0,X
+                ORA   L1276+1
+                BNE   L1581
+L1573           CPX   L167C+1
+                BNE   L157B
+                STY   L1680+1
+L157B           LDA   $10A1,X
+                AND   L1276+1
+L1581           STA   L1276+1
+                JMP   L15AE
+
+L1587           LDA   ($FE),Y
+                BEQ   L1595
+                CMP   #$FF
+                BEQ   L159D
+                STX   L1713+1
+                STY   L1717+1
+L1595           LDA   $10A0,X
+                ORA   L124D+1
+                BNE   L15AB
+L159D           CPX   L1713+1
+                BNE   L15A5
+                STY   L1717+1
+L15A5           LDA   $10A1,X
+                AND   L124D+1
+L15AB           STA   L124D+1
+L15AE           LDY   #$04
+                LDA   ($FE),Y
+                STA   $1124,X
+                DEY
+                LDA   ($FE),Y
+                STA   $1123,X
+                JSR   $1B2B
+                JMP   L18CF
+
+L15C1           LDY   $107A,X
+                BNE   L15C7
+                RTS
+
+L15C7           LDA   $2C9A,Y
+                STA   $FE
+                LDA   $2CAD,Y
+                STA   $FF
+L15D1           LDY   $10CA,X
+                BEQ   L1625
+                BPL   L161A
+                CPY   #$82
+                BEQ   L1648
+                BPL   L15E1
+                JMP   L1663
+
+L15E1           CPY   #$FF
+                BEQ   L160B
+                LDY   $1078,X
+                LDA   $1A17,Y
+                SBC   $1022,X
+                STA   L15F8+1
+                LDA   $19AF,Y
+                SBC   $1023,X
+                TAY
+L15F8           LDA   #$C7
+                BCS   L165A
+                ADC   $10CB,X
+                TYA
+                ADC   $10CC,X
+                BCC   L1648
+L1605           JSR   $1BD9
+                JSR   L195B
+L160B           LDY   $1078,X
+                LDA   $1A17,Y
+                STA   $1022,X
+                LDA   $19AF,Y
+                JMP   L1672
+
+L161A           LDY   $10CD,X
+                BMI   L1634
+                DEC   $10CD,X
+                JMP   L1675
+
+L1625           LDA   $10CB,X
+                CLC
+                ADC   $10CD,X
+                STA   $10CB,X
+                BCC   L1634
+                INC   $10CC,X
+L1634           LDA   $10CF,X
+                BNE   L163C
+                LDA   $10CE,X
+L163C           SEC
+                SBC   #$01
+                STA   $10CF,X
+                ASL   A
+                CMP   $10CE,X
+                BCC   L1663
+L1648           LDA   $1022,X
+                SBC   $10CB,X
+                STA   $1022,X
+                LDA   $1023,X
+                SBC   $10CC,X
+                JMP   L1672
+
+L165A           SBC   $10CB,X
+                TYA
+                SBC   $10CC,X
+                BCC   L1605
+L1663           LDA   $1022,X
+                ADC   $10CB,X
+                STA   $1022,X
+                LDA   $1023,X
+                ADC   $10CC,X
+L1672           STA   $1023,X
+L1675           CPX   #$15
+                BCS   L167C
+                JMP   L1713
+
+L167C           CPX   #$0F
+                BNE   L16C3
+L1680           LDY   #$00
+                LDA   ($FE),Y
+                BMI   L16C6
+                INY
+L1687           CMP   #$00
+                BEQ   L16F4
+                INC   L1687+1
+                CLC
+                LDA   ($FE),Y
+                BPL   L16AA
+                ORA   #$F8
+                ADC   L129A+1
+                PHP
+                AND   #$07
+                STA   L129A+1
+                LDA   ($FE),Y
+                EOR   #$FF
+                LSR   A
+                LSR   A
+                LSR   A
+                EOR   #$FF
+                JMP   L16BC
+
+L16AA           AND   #$07
+                ADC   L129A+1
+                CMP   #$08
+                PHP
+                AND   #$07
+                STA   L129A+1
+                LDA   ($FE),Y
+                LSR   A
+                LSR   A
+                LSR   A
+L16BC           PLP
+                ADC   L1293+1
+                STA   L1293+1
+L16C3           JMP   L1710
+
+L16C6           CMP   #$FE
+                BEQ   L16CE
+                BCC   L16DB
+                BCS   L1710
+
+L16CE           INY
+                LDA   ($FE),Y
+                CMP   L1680+1
+                BEQ   L1710
+                TAY
+                LDA   ($FE),Y
+                BPL   L1708
+L16DB           PHA
+                AND   #$70
+                STA   L127F+1
+                PLA
+                ASL   A
+                ASL   A
+                ASL   A
+                ASL   A
+                STA   L1278+1
+                INY
+                LDA   ($FE),Y
+                STA   L1293+1
+                LDA   #$00
+                STA   L129A+1
+L16F4           INY
+                LDA   ($FE),Y
+                BPL   L1704
+                CMP   #$90
+                BCS   L1704
+                AND   #$0F
+                STA   L1276+1
+                LDA   #$00
+L1704           STA   L1285+1
+                INY
+L1708           STY   L1680+1
+                LDA   #$00
+                STA   L1687+1
+L1710           JMP   L17A7
+
+L1713           CPX   #$00
+                BNE   L175A
+L1717           LDY   #$36
+                LDA   ($FE),Y
+                BMI   L175D
+                INY
+L171E           CMP   #$07
+                BEQ   L178B
+                INC   L171E+1
+                CLC
+                LDA   ($FE),Y
+                BPL   L1741
+                ORA   #$F8
+                ADC   L1271+1
+                PHP
+                AND   #$07
+                STA   L1271+1
+                LDA   ($FE),Y
+                EOR   #$FF
+                LSR   A
+                LSR   A
+                LSR   A
+                EOR   #$FF
+                JMP   L1753
+
+L1741           AND   #$07
+                ADC   L1271+1
+                CMP   #$08
+                PHP
+                AND   #$07
+                STA   L1271+1
+                LDA   ($FE),Y
+                LSR   A
+                LSR   A
+                LSR   A
+L1753           PLP
+                ADC   L126A+1
+                STA   L126A+1
+L175A           JMP   L17A7
+
+L175D           CMP   #$FE
+                BEQ   L1765
+                BCC   L1772
+                BCS   L17A7
+
+L1765           INY
+                LDA   ($FE),Y
+                CMP   L1717+1
+                BEQ   L17A7
+                TAY
+                LDA   ($FE),Y
+                BPL   L179F
+L1772           PHA
+                AND   #$70
+                STA   L1256+1
+                PLA
+                ASL   A
+                ASL   A
+                ASL   A
+                ASL   A
+                STA   L124F+1
+                INY
+                LDA   ($FE),Y
+                STA   L126A+1
+                LDA   #$00
+                STA   L1271+1
+L178B           INY
+                LDA   ($FE),Y
+                BPL   L179B
+                CMP   #$90
+                BCS   L179B
+                AND   #$0F
+                STA   L124D+1
+                LDA   #$00
+L179B           STA   L125C+1
+                INY
+L179F           STY   L1717+1
+                LDA   #$00
+                STA   L171E+1
+L17A7           LDY   $1051,X
+                LDA   ($FE),Y
+                BMI   L17CC
+                INY
+                CMP   $1028,X
+                BEQ   L17EC
+                INC   $1028,X
+                LDA   ($FE),Y
+                BPL   L17BE
+                DEC   $1025,X
+L17BE           CLC
+                ADC   $1024,X
+                STA   $1024,X
+                BCC   L17FC
+                INC   $1025,X
+                BCS   L17FC
+
+L17CC           CMP   #$FE
+                BEQ   L17D4
+                BCC   L17E1
+                BCS   L17FC
+
+L17D4           INY
+                LDA   ($FE),Y
+                CMP   $1051,X
+                BEQ   L17FC
+                TAY
+                LDA   ($FE),Y
+                BPL   L17F3
+L17E1           AND   #$7F
+                STA   $1025,X
+                INY
+                LDA   ($FE),Y
+                STA   $1024,X
+L17EC           INY
+                LDA   ($FE),Y
+                STA   $10F7,X
+                INY
+L17F3           TYA
+                STA   $1051,X
+                LDA   #$00
+                STA   $1028,X
+L17FC           CLC
+                LDA   $10F7,X
+                BEQ   L180C
+                ADC   $1078,X
+                TAY
+                LDA   $19A4,Y
+                SBC   L19A3,Y
+L180C           ADC   $1025,X
+                STA   $1121,X
+                LDA   $1024,X
+                STA   $1120,X
+                DEC   $1052,X
+                BPL   L1830
+                LDA   $10F6,X
+                AND   #$3F
+                STA   $1052,X
+L1825           LDY   $1050,X
+                LDA   ($FE),Y
+                CMP   #$FE
+                BEQ   L183C
+                BCC   L1833
+L1830           JMP   L18BE
+
+L1833           CMP   #$10
+                BCS   L1847
+                STA   $1052,X
+                BCC   L184D
+
+L183C           INY
+                LDA   ($FE),Y
+                BMI   L18BE
+                STA   $1050,X
+                TAY
+                LDA   ($FE),Y
+L1847           AND   $1027,X
+                STA   $1026,X
+L184D           INY
+                LDA   ($FE),Y
+                INY
+                CMP   #$7F
+                BEQ   L1874
+                STA   L1866+1
+                LDA   ($FE),Y
+                CMP   #$FF
+                BEQ   L1861
+                STA   $10A6,X
+L1861           INY
+                TYA
+                STA   $1050,X
+L1866           LDA   #$00
+                BPL   L18AB
+
+                .byte  $C9
+                .byte  $80
+                .byte  $F0
+                .byte  $50
+                .byte  $C9
+                .byte  $E0
+                .byte  $90
+                .byte  $3D
+                .byte  $B0
+                .byte  $37
+
+L1874           LDA   ($FE),Y
+                STA   $10A6,X
+                LDY   $10F9,X
+                LDA   $2C38,Y
+                CMP   #$7E
+                BNE   L1897
+                LDY   $10F8,X
+                LDA   $2C8B,Y
+                STA   $10F9,X
+                LDA   $1050,X
+                ADC   #$02
+                STA   $1050,X
+                JMP   L1825
+
+L1897           CMP   #$7F
+                BNE   L18A8
+                LDY   $10F8,X
+                LDA   $2C8B,Y
+                STA   $10F9,X
+                TAY
+                LDA   $2C38,Y
+L18A8           INC   $10F9,X
+L18AB           CLC
+                ADC   $1078,X
+                AND   #$7F
+                TAY
+                LDA   $1A17,Y
+                STA   $1022,X
+                LDA   $19AF,Y
+                STA   $1023,X
+L18BE           LDA   $1022,X
+                ADC   $10A6,X
+                STA   $111E,X
+                LDA   $1023,X
+                ADC   #$00
+                STA   $111F,X
+L18CF           LDA   $1026,X
+                STA   $1122,X
+                RTS
+
+                .byte  $A2
+                .byte  $00
+                .byte  $20
+                .byte  $04
+                .byte  $19
+                .byte  $A2
+                .byte  $07
+                .byte  $20
+                .byte  $0E
+                .byte  $19
+                .byte  $A2
+                .byte  $0E
+                .byte  $20
+                .byte  $0E
+                .byte  $19
+                .byte  $A2
+                .byte  $15
+                .byte  $20
+                .byte  $0E
+                .byte  $19
+                .byte  $A2
+                .byte  $1C
+                .byte  $20
+                .byte  $0E
+                .byte  $19
+                .byte  $A2
+                .byte  $23
+                .byte  $20
+                .byte  $0E
+                .byte  $19
+                
+                .byte $C8
+                .byte $C8
+                .byte $C8
+                .byte $B9
+
+                .byte  $7A
+                .byte  $2C
+                .byte  $8D
+                .byte  $6C
+                .byte  $2C
+                .byte  $B9
+                .byte  $7B
+                .byte  $2C
+                .byte  $8D
+                .byte  $6D
+                .byte  $2C
+                .byte  $60
+
+L1904           STX   L1927+1
+                ASL   A
+                ASL   A
+                ASL   A
+                ASL   A
+                STA   L1917+1
+                LDA   $10A2,X
+                ASL   A
+                SBC   #$02
+                TAX
+                LSR   A
+                CLC
+L1917           ADC   #$00
+                TAY
+                LDA   $2C7A,Y
+                STA   L193C,X
+                INY
+                LDA   $2C7A,Y
+                STA   L193C+1,X
+L1927           LDX   #$00
+                RTS
+
+L192A           CPX   #$15
+                BCC   L1936
+                CPX   #$1C
+                BEQ   L194C
+                BPL   L1950
+                BMI   L1948
+
+L1936           CPX   #$07
+                BEQ   L1940
+                BPL   L1944
+L193C           LDA   $1D7F,Y
+                RTS
+
+L1940           LDA   $1DAF,Y
+                RTS
+
+L1944           LDA   $1DDF,Y
+                RTS
+
+L1948           LDA   $1E0F,Y
+                RTS
+
+L194C           LDA   $1E3F,Y
+                RTS
+
+L1950           LDA   $1E6F,Y
+                RTS
+
+L1954           LDY   #$06
+                LDA   ($FE),Y
+                STA   $10CD,X
+L195B           LDY   #$05
+                LDA   ($FE),Y
+                PHA
+                AND   #$0F
+                ASL   A
+                STA   $10CE,X
+                LSR   A
+                LDY   $10CA,X
+                CPY   #$20
+                BPL   L196F
+                LSR   A
+L196F           CPY   #$30
+                BNE   L1975
+                LDA   #$00
+L1975           STA   $10CF,X
+                PLA
+                AND   #$F0
+                LSR   A
+                BEQ   L198E
+                LSR   A
+                ADC   $1078,X
+                TAY
+                CPY   #$CB
+                BCS   L1995
+                CPY   #$6B
+                BCS   L1997
+                LDA   $19A4,Y
+L198E           STA   $10CB,X
+                LDA   #$00
+                BEQ   L19A0
+
+L1995           LDY   #$CB
+L1997           LDA   $19AC,Y
+                STA   $10CB,X
+                LDA   L1944,Y
+L19A0           STA   $10CC,X
+L19A3           RTS
+
 .endlogical
 UNKNOWN_CODE1_DONE
 
