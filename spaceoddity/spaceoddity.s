@@ -766,7 +766,7 @@ SpecialKeyDown
 .byte $d0, $0a ; BNE
 
     LDA $E16F ; KeyboardState
-    EOR #$10 #KEYBOARDSTATES.NUMLK
+    EOR #$10 ; #KEYBOARDSTATES.NUMLK
     STA $E16F ; KeyboardState
 .byte $80, $0e ; BRA
 .endlogical
@@ -909,86 +909,86 @@ COLODORE_PALETTE
 
 Init_CODEC
     LDA #$00
-    STA $D620
+    STA CODEC_LOW
 
     LDA #$1A
-    STA $D621
+    STA CODEC_HI
     
     LDA #$01
-    STA $D622
+    STA CODEC_CTRL
 
-    JSR $E5CB
+    JSR WriteCodecWait
     
     LDA #$03
-    STA $D620
+    STA CODEC_LOW
     
     LDA #$2A
-    STA $D621
+    STA CODEC_HI
     
     LDA #$01
-    STA $D622
+    STA CODEC_CTRL
     
-    JSR $E5CB
+    JSR WriteCodecWait
     
     LDA #$01
-    STA $D620
+    STA CODEC_LOW
     
     LDA #$23
-    STA $D621
+    STA CODEC_HI
     
     LDA #$01
-    STA $D622
+    STA CODEC_CTRL
     
-    JSR $E5CB
+    JSR WriteCodecWait
     
     LDA #$07
-    STA $D620
+    STA CODEC_LOW
     
     LDA #$2C
-    STA $D621
+    STA CODEC_HI
     
     LDA #$01
-    STA $D622
+    STA CODEC_CTRL
     
-    JSR $E5CB
+    JSR WriteCodecWait
     
     LDA #$02
-    STA $D620
+    STA CODEC_LOW
     
     LDA #$14
-    STA $D621
+    STA CODEC_HI
     
     LDA #$01
-    STA $D622
+    STA CODEC_CTRL
     
-    JSR $E5CB
+    JSR WriteCodecWait
     
     LDA #$02
-    STA $D620
+    STA CODEC_LOW
     
     LDA #$16
-    STA $D621
+    STA CODEC_HI
     
     LDA #$01
-    STA $D622
+    STA CODEC_CTRL
     
-    JSR $E5CB
+    JSR WriteCodecWait
     
     LDA #$45
-    STA $D620
+    STA CODEC_LOW
     
     LDA #$18
-    STA $D621
+    STA CODEC_HI
     
     LDA #$01
-    STA $D622
+    STA CODEC_CTRL
     
-    JSR $E5CB
+    JSR WriteCodecWait
 
     RTS
 
     WriteCodecWait
-    LDA $D622 ; CODEC_CTRL
+    LDA CODEC_CTRL ; CODEC_CTRL
     AND #$01
     CMP #$01
     BEQ WriteCodecWait
