@@ -889,10 +889,28 @@ DoneUpdateSpeed
     PHA
     LDA MMU_IO_CTRL
     PHA
+                       ;<<<="PushMMUIO"
+    STZ MMU_IO_CTRL    ; use i/o registers ;<<<="SetMMUIO	; use i/o registers"
+    LDA INT_PENDING_REG0
+    STA $20 ; TempIRQ
+    BIT #JR0_INT00_SOF
 
-.byte $64, $01, $ad, $60, $d6, $85, $20, $89, $01, $f0
-.byte $08, $8d, $60, $d6, $20, $38, $e6, $a5, $20, $89, $04, $f0, $08, $8d, $60, $d6
-.byte $20, $2c, $e2, $a5, $20, $68, $85, $01, $68, $85, $00, $7a, $fa, $68, $28, $40
+.byte $f0, $08 ; BEQ
+    STA INT_PENDING_REG0 ; clear irq
+
+    JSR $E638 ; SOFIRQ ;Increase_SOFCounter
+
+    LDA $20 ; TempIRQ
+
+    BIT #JR0_INT02_KBD
+
+.byte $f0, $08 ; BEQ __
+
+    STA INT_PENDING_REG0
+
+    JSR $E22C ; KeyboardIRQ
+
+.byte $a5, $20, $68, $85, $01, $68, $85, $00, $7a, $fa, $68, $28, $40
 
 Init_IRQHandler
     LDA MMU_IO_CTRL
