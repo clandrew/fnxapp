@@ -2,7 +2,8 @@
 
 .include "api.asm"
 .include "TinyVicky_Def.asm"
-.include "includes\f256jr_registers.asm"
+.include "interrupt_def.asm"
+.include "includes/f256jr_registers.asm"
 
 ; Constants
 VIA_ORB_IRB = $DC00
@@ -10,14 +11,6 @@ VIA_ORB_IRA = $DC01
 
 RNG_CTRL    = $D6A6
 RNG_ENABLE  = $01
-
-; Interrupt-related
-INT_PENDING_REG0 = $D660
-INT_PENDING_REG1 = $D661
-INT_EDGE_REG0 = $D668
-INT_EDGE_REG1 = $D669
-INT_MASK_REG0 = $D66C
-INT_MASK_REG1 = $D66D
 
 ;const SIDSTART=$a000,SIDINIT=$a000,SIDPLAY=$a003,SIDMODE=5,SIDFILE='toccata_v3.a000'
 ;const SIDSTART=$a000,SIDINIT=$a048,SIDPLAY=$a021,SIDMODE=5,SIDFILE='viola_duet.a000'
@@ -886,7 +879,7 @@ DoneUpdateSpeed
     PHP
     PHA
     PHX
-    PHY
+    PHY                ;<<<="PushAXY"
     CLD
     LDA MMU_MEM_CTRL
     PHA
@@ -1001,14 +994,12 @@ done_updating_destaddr
     PLA
     STA MMU_IO_CTRL ;<<<="PullMMUIO"
     RTS
-
 .endlogical
 
 * = $00DF07
-
 .logical $E707
 FONT_FANTASY
-.binary 'assets\gamefont2.bin'
+.binary 'assets/gamefont2.bin'
 .endlogical
 
 * = $00E707
