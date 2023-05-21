@@ -30,6 +30,8 @@ SIDFILE='Space_Oddity_2SID'
 
 * = $000800 
     .logical $1000
+
+; Proc: SIDINIT
     JMP $1148
     JMP $11CC
     JMP $12A6
@@ -62,7 +64,10 @@ SIDFILE='Space_Oddity_2SID'
 .byte $00, $01, $00, $00, $01, $00, $00, $00, $01, $00, $00, $01, $00, $00, $be, $02
 .byte $e0, $03, $41, $00, $f8, $a0, $1b, $10, $02, $41, $00, $7a, $41, $37, $20, $05
 .byte $41, $00, $7b, $db, $2b, $20, $05, $41, $00, $aa, $f7, $0a, $80, $06, $40, $00
-.byte $7c, $6e, $10, $20, $0a, $40, $0f, $00, $20, $d6, $18, $a9, $00, $a0, $7d, $99
+.byte $7c, $6e, $10, $20, $0a, $40, $0f, $00
+
+; Control ends up here.
+.byte $20, $d6, $18, $a9, $00, $a0, $7d, $99
 .byte $22, $10, $88, $10, $fa, $a0, $7d, $99, $ca, $10, $88, $10, $fa, $a0, $17, $99
 .byte $00, $d4, $99, $00, $d5, $88, $10, $f7, $8d, $57, $12, $8d, $80, $12, $8d, $6d
 .byte $12, $8d, $96, $12, $8d, $5d, $12, $8d, $86, $12, $8d, $4e, $12, $8d, $77, $12
@@ -910,85 +915,64 @@ COLODORE_PALETTE
 Init_CODEC
     LDA #$00
     STA CODEC_LOW
-
     LDA #$1A
-    STA CODEC_HI
-    
+    STA CODEC_HI    
     LDA #$01
     STA CODEC_CTRL
-
-    JSR WriteCodecWait
+    JSR WriteCodecWait ; 1A00
     
     LDA #$03
-    STA CODEC_LOW
-    
+    STA CODEC_LOW    
     LDA #$2A
-    STA CODEC_HI
+    STA CODEC_HI    
+    LDA #$01
+    STA CODEC_CTRL    
+    JSR WriteCodecWait ; 2A03
     
     LDA #$01
-    STA CODEC_CTRL
-    
-    JSR WriteCodecWait
-    
-    LDA #$01
-    STA CODEC_LOW
-    
+    STA CODEC_LOW    
     LDA #$23
-    STA CODEC_HI
-    
+    STA CODEC_HI    
     LDA #$01
-    STA CODEC_CTRL
-    
-    JSR WriteCodecWait
+    STA CODEC_CTRL    
+    JSR WriteCodecWait ; 2301
     
     LDA #$07
-    STA CODEC_LOW
-    
+    STA CODEC_LOW    
     LDA #$2C
-    STA CODEC_HI
-    
+    STA CODEC_HI    
     LDA #$01
-    STA CODEC_CTRL
-    
-    JSR WriteCodecWait
+    STA CODEC_CTRL    
+    JSR WriteCodecWait ; 2C07
     
     LDA #$02
-    STA CODEC_LOW
-    
+    STA CODEC_LOW    
     LDA #$14
-    STA CODEC_HI
-    
+    STA CODEC_HI    
     LDA #$01
-    STA CODEC_CTRL
-    
-    JSR WriteCodecWait
+    STA CODEC_CTRL    
+    JSR WriteCodecWait ; 1402
     
     LDA #$02
-    STA CODEC_LOW
-    
+    STA CODEC_LOW    
     LDA #$16
-    STA CODEC_HI
-    
+    STA CODEC_HI    
     LDA #$01
-    STA CODEC_CTRL
-    
-    JSR WriteCodecWait
+    STA CODEC_CTRL    
+    JSR WriteCodecWait ; 1602
     
     LDA #$45
-    STA CODEC_LOW
-    
+    STA CODEC_LOW    
     LDA #$18
-    STA CODEC_HI
-    
+    STA CODEC_HI    
     LDA #$01
-    STA CODEC_CTRL
-    
-    JSR WriteCodecWait
+    STA CODEC_CTRL    
+    JSR WriteCodecWait  ; 1845
 
     RTS
 
     WriteCodecWait
-    LDA CODEC_CTRL ; CODEC_CTRL
+    LDA CODEC_CTRL
     AND #$01
     CMP #$01
     BEQ WriteCodecWait
