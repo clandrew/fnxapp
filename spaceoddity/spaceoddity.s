@@ -66,7 +66,7 @@ SIDFILE='Space_Oddity_2SID'
 .byte $41, $00, $7b, $db, $2b, $20, $05, $41, $00, $aa, $f7, $0a, $80, $06, $40, $00
 .byte $7c, $6e, $10, $20, $0a, $40, $0f, $00
 
-; Control ends up here.
+UNKNOWN_CODE1
 .byte $20, $d6, $18, $a9, $00, $a0, $7d, $99
 .byte $22, $10, $88, $10, $fa, $a0, $7d, $99, $ca, $10, $88, $10, $fa, $a0, $17, $99
 .byte $00, $d4, $99, $00, $d5, $88, $10, $f7, $8d, $57, $12, $8d, $80, $12, $8d, $6d
@@ -211,7 +211,11 @@ SIDFILE='Space_Oddity_2SID'
 .byte $30, $d0, $02, $a9, $00, $9d, $cf, $10, $68, $29, $f0, $4a, $f0, $10, $4a, $7d
 .byte $78, $10, $a8, $c0, $cb, $b0, $0e, $c0, $6b, $b0, $0c, $b9, $a4, $19, $9d, $cb
 .byte $10, $a9, $00, $f0, $0b, $a0, $cb, $b9, $ac, $19, $9d, $cb, $10, $b9, $44, $19
-.byte $9d, $cc, $10, $60, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01
+.byte $9d, $cc, $10, $60
+UNKNOWN_CODE1_DONE
+
+; Data below
+.byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01
 .byte $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $02, $02, $02, $02, $02
 .byte $02, $02, $03, $03, $03, $03, $03, $04, $04, $04, $04, $05, $05, $05, $06, $06
 .byte $06, $07, $07, $08, $08, $09, $09, $0a, $0a, $0b, $0c, $0d, $0d, $0e, $0f, $10
@@ -226,7 +230,10 @@ SIDFILE='Space_Oddity_2SID'
 .byte $f6, $9d, $4e, $09, $d0, $a2, $81, $6d, $67, $70, $88, $b2, $ed, $3a, $9c, $13
 .byte $a0, $44, $02, $da, $ce, $e0, $11, $64, $da, $75, $38, $26, $40, $89, $04, $b4
 .byte $9c, $c0, $22, $c8, $b4, $eb, $71, $4c, $80, $12, $08, $68, $38, $80, $45, $90
-.byte $68, $d6, $e3, $98, $00, $24, $10, $c9, $a0, $b0, $06, $e9, $8f, $9d, $a5, $10
+.byte $68, $d6, $e3, $98, $00, $24, $10
+
+UNKNOWN_CODE2
+.byte $c9, $a0, $b0, $06, $e9, $8f, $9d, $a5, $10
 .byte $60, $c9, $b0, $b0, $0e, $29, $0f, $e0, $15, $90, $04, $8d, $35, $13, $60, $8d
 .byte $30, $13, $60, $c9, $f0, $b0, $05, $e9, $af, $9d, $a4, $10, $60, $00, $0a, $0e
 .byte $13, $17, $1f, $2b, $00, $c9, $78, $10, $09, $8d, $63, $1b, $20, $d1, $1b, $4c
@@ -243,7 +250,11 @@ SIDFILE='Space_Oddity_2SID'
 .byte $b9, $29, $1c, $8d, $50, $1b, $b9, $2a, $1c, $8d, $51, $1b, $bd, $7c, $10, $4c
 .byte $78, $1c, $60, $b1, $fe, $29, $f0, $0d, $63, $1b, $60, $b1, $fe, $29, $0f, $8d
 .byte $69, $1b, $a9, $63, $0a, $0a, $0a, $0a, $09, $06, $60, $8d, $70, $1b, $0a, $69
-.byte $00, $60, $01, $0a, $14, $1e, $27, $31, $3c, $4e, $53, $5e, $61, $6a, $70, $77
+.byte $00, $60
+UNKNOWN_CODE2_DONE
+
+UNKNOWN_DATA_START
+.byte $01, $0a, $14, $1e, $27, $31, $3c, $4e, $53, $5e, $61, $6a, $70, $77
 .byte $48, $4a, $4a, $4a, $4a, $a8, $b9, $70, $1b, $8d, $94, $1b, $68, $29, $0f, $8d
 .byte $63, $1b, $18, $90, $31, $60, $bd, $23, $11, $20, $5d, $1b, $4c, $a5, $1b, $bd
 .byte $23, $11, $20, $55, $1b, $9d, $23, $11, $60, $bd, $26, $10, $20, $5d, $1b, $9d
@@ -277,7 +288,10 @@ SIDFILE='Space_Oddity_2SID'
 .byte $f0, $0b, $c8, $d0, $03, $9d, $a3, $10, $a9, $02, $9d, $4d, $10, $de, $a3, $10
 .byte $60, $bc, $a3, $10, $d0, $07, $18, $7d, $4d, $10, $9d, $4d, $10, $4c, $3d, $1d
 .byte $48, $29, $0f, $e0, $15, $90, $06, $8d, $77, $12, $4c, $70, $1d, $8d, $4e, $12
-.byte $68, $29, $f0, $e0, $15, $90, $04, $8d, $79, $12, $60, $8d, $50, $12, $60, $02
+.byte $68, $29, $f0, $e0, $15, $90, $04, $8d, $79, $12, $60, $8d, $50, $12, $60
+
+; data here
+.byte $02
 .byte $02, $02, $04, $04, $06, $04, $04, $06, $08, $0a, $0b, $0e, $0e, $10, $0b, $0e
 .byte $0e, $10, $02, $02, $13, $15, $48, $03, $55, $56, $0b, $0e, $0e, $10, $58, $5c
 .byte $02, $02, $13, $15, $48, $03, $55, $63, $62, $01, $01, $01, $ff, $00, $2f, $03
@@ -554,6 +568,7 @@ SIDFILE='Space_Oddity_2SID'
 .byte $27, $27, $27, $27, $28, $28, $28, $28, $28, $28, $28, $28, $29, $29, $29, $29
 .byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 .byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+; Data end
 
 * = $00D800
 .logical $E000
@@ -612,22 +627,74 @@ TEST1
 ;	<CursorPointer>	=	word address of screen character/color memory
 PrintAnsiString
     LDY #$00
-.byte $80, $0c
-.byte $c9, $1b, $90, $0d, $20, $00, $e0, $c8, $d0, $02, $e6, $31, $b1, $30, $d0, $f0
-.byte $60, $c9, $02, $d0, $0f, $a5, $48, $29, $f0, $85, $48, $20, $e1, $e0, $05, $48
-.byte $85, $48, $80, $e3, $c9, $03, $d0, $07, $20, $e1, $e0, $85, $48, $80, $d8, $c9
-.byte $06, $d0, $13, $a5, $48, $29, $0f, $85, $48, $20, $e1, $e0
+.byte $80, $0c ; BRA
+Print10
+    CMP #$1B
+    BCC CheckControlCodes
+    JSR $E000 ; ChrOut
 
-    ASL
-    ASL
-    ASL
-    ASL
-
-.byte $05, $48, $85, $48, $80, $c1, $c9, $0c, $d0, $05, $20, $40, $e0, $80, $b8
-    RTS
-.byte $00
+NextByte
     INY
-.byte $d0, $02, $e6, $31, $b1, $30
+    BNE Print20
+    INC $31 ; TempSrc+1
+
+Print20
+    LDA ($30),y ; (TempSrc),y
+    BNE Print10
+    RTS
+
+CheckControlCodes
+    CMP #$02            ; ctrl-f/set cursor foreground color
+    BNE CheckControlCodes_Cond0
+    LDA $48 ; CursorColor
+    AND #$F0
+    STA $48 ; CursorColor
+    JSR $E0E1 ; GetNextByte
+    ORA $48 ; CursorColor
+    STA $48 ; CursorColor
+    BRA NextByte
+
+CheckControlCodes_Cond0
+    CMP #$03
+    BNE CheckControlCodes_Cond1 
+    JSR $E0E1 ; GetNextByte
+    STA $48 ; CursorColor
+    BRA NextByte
+    
+CheckControlCodes_Cond1
+    CMP #$06    ; ctrl-f/set cursor foreground color
+    BNE CheckControlCodes_Cond2
+    LDA $48 ; CursorColor
+    AND #$0F
+    STA $48 ; CursorColor
+    JSR $E0E1 ; GetNextByte
+    ASL
+    ASL
+    ASL
+    ASL
+    ORA $48 ; CursorColor
+    STA $48 ; CursorColor
+    BRA NextByte
+
+CheckControlCodes_Cond2
+    CMP #$0C
+
+    BNE CheckControlCodes_Cond3 
+    JSR $E040
+    BRA NextByte
+CheckControlCodes_Cond3
+    RTS
+
+temp
+.byte $00
+
+GetNextByte
+    INY
+    BNE CheckControlCodes_Cond4
+    INC $31 ; $e6, $31
+
+CheckControlCodes_Cond4
+    LDA ($30), y ; (TempSrc),y
     RTS    
 .endlogical
 
