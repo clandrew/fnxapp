@@ -645,11 +645,11 @@ CLEAR
     LDX #$00
     STA $E170,X       
 
-.byte $e8, $e0, $90, $d0, $f8, $a9, $00, $8d, $6f, $e1, $60, $ad, $44, $d6, $29
+.byte $e8, $e0, $90, $d0, $f8, $a9, $00, $8d, $6f, $e1, $60
 
-.byte $01, $d0
 
-KeyboardIRQ
+KeyboardIRQ 
+.byte $ad, $44, $d6, $29, $01, $d0
 .byte $1a, $ad, $e9, $e0, $aa, $1a, $29, $7f, $cd, $eb, $e0, $f0, $0b, $8d
 .byte $e9, $e0, $ad, $42, $d6, $9d, $ef, $e0, $80, $e2, $ad, $42, $d6, $60, $ad, $eb
 .byte $e0, $cd, $e9, $e0, $f0, $0e, $da, $aa, $1a, $29, $7f, $8d, $eb, $e0, $bd, $ef
@@ -908,7 +908,7 @@ DoneUpdateSpeed
 
     STA INT_PENDING_REG0
 
-    JSR $E22C ; KeyboardIRQ
+    JSR KeyboardIRQ
 
 .byte $a5, $20, $68, $85, $01, $68, $85, $00, $7a, $fa, $68, $28, $40
 
