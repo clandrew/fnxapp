@@ -205,16 +205,10 @@ L127F           ORA   #$00
 L1285           LDA   #$00
                 BEQ   L1293
 
-                .byte  $AE
-                .byte  $7D
-                .byte  $16
-                .byte  $7D
-                .byte  $78
-                .byte  $10
-                .byte  $A8
-                .byte  $B9
-                .byte  $A4
-                .byte  $19
+                LDX   $167D
+                ADC   $1078,X
+                TAY
+                LDA   $19A4,Y
 
 L1293           ADC   #$00
                 ADC   #$00
