@@ -38,6 +38,11 @@ SIDFILE='Space_Oddity_2SID'
     JMP $11C2
     JMP $12A5
 
+    ;   2097 000F78:[=4139/$102B bytes]                        incbin      'music\'+SIDFILE+'.sid'
+    ; including binary file 'music\Lakeside_2SID.sid', 4139 bytes [=$00102B]
+
+    ; saving binary file 'wktitle.0800.bin', $000800-00FFFF, 63488 bytes [=$00F800]
+
 .byte $80
 .byte $01, $20, $53, $49, $44, $57, $49, $5a, $2d, $32, $53, $49, $44, $20, $31, $2e
 .byte $38, $01, $bd, $02, $e0, $03, $41, $ff, $07, $a0, $1b, $10, $02, $41, $ff, $09
@@ -625,6 +630,7 @@ PrintAnsiString
 
 * = $00DA00
 .logical $E200
+Init_Keyboard
     ; 8-bit accumulator, X, Y
     STZ $01
     LDA #$30
@@ -667,6 +673,7 @@ KeyboardIRQ
 
 ; db00
 * = $00DB00
+.logical $E300
 .byte $e0, $ce, $d0, $0a, $ad, $6f, $e1, $49, $20, $8d, $6f, $e1, $80, $00, $a9, $00
 .byte $38, $fa, $60, $aa, $a9, $80, $9d, $70, $e1, $bd, $75, $e3, $aa, $29, $c0, $c9
 .byte $c0, $f0, $05, $a9, $00, $38, $fa, $60, $e0, $c0, $f0, $04, $e0, $c1, $d0, $0a
@@ -693,21 +700,26 @@ KeyboardIRQ
 .byte $7d, $00, $7c, $00, $00, $00, $00, $00, $00, $00, $00, $08, $00, $00, $00, $00
 .byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $1b, $cf, $a0, $00, $00
 .byte $00, $00, $00, $00, $00, $00, $00, $00, $9c, $00, $00, $00, $00, $00, $00, $00
-.byte $00, $00, $00, $00, $00, $a5, $01, $48, $64, $01, $a2, $00, $a9, $00, $9d, $00
+.byte $00, $00, $00, $00, $00
+
+Init_Graphics
+.byte $a5, $01, $48, $64, $01, $a2, $00, $a9, $00, $9d, $00
 .byte $d8, $9d, $40, $d8, $e8, $e0, $40, $d0, $f5, $a2, $00, $bd, $0c, $e5, $9d, $00
 .byte $d8, $9d, $40, $d8, $e8, $e0, $40, $d0, $f2, $64, $01, $9c, $04, $d0, $9c, $05
 .byte $d0, $9c, $06, $d0, $9c, $07, $d0, $9c, $09, $d0, $9c, $08, $d0, $9c, $0d, $d0
 .byte $9c, $0e, $d0, $9c, $0f, $d0, $a2, $00, $9e, $00, $d1, $9e, $00, $d2, $9e, $00
-.byte $d9, $9e, $00, $da, $e8, $d0, $f1, $9c, $10, $d0, $9c, $12, $d0, $9c, $14, $d0
+.byte $d9, $9e, $00, $da, $e8, $d0, $f1, $9c, $10, $d0, $9c, $12, $d0, $9c
+.byte $14, $d0
+
+SYSTEM_FONT
 .byte $9c, $15, $d0, $9c, $16, $d0, $9c, $17, $d0, $a9, $e0, $85, $48, $20, $40, $e0
-; dd00
 .byte $a9, $00, $85, $4b, $a9, $c0, $92, $4b, $68, $85, $01, $60, $00, $00, $00, $00
 .byte $ff, $ff, $ff, $00, $38, $33, $81, $00, $c8, $ce, $75, $00, $97, $3c, $8e, $00
 .byte $4d, $ac, $56, $00, $9b, $2c, $2e, $00, $71, $f1, $ed, $00, $29, $50, $8e, $00
 .byte $00, $38, $55, $00, $71, $6c, $c4, $00, $4a, $4a, $4a, $00, $7b, $7b, $7b, $00
 .byte $9f, $ff, $a9, $00, $eb, $6d, $70, $00, $b2, $b2, $b2, $00
 
-; Init_CODEC
+Init_CODEC
     LDA #$00
     STA $D620
 
@@ -793,6 +805,7 @@ KeyboardIRQ
     CMP #$01
     BEQ WriteCodecWait
     RTS
+.endlogical
 
 ; Entrypoint
 * = $00DDD5 
@@ -854,9 +867,9 @@ F256_RESET
     LDA INT_PENDING_REG1
     STA INT_PENDING_REG1
 
-    JSR $E54C   ; Init_Sound
-    JSR $E495   ; Init_Graphics
-    JSR $E200   ; Init_Keyboard
+    JSR Init_CODEC      ; Init_Sound
+    JSR Init_Graphics   ; Init_Graphics
+    JSR Init_Keyboard   ; Init_Keyboard
     CLI
     JMP MAIN
 
