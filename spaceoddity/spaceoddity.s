@@ -972,7 +972,7 @@ CopyMemSmall
 
     LDY #$00
 
-FONTCOND1
+LoadNextFontData
     
     local_srcaddr = *+1
     LDA $1234
@@ -980,29 +980,23 @@ FONTCOND1
     local_destaddr = *+1
     STA $4321
 
-    INC $E6E0
+    INC local_srcaddr
+    BNE done_updating_srcaddr
+    INC local_srcaddr+1
 
-    BNE FONTCOND2
+done_updating_srcaddr
+    INC local_destaddr
+    BNE done_updating_destaddr
+    INC local_destaddr+1
 
-    INC $E6E1
-
-FONTCOND2
-    INC $E6E3
-    BNE FONTCOND3
-
-    INC $E6E4
-FONTCOND3
-
-    LDA $E6E0 ; from .srcaddr
+done_updating_destaddr
+    LDA local_srcaddr
     CMP #$07 ; #<(FONT_FANTASY+sizeof(FONT_FANTASY))  [217/$D9/"U"]
+    BNE LoadNextFontData
 
-    BNE FONTCOND1
-
-    LDA $E6E1 ; from .srcaddr+1
-
+    LDA local_srcaddr+1
     CMP #$EF ; #>(FONT_FANTASY+sizeof(FONT_FANTASY))  [247/$F7/"ö"]
-
-    BNE FONTCOND1
+    BNE LoadNextFontData
 
     PLA
     STA MMU_IO_CTRL ;<<<="PullMMUIO"
