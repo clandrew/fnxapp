@@ -657,9 +657,28 @@ CLEAR
 KeyboardIRQ 
 .byte $ad, $44, $d6, $29, $01, $d0
 .byte $1a, $ad, $e9, $e0, $aa, $1a, $29, $7f, $cd, $eb, $e0, $f0, $0b, $8d
-.byte $e9, $e0, $ad, $42, $d6, $9d, $ef, $e0, $80, $e2, $ad, $42, $d6, $60, $ad, $eb
-.byte $e0, $cd, $e9, $e0, $f0, $0e, $da, $aa, $1a, $29, $7f, $8d, $eb, $e0, $bd, $ef
-.byte $e0, $fa, $18, $60, $a9, $00, $38, $60, $20, $4e, $e2, $90, $01, $60, $c9, $90
+.byte $e9, $e0, $ad, $42, $d6, $9d, $ef, $e0, $80, $e2, $ad, $42, $d6
+    RTS
+
+GetScancode
+    LDA $E0EB ; ScancodeBufferRPos
+    CMP $E0E9 ; ScancodeBufferWPos
+.byte $f0, $0e
+    PHX
+    TAX
+    INA
+    AND #$7F
+    STA $E0EB
+    LDA $E0EF,x ; ScancodeBuffer,x 
+    PLX
+    CLC
+    RTS
+BufferEmpty
+    LDA #$00
+    SEC
+    RTS
+
+.byte $20, $4e, $e2, $90, $01, $60, $c9, $90
 .byte $90, $0b, $8d, $ed, $e0, $c9, $f0, $f0, $ef, $a9, $00, $38, $60, $da, $ae, $ed
 .byte $e0, $8d, $ed, $e0, $e0, $f0, $d0, $03, $4c, $13, $e3, $aa, $a9, $00, $9d, $70
 .byte $e1, $ad, $6f, $e1, $89, $21, $f0, $05, $bd, $05, $e4, $80, $03, $bd, $75, $e3
