@@ -698,11 +698,63 @@ BufferEmpty
     SEC
     RTS
 
-.byte $20, $4e, $e2, $90, $01, $60, $c9, $90
-.byte $90, $0b, $8d, $ed, $e0, $c9, $f0, $f0, $ef, $a9, $00, $38, $60, $da, $ae, $ed
-.byte $e0, $8d, $ed, $e0, $e0, $f0, $d0, $03, $4c, $13, $e3, $aa, $a9, $00, $9d, $70
-.byte $e1, $ad, $6f, $e1, $89, $21, $f0, $05, $bd, $05, $e4, $80, $03, $bd, $75, $e3
-.byte $aa, $29, $c0, $c9, $c0, $f0, $03, $8a, $fa, $60, $e0, $c0, $f0, $04, $e0, $c1
+GetChar
+    JSR GetScancode
+    BCC GetChar_BufferNotEmpty
+    RTS
+GetChar_BufferNotEmpty
+    CMP #$90 ; scan code can only be 00-8f
+    BCC InvalidScanCode ; BCC 0B
+    STA $E0ED ; LastScancode
+    CMP #$F0  ; is last scan code a break prefix, get next scan code
+
+.byte $f0, $ef
+
+    LDA #$00
+    SEC
+    RTS
+
+InvalidScanCode
+    PHX
+    LDX $E0ED ; LastScancode ; get last scan code
+    STA $E0ED ; LastScancode ; save new scan code
+    CPX #$F0
+    .byte $D0, $03 ; BNE KeyPressed ; 03
+    
+    JMP KeyReleased
+
+KeyPressed
+    TAX
+    LDA #$00
+    STA $E170,x ; KeyboardKeyStates,x 
+    LDA $E16F ; KeyboardState
+    BIT #$21 ; #(KEYBOARDSTATES.SHIFT|KEYBOARDSTATES.CAPSLK)
+
+.byte $f0, $05 ; BEQ
+
+    LDA SCSET21,x
+
+.byte $80, $03 ; BRA
+
+    LDA SCSET2,x
+    TAX
+    AND #$C0
+    CMP #$C0
+
+.byte $f0, $03 ; BEQ
+
+    TXA
+    PLX
+    RTS
+
+SpecialKeyDown
+
+    CPX #$C0
+
+.byte $f0, $04 ; BEQ
+
+    CPX #$C1
+
 .byte $d0, $0a, $ad, $6f, $e1, $09, $01, $8d, $6f, $e1, $80, $52, $e0, $c2, $f0, $04
 .byte $e0, $c3, $d0, $0a, $ad, $6f, $e1, $09, $02, $8d, $6f, $e1, $80, $40, $e0, $c4
 .byte $f0, $04, $e0, $c5, $d0, $0a, $ad, $6f, $e1, $09, $04, $8d, $6f, $e1, $80, $2e
@@ -713,14 +765,32 @@ BufferEmpty
 ; db00
 * = $00DB00
 .logical $E300
-.byte $e0, $ce, $d0, $0a, $ad, $6f, $e1, $49, $20, $8d, $6f, $e1, $80, $00, $a9, $00
-.byte $38, $fa, $60, $aa, $a9, $80, $9d, $70, $e1, $bd, $75, $e3, $aa, $29, $c0, $c9
+    CPX #$CE
+.byte $d0, $0a ; BNE
+    LDA $E16F ; KeyboardState
+    EOR #$20 ; #KEYBOARDSTATES.CAPSLK
+    STA $E16F ; KeyboardState
+.byte $80, $00 ; BRA
+    LDA #$00
+    SEC
+    PLX
+    RTS
+
+KeyReleased
+.byte $aa, $a9, $80, $9d, $70, $e1, $bd, $75, $e3, $aa, $29, $c0, $c9
 .byte $c0, $f0, $05, $a9, $00, $38, $fa, $60, $e0, $c0, $f0, $04, $e0, $c1, $d0, $0a
 .byte $ad, $6f, $e1, $29, $fe, $8d, $6f, $e1, $80, $36, $e0, $c2, $f0, $04, $e0, $c3
 .byte $d0, $0a, $ad, $6f, $e1, $29, $fd, $8d, $6f, $e1, $80, $24, $e0, $c4, $f0, $04
 .byte $e0, $c5, $d0, $0a, $ad, $6f, $e1, $29, $fb, $8d, $6f, $e1, $80, $12, $e0, $c6
-.byte $f0, $04, $e0, $c7, $d0, $0a, $ad, $6f, $e1, $29, $f7, $8d, $6f, $e1, $80, $00
-.byte $a9, $00, $38, $fa, $60
+.byte $f0, $04, $e0, $c7, $d0, $0a, $ad, $6f, $e1, $29, $f7, $8d, $6f, $e1
+
+    BRA Keyboard_Done
+
+Keyboard_Done
+    LDA #$00
+    SEC
+    PLX
+    RTS
 
 SCSET2
 ; function keys f1-f24 = ascii $8a-$a1
