@@ -959,43 +959,50 @@ Init_GameFont
 CopyMemSmall
                     ;		AssignWord(FONT_FANTASY,.asrcaddr)
     LDA #$07 ; #<(FONT_FANTASY)
-    STA $E6E0 ; .srcaddr
+    STA local_srcaddr
 
     LDA #$E7 ; #>(FONT_FANTASY)
-    STA $E6E1 ; .srcaddr+1
+    STA local_srcaddr+1
     
     LDA #$00 ; #<(FONT_MEM) 
-    STA $E6E3 ; .destaddr
+    STA local_destaddr
     
     LDA #$C0 ; #>(FONT_MEM)
-    STA $E6E4 ; .destaddr+1
+    STA local_destaddr+1
 
     LDY #$00
 
+FONTCOND1
+    
+    local_srcaddr = *+1
     LDA $1234
+
+    local_destaddr = *+1
     STA $4321
 
     INC $E6E0
 
-.byte $d0, $03 ; BNE
+    BNE FONTCOND2
 
     INC $E6E1
-    INC $E6E3
 
-.byte $d0, $03
+FONTCOND2
+    INC $E6E3
+    BNE FONTCOND3
 
     INC $E6E4
+FONTCOND3
 
     LDA $E6E0 ; from .srcaddr
     CMP #$07 ; #<(FONT_FANTASY+sizeof(FONT_FANTASY))  [217/$D9/"U"]
 
-.byte $d0, $e3 ; BNE
+    BNE FONTCOND1
 
     LDA $E6E1 ; from .srcaddr+1
 
     CMP #$EF ; #>(FONT_FANTASY+sizeof(FONT_FANTASY))  [247/$F7/"ö"]
 
-.byte $d0, $dc ; BNE
+    BNE FONTCOND1
 
     PLA
     STA MMU_IO_CTRL ;<<<="PullMMUIO"
