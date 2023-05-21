@@ -185,16 +185,10 @@ L1256           ORA   #$10
 L125C           LDA   #$00
                 BEQ   L126A
 
-                .byte  $AE
-                .byte  $14
-                .byte  $17
-                .byte  $7D
-                .byte  $78
-                .byte  $10
-                .byte  $A8
-                .byte  $B9
-                .byte  $A4
-                .byte  $19
+                LDX   $1714
+                ADC   $1078,X
+                TAY
+                LDA   $19A4,Y
 
 L126A           ADC   #$0C
                 ADC   #$00
