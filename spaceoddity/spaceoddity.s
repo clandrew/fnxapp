@@ -865,16 +865,84 @@ F256_RESET
 
 .byte $00
 
-    ; From ;include 'sid.asm'
-.byte $a9, $05, $c9, $06, $f0, $09, $ce, $37
-.byte $e6, $d0, $04, $8d, $37, $e6, $60, $20, $03, $10, $60, $08, $48, $da, $5a, $d8
-.byte $a5, $00, $48, $a5, $01, $48, $64, $01, $ad, $60, $d6, $85, $20, $89, $01, $f0
+    ; SOFIRQ ;	proc Increase_SOFCounter
+                    ;	Increase_SOF_Counter()
+                    ;	SID_Play_Frame()
+    LDA #$05 ; SIDMODE
+    CMP #$06
+    BEQ DoneUpdateSpeed
+
+    DEC $E637 ; SIDSpeed
+    BNE DoneUpdateSpeed
+
+    STA $E637 ; SIDSpeed
+    RTS
+
+DoneUpdateSpeed
+    JSR $1003 ; SIDPLAY
+    RTS
+
+; IRQ_Handler
+    PHP
+    PHA
+    PHX
+    PHY
+    CLD
+    LDA MMU_MEM_CTRL
+    PHA
+    LDA MMU_IO_CTRL
+    PHA
+
+.byte $64, $01, $ad, $60, $d6, $85, $20, $89, $01, $f0
 .byte $08, $8d, $60, $d6, $20, $38, $e6, $a5, $20, $89, $04, $f0, $08, $8d, $60, $d6
 .byte $20, $2c, $e2, $a5, $20, $68, $85, $01, $68, $85, $00, $7a, $fa, $68, $28, $40
-.byte $a5, $01, $48, $64, $01, $78, $a9, $4b, $8d, $fe, $ff, $a9, $e6, $8d, $ff, $ff
-.byte $a9, $fa, $8d, $6c, $d6, $a9, $00, $85, $4d, $a9, $00, $92, $4d, $a9, $00, $92
-.byte $4d, $a9, $00, $92, $4d, $58, $68, $85, $01, $60, $a5, $01, $48, $64, $01, $a2
-.byte $00, $9e, $00, $d4, $9e, $00, $d5, $e8, $e0, $20, $d0, $f5, $68, $85, $01, $60
+
+; Init_IRQHandler
+    LDA MMU_IO_CTRL
+    PHA                 ;<<<="PushMMUIO"
+    STZ MMU_IO_CTRL     ;<<<="SetMMUIO"
+    SEI
+    LDA #$4B ; #<(loword(val(copy('#IRQ_Handler',2))))
+    STA $FFFE ; VECTOR_IRQ
+    LDA #$E6 ; #>(loword(val(copy('#IRQ_Handler',2))))
+    STA $FFFF ; (VECTOR_IRQ)+1
+    LDA #$FA ; #~(JR0_INT00_SOF|JR0_INT02_KBD)
+
+    STA $D66C ; INT_MASK_REG0
+
+    LDA #$00 ; #<(loword(val(copy('#0',2))))
+    STA $4D  ; SOFCounter
+    
+    LDA #$00 ; #>(loword(val(copy('#0',2))))
+    STA ($4D) ; (SOFCounter)+1
+    
+    LDA #$00 ; #<(hiword(val(copy('#0',2))))
+    STA ($4D) ; (SOFCounter)+2 
+
+    LDA #$00 ; #>(hiword(val(copy('#0',2))))
+    STA ($4D) ; (SOFCounter)+3 
+
+    CLI
+    PLA
+    STA MMU_IO_CTRL ;<<<="PullMMUIO"
+    RTS
+
+    ; Init_Audio
+    LDA MMU_IO_CTRL
+    PHA                 ;<<<="PushMMUIO"
+    STZ MMU_IO_CTRL     ; ;<<<="SetMMUIO"
+    LDX #$00
+
+    ClearAudioElement
+    STZ $D400,x         ; SID_LEFT,x
+    STZ $D500,x         ; SID_RIGHT,x
+    INX
+    CPX #$20
+    BNE ClearAudioElement
+
+    PLA
+    STA MMU_IO_CTRL ;<<<="PullMMUIO"
+    RTS
 
 .endlogical
 
