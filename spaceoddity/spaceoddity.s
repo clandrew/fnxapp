@@ -221,84 +221,41 @@ L129A           LDA   #$00
                 STA   $FE
                 RTS
 
-                .byte  $A5
-                .byte  $FE
-                .byte  $48
-                .byte  $A5
-                .byte  $FF
-                .byte  $48
-                .byte  $A2
-                .byte  $0E
-                .byte  $20
-                .byte  $CD
-                .byte  $12
-                .byte  $A2
-                .byte  $23
-                .byte  $20
-                .byte  $CD
-                .byte  $12
-                .byte  $A2
-                .byte  $07
-                .byte  $20
-                .byte  $CD
-                .byte  $12
-                .byte  $A2
-                .byte  $1C
-                .byte  $20
-                .byte  $CD
-                .byte  $12
-                .byte  $A2
-                .byte  $00
-                .byte  $20
-                .byte  $CD
-                .byte  $12
-                .byte  $A2
-                .byte  $15
-                .byte  $20
-                .byte  $CD
-                .byte  $12
-                .byte  $4C
-                .byte  $F0
-                .byte  $11
-                .byte  $BD
-                .byte  $52
-                .byte  $10
-                .byte  $30
-                .byte  $D3
-                .byte  $BC
-                .byte  $7A
-                .byte  $10
-                .byte  $B9
-                .byte  $9A
-                .byte  $2C
-                .byte  $85
-                .byte  $FE
-                .byte  $B9
-                .byte  $AD
-                .byte  $2C
-                .byte  $85
-                .byte  $FF
-                .byte  $A0
-                .byte  $07
-                .byte  $B1
-                .byte  $FE
+                LDA   $FE
+                PHA
+                LDA   $FF
+                PHA
+                LDX   #$0E
+                JSR   L12CD
+                LDX   #$23
+                JSR   L12CD
+                LDX   #$07
+                JSR   L12CD
+                LDX   #$1C
+                JSR   L12CD
+                LDX   #$00
+                JSR   L12CD
+                LDX   #$15
+                JSR   L12CD
+                JMP   $11F0
 
-                .byte $30
-                .byte $0A
-                .byte $29
-                .byte $40
+L12CD           LDA   $1052,X
+                BMI   $12A5
+                LDY   $107A,X
+                LDA   $2C9A,Y
+                STA   $FE
+                LDA   $2CAD,Y
+                STA   $FF
+                LDY   #$07
+                LDA   ($FE),Y
+                BMI   L12EF
+                AND   #$40
+                BNE   L12EC
+                JMP   $1818
 
-                .byte  $D0
-                .byte  $03
-                .byte  $4C
-                .byte  $18
-                .byte  $18
-                .byte  $4C
-                .byte  $A7
-                .byte  $17
-                .byte  $4C
-                .byte  $75
-                .byte  $16
+L12EC           JMP   $17A7
+
+L12EF           JMP   $1675
 
 L12F2           LDY   $10F5,X
                 LDA   $104D,X
