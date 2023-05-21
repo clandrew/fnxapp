@@ -910,7 +910,16 @@ DoneUpdateSpeed
 
     JSR KeyboardIRQ
 
-.byte $a5, $20, $68, $85, $01, $68, $85, $00, $7a, $fa, $68, $28, $40
+    LDA $20 ; TempIRQ
+    PLA
+    STA MMU_IO_CTRL ;<<<="PullMMUIO"
+    PLA
+    STA MMU_MEM_CTRL
+    PLY
+    PLX
+    PLA
+    PLP
+    RTI
 
 Init_IRQHandler
     LDA MMU_IO_CTRL
