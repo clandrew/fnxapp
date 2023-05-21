@@ -897,7 +897,7 @@ DoneUpdateSpeed
 .byte $08, $8d, $60, $d6, $20, $38, $e6, $a5, $20, $89, $04, $f0, $08, $8d, $60, $d6
 .byte $20, $2c, $e2, $a5, $20, $68, $85, $01, $68, $85, $00, $7a, $fa, $68, $28, $40
 
-; Init_IRQHandler
+Init_IRQHandler
     LDA MMU_IO_CTRL
     PHA                 ;<<<="PushMMUIO"
     STZ MMU_IO_CTRL     ;<<<="SetMMUIO"
@@ -927,7 +927,7 @@ DoneUpdateSpeed
     STA MMU_IO_CTRL ;<<<="PullMMUIO"
     RTS
 
-    ; Init_Audio
+Init_Audio
     LDA MMU_IO_CTRL
     PHA                 ;<<<="PushMMUIO"
     STZ MMU_IO_CTRL     ; ;<<<="SetMMUIO"
@@ -1084,8 +1084,8 @@ MAIN
     STA @w MASTER_CTRL_REG_H
     
     JSR Init_GameFont
-    JSR $E6AA
-    JSR $E680
+    JSR Init_Audio
+    JSR Init_IRQHandler
 
     LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK
     STA $48 ; CursorColor
