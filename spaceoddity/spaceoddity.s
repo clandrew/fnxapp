@@ -958,10 +958,10 @@ Init_GameFont
 
 CopyMemSmall
                     ;		AssignWord(FONT_FANTASY,.asrcaddr)
-    LDA #$07 ; #<(FONT_FANTASY)
+    LDA #<(FONT_FANTASY)
     STA local_srcaddr
 
-    LDA #$E7 ; #>(FONT_FANTASY)
+    LDA #>(FONT_FANTASY)
     STA local_srcaddr+1
     
     LDA #$00 ; #<(FONT_MEM) 
@@ -1005,7 +1005,9 @@ done_updating_destaddr
 .endlogical
 
 * = $00DF07
+
 .logical $E707
+FONT_FANTASY
 .byte $00, $00, $00, $00, $00, $00, $00, $00, $00
 .byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 .byte $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
