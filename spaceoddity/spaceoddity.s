@@ -1105,7 +1105,6 @@ L19A3           RTS
 .endlogical
 
 ; Data below
-MARKER
 * = $0011a4
 .logical $19A4
 .binary 'assets/data.bin'
@@ -1136,24 +1135,93 @@ L1A93           CMP   #$F0
                 STA   $10A4,X
 L1A9C           RTS
 
+.byte $00
+.byte $0a, $0e
+.byte $13, $17, $1f, $2b, $00
 
-.byte $00, $0a, $0e
-.byte $13, $17, $1f, $2b, $00, $c9, $78, $10, $09, $8d, $63, $1b, $20, $d1, $1b, $4c
-.byte $2b, $1b, $a8, $b9, $25, $1a, $8d, $be, $1a, $bd, $26, $10, $18, $90, $2b, $a0
-.byte $ff, $a9, $6e, $20, $6f, $1c, $4c, $2b, $1b, $09, $02, $d0, $0b, $29, $fd, $4c
-.byte $d8, $1a, $09, $04, $d0, $02, $29, $fb, $9d, $26, $10, $4c, $2b, $1b, $a9, $ff
+    CMP #$78
+.byte $10, $09 ; BPL
+    STA $1B63
+    JSR $1BD1
+    JMP $1B2B
+
+    TAY
+    LDA $1A25,Y
+    STA $1ABE
+    LDA $1026,X
+    CLC
+
+.byte $90, $2b ; BCC
+
+    LDY #$FF
+    LDA #$6E
+    JSR $1C6F
+    JMP $1B2B
+
+.byte $09, $02, $d0, $0b, $29, $fd
+
+    JMP $1AD8
+.byte  $09, $04, $d0, $02, $29, $fb, $9d, $26, $10
+
+    JMP $1B2B
+    LDA #$FF
 .byte $9d, $27, $10, $bd, $26, $10, $09, $01, $d0, $ee, $a0, $0c, $b1, $fe, $d0, $0e
 .byte $a9, $fe, $9d, $27, $10, $3d, $26, $10, $9d, $26, $10, $4c, $01, $1b, $9d, $50
 .byte $10, $a0, $0d, $b1, $fe, $f0, $03, $9d, $51, $10, $e0, $15, $90, $10, $ec, $7d
-.byte $16, $d0, $18, $c8, $b1, $fe, $f0, $13, $8d, $81, $16, $4c, $2b, $1b, $ec, $14
-.byte $17, $d0, $08, $c8, $b1, $fe, $f0, $03, $8d, $18, $17, $bd, $79, $10, $c9, $40
-.byte $30, $03, $20, $80, $1b, $bd, $7b, $10, $f0, $18, $c9, $20, $b0, $42, $0a, $a8
-.byte $b9, $29, $1c, $8d, $50, $1b, $b9, $2a, $1c, $8d, $51, $1b, $bd, $7c, $10, $4c
-.byte $78, $1c, $60, $b1, $fe, $29, $f0, $0d, $63, $1b, $60, $b1, $fe, $29, $0f, $8d
-.byte $69, $1b, $a9, $63, $0a, $0a, $0a, $0a, $09, $06, $60, $8d, $70, $1b, $0a, $69
-.byte $00, $60
+.byte $16, $d0, $18, $c8, $b1, $fe, $f0, $13
+
+    STA $1681
+    JMP $1B2B
+    CPX $1714
+
+.byte $d0, $08 ; BNE
+    INY
+    LDA ($FE),Y
+
+.byte $f0, $03 ; BEQ
+
+    STA $1718
+    LDA $1079,X
+    CMP #$40
+.byte $30, $03; BMI
+
+    JSR $1B80
+    LDA $107B,X
+.byte $f0, $18 ; BEQ
+
+    CMP #$20
+.byte $b0, $42; BCS
+    ASL
+    TAY
+    LDA $1C29,Y
+    STA $1B50
+    LDA $1C2A,Y
+    STA $1B51
+    LDA $107C,X
+    JMP $1C78
+    RTS
+
+    LDA ($FE),Y
+    AND #$F0
+    ORA $1B63
+    RTS
+
+    LDA ($FE),Y
+    AND #$0F
+    STA $1B69
+    LDA #$63
+    ASL
+    ASL
+    ASL
+    ASL
+    ORA #$06
+    RTS
+
+    STA $1B70
+    ASL
+    ADC #$00
+    RTS
 .endlogical
-UNKNOWN_CODE2_DONE
 
 .binary 'assets/data2.bin'
 
