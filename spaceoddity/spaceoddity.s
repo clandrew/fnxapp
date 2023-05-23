@@ -1229,6 +1229,7 @@ EarlyOut_1b52
 
 * = $00D800
 .logical $E000
+ChrOut
     PHA
     PHY
     TAY
@@ -1284,17 +1285,18 @@ TEST1
 ;	<CursorPointer>	=	word address of screen character/color memory
 PrintAnsiString
     LDY #$00
-.byte $80, $0c ; BRA
+    BRA Print20
+
 Print10
     CMP #$1B
     BCC CheckControlCodes
-    JSR $E000 ; ChrOut
+    JSR ChrOut
 
 NextByte
     INY
     BNE Print20
     INC $31 ; TempSrc+1
-
+    
 Print20
     LDA ($30),y ; (TempSrc),y
     BNE Print10
@@ -1306,7 +1308,7 @@ CheckControlCodes
     LDA $48 ; CursorColor
     AND #$F0
     STA $48 ; CursorColor
-    JSR $E0E1 ; GetNextByte
+    JSR GetNextByte
     ORA $48 ; CursorColor
     STA $48 ; CursorColor
     BRA NextByte
@@ -1324,7 +1326,7 @@ CheckControlCodes_Cond1
     LDA $48 ; CursorColor
     AND #$0F
     STA $48 ; CursorColor
-    JSR $E0E1 ; GetNextByte
+    JSR GetNextByte
     ASL
     ASL
     ASL
