@@ -32,11 +32,11 @@ SIDFILE='Space_Oddity_2SID'
     .logical $1000
 
 ; Proc: SIDINIT
-    JMP $1148
-    JMP $11CC
-    JMP $12A6
-    JMP $11C2
-    JMP $12A5
+    JMP SoundInitStart
+    JMP Fn11CC
+    JMP Fn12A6
+    JMP Fn11C2
+    JMP Fn12A5_EarlyOut
 
 .byte $80
 .byte $01, $20, $53, $49, $44, $57, $49, $5a, $2d, $32, $53, $49, $44, $20, $31, $2e
@@ -61,7 +61,8 @@ SIDFILE='Space_Oddity_2SID'
 .byte $41, $00, $7b, $db, $2b, $20, $05, $41, $00, $aa, $f7, $0a, $80, $06, $40, $00
 .byte $7c, $6e, $10, $20, $0a, $40, $0f, $00
 
-                JSR   $18D6
+SoundInitStart
+                JSR   SomeSoundFn
                 LDA   #$00
                 LDY   #$7D
 L114F           STA   $1022,Y
@@ -113,12 +114,13 @@ L11B5           LDA   #$FF
                 BPL   L1196
                 RTS
 
+Fn11C2
                 LDX   #$15
                 JSR   $1BE8
                 LDX   #$00
                 JMP   $1BE8
 
-
+Fn11CC
                 LDA   $FE
                 PHA
                 LDA   $FF
@@ -217,8 +219,10 @@ L129A           LDA   #$00
                 STA   $FF
                 PLA
                 STA   $FE
+Fn12A5_EarlyOut
                 RTS
 
+Fn12A6
                 LDA   $FE
                 PHA
                 LDA   $FF
@@ -962,6 +966,7 @@ L18CF           LDA   $1026,X
                 STA   $1122,X
                 RTS
 
+SomeSoundFn
                 .byte  $A2
                 .byte  $00
                 .byte  $20
@@ -1140,18 +1145,19 @@ L1A9C           RTS
 .byte $13, $17, $1f, $2b, $00
 
     CMP #$78
-.byte $10, $09 ; BPL
+    BPL L1AB2
     STA $1B63
     JSR $1BD1
     JMP $1B2B
 
+L1AB2
     TAY
     LDA $1A25,Y
     STA $1ABE
     LDA $1026,X
     CLC
 
-.byte $90, $2b ; BCC
+    BCC L1AEA
 
     LDY #$FF
     LDA #$6E
@@ -1165,7 +1171,11 @@ L1A9C           RTS
 
     JMP $1B2B
     LDA #$FF
-.byte $9d, $27, $10, $bd, $26, $10, $09, $01, $d0, $ee, $a0, $0c, $b1, $fe, $d0, $0e
+
+.byte $9d, $27, $10, $bd, $26, $10, $09, $01, $d0, $ee
+
+L1AEA
+.byte $a0, $0c, $b1, $fe, $d0, $0e
 .byte $a9, $fe, $9d, $27, $10, $3d, $26, $10, $9d, $26, $10, $4c, $01, $1b, $9d, $50
 .byte $10, $a0, $0d, $b1, $fe, $f0, $03, $9d, $51, $10, $e0, $15, $90, $10, $ec, $7d
 .byte $16, $d0, $18, $c8, $b1, $fe, $f0, $13
@@ -1191,7 +1201,7 @@ L1B35
     BEQ EarlyOut_1b52
 
     CMP #$20
-    .byte $b0, $42; BCS
+    .byte $b0, $42; BCS. enters data bin
     ASL
     TAY
     LDA $1C29,Y
@@ -1245,20 +1255,20 @@ ChrOut
     STA ($4B),Y
     INY
     CPY #$28
-    BNE TEST1
+    BNE LE038
 
     CLC
     LDA $4B
     ADC #$28
     STA $4B
-    BCC TEST2
+    BCC LE025
     INC $4C
 
-TEST2
+LE025
     LDA $4A
     INA
     CMP #$1E
-    BNE TEST3
+    BNE LE034
 
     LDA #$C0
     STA $4C
@@ -1266,11 +1276,11 @@ TEST2
     LDA #$00
     STA $4B
 
-TEST3
+LE034
     STA $4A
     LDY #$00
 
-TEST1
+LE038
 .byte $84, $49, $68, $85, $01, $7a, $68, $60
 .byte $48, $da, $a5, $01, $48, $9c, $73, $e0, $64, $4b, $a9, $c0, $8d, $74, $e0, $85
 .byte $4c, $a9, $02, $85, $01, $a2, $20, $20, $71, $e0, $9c, $73, $e0, $a9, $c0, $8d
@@ -1481,13 +1491,10 @@ LE2A0
     RTS
 
 SpecialKeyDown
-
     CPX #$C0
-
     BEQ LE2B2
 
     CPX #$C1
-
     BNE LE2BC
 
 LE2B2
