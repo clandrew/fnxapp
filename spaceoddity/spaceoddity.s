@@ -1460,19 +1460,21 @@ KeyPressed
     STA $E170,x ; KeyboardKeyStates,x 
     LDA $E16F ; KeyboardState
     BIT #$21 ; #(KEYBOARDSTATES.SHIFT|KEYBOARDSTATES.CAPSLK)
-
-.byte $f0, $05 ; BEQ
+    BEQ LE29D
 
     LDA SCSET21,x
 
-.byte $80, $03 ; BRA
+    BRA LE2A0
 
+LE29D
     LDA SCSET2,x
+
+LE2A0
     TAX
     AND #$C0
     CMP #$C0
 
-.byte $f0, $03 ; BEQ
+    BEQ SpecialKeyDown
 
     TXA
     PLX
@@ -1482,35 +1484,43 @@ SpecialKeyDown
 
     CPX #$C0
 
-.byte $f0, $04 ; BEQ
+    BEQ LE2B2
 
     CPX #$C1
 
-.byte $d0, $0a, $ad, $6f, $e1, $09, $01, $8d, $6f, $e1, $80, $52, $e0, $c2, $f0, $04
+    BNE LE2BC
+
+LE2B2
+.byte $ad, $6f, $e1, $09, $01, $8d, $6f, $e1, $80, $52
+
+LE2BC
+.byte $e0, $c2, $f0, $04
 .byte $e0, $c3, $d0, $0a, $ad, $6f, $e1, $09, $02, $8d, $6f, $e1, $80, $40, $e0, $c4
 .byte $f0, $04, $e0, $c5, $d0, $0a, $ad, $6f, $e1, $09, $04, $8d, $6f, $e1, $80, $2e
 .byte $e0, $c6, $f0, $04, $e0, $c7, $d0, $0a, $ad, $6f, $e1, $09, $08, $8d, $6f, $e1
 
-.byte $80, $1c ; BRA
+    BRA LE30E
     CPX #$CF
 
-.byte $d0, $0a ; BNE
+    BNE LE300
 
     LDA $E16F ; KeyboardState
     EOR #$10 ; #KEYBOARDSTATES.NUMLK
     STA $E16F ; KeyboardState
-.byte $80, $0e ; BRA
+    BRA LE30E ; .byte $80, $0e ; BRA
+LE300
 .endlogical
 
 ; db00
 * = $00DB00
 .logical $E300
     CPX #$CE
-.byte $d0, $0a ; BNE
+    BNE LE30E ; .byte $d0, $0a ; BNE
     LDA $E16F ; KeyboardState
     EOR #$20 ; #KEYBOARDSTATES.CAPSLK
     STA $E16F ; KeyboardState
-.byte $80, $00 ; BRA
+    BRA LE30E ; This seems pointless but ok
+LE30E
     LDA #$00
     SEC
     PLX
