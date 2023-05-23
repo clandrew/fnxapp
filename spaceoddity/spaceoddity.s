@@ -1173,24 +1173,25 @@ L1A9C           RTS
     STA $1681
     JMP $1B2B
     CPX $1714
-
-.byte $d0, $08 ; BNE
+    BNE L1B2B
     INY
     LDA ($FE),Y
-
-.byte $f0, $03 ; BEQ
-
+    BEQ L1B2B
     STA $1718
+
+L1B2B
     LDA $1079,X
     CMP #$40
-.byte $30, $03; BMI
+    BMI L1B35
 
     JSR $1B80
+
+L1B35
     LDA $107B,X
-.byte $f0, $18 ; BEQ
+    BEQ EarlyOut_1b52
 
     CMP #$20
-.byte $b0, $42; BCS
+    .byte $b0, $42; BCS
     ASL
     TAY
     LDA $1C29,Y
@@ -1199,6 +1200,7 @@ L1A9C           RTS
     STA $1B51
     LDA $107C,X
     JMP $1C78
+EarlyOut_1b52 
     RTS
 
     LDA ($FE),Y
@@ -1221,9 +1223,9 @@ L1A9C           RTS
     ASL
     ADC #$00
     RTS
-.endlogical
 
 .binary 'assets/data2.bin'
+.endlogical
 
 * = $00D800
 .logical $E000
