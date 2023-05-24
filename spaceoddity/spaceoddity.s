@@ -1181,7 +1181,7 @@ L1AEA
 .byte $16, $d0, $18, $c8, $b1, $fe, $f0, $13
 
     STA $1681
-    JMP $1B2B
+    JMP L1B2B
     CPX $1714
     BNE L1B2B
     INY
@@ -1194,14 +1194,14 @@ L1B2B
     CMP #$40
     BMI L1B35
 
-    JSR $1B80
+    JSR L1B80
 
 L1B35
     LDA $107B,X
     BEQ EarlyOut_1b52
 
     CMP #$20
-    .byte $b0, $42; BCS. enters data bin
+    BCS L1B80
     ASL
     TAY
     LDA $1C29,Y
@@ -1209,7 +1209,7 @@ L1B35
     LDA $1C2A,Y
     STA $1B51
     LDA $107C,X
-    JMP $1C78
+    JMP Fn1C78
 EarlyOut_1b52 
     RTS
 
@@ -1234,7 +1234,11 @@ EarlyOut_1b52
     ADC #$00
     RTS
 
+SomeLookupTable
+;       1   10   20   30   39   49   60  78   83   94   97   106  112  119
 .byte $01, $0a, $14, $1e, $27, $31, $3c, $4e, $53, $5e, $61, $6a, $70, $77
+
+L1B80
 .byte $48, $4a, $4a, $4a, $4a, $a8, $b9, $70, $1b, $8d, $94, $1b, $68, $29, $0f, $8d
 .byte $63, $1b, $18, $90, $31, $60, $bd, $23, $11, $20, $5d, $1b, $4c, $a5, $1b, $bd
 .byte $23, $11, $20, $55, $1b, $9d, $23, $11, $60, $bd, $26, $10, $20, $5d, $1b, $9d
@@ -1251,24 +1255,153 @@ EarlyOut_1b52
 .byte $1c, $f6, $1b, $ad, $1c, $b1, $1c, $b7, $1c, $c3, $1c, $ef, $1c, $fe, $1c, $07
 .byte $1d, $17, $1d, $28, $1d, $dd, $1b, $31, $1d, $31, $1d, $31, $1d, $31, $1d, $31
 .byte $1d, $31, $1d, $3d, $1d, $51, $1d, $60, $1d, $a0, $81, $d0, $02, $a0, $82, $48
-.byte $98, $9d, $ca, $10, $68, $4c, $7c, $19, $a0, $83, $d0, $f3, $48, $20, $d9, $1b
-.byte $68, $4c, $5f, $19, $20, $6b, $1b, $69, $10, $9d, $50, $10, $60, $20, $6b, $1b
-.byte $a0, $0a, $71, $fe, $9d, $51, $10, $a9, $00, $9d, $28, $10, $60, $20, $6b, $1b
-.byte $a0, $0b, $71, $fe, $8d, $18, $17, $a9, $00, $8d, $1f, $17, $60, $9d, $a6, $10
-.byte $60, $29, $0f, $9d, $25, $10, $60, $e0, $15, $90, $04, $8d, $94, $12, $60, $8d
-.byte $6b, $12, $60, $09, $80, $8d, $6c, $2c, $a9, $00, $8d, $f5, $10, $8d, $fc, $10
-.byte $8d, $03, $11, $8d, $f4, $10, $8d, $fb, $10, $8d, $02, $11, $8d, $0a, $11, $8d
-.byte $11, $11, $8d, $18, $11, $8d, $09, $11, $8d, $10, $11, $8d, $17, $11, $60, $48
-.byte $29, $0f, $09, $80, $8d, $6d, $2c, $68, $4a, $4a, $4a, $4a, $10, $c7, $f0, $7e
-; 1500
-.byte $a8, $b9, $8a, $2c, $4c, $ca, $1c, $09, $80, $bc, $a2, $10, $99, $6c, $2c, $98
-.byte $9d, $f4, $10, $9d, $f5, $10, $60, $48, $4a, $4a, $4a, $4a, $20, $09, $1d, $68
-.byte $29, $0f, $09, $80, $99, $6d, $2c, $60, $f0, $54, $a8, $b9, $8a, $2c, $4c, $10
-.byte $1d, $e0, $15, $90, $04, $8d, $96, $12, $60, $8d, $6d, $12, $60, $bc, $a3, $10
-.byte $f0, $0b, $c8, $d0, $03, $9d, $a3, $10, $a9, $02, $9d, $4d, $10, $de, $a3, $10
-.byte $60, $bc, $a3, $10, $d0, $07, $18, $7d, $4d, $10, $9d, $4d, $10, $4c, $3d, $1d
-.byte $48, $29, $0f, $e0, $15, $90, $06, $8d, $77, $12, $4c, $70, $1d, $8d, $4e, $12
-.byte $68, $29, $f0, $e0, $15, $90, $04, $8d, $79, $12, $60, $8d, $50, $12, $60
+.byte $98, $9d, $ca, $10, $68, $4c, $7c, $19
+
+Fn1C78
+                LDY   #$83
+                BNE   $1C6F
+
+                PHA
+                JSR   $1BD9
+                PLA
+                JMP   $195F
+
+                JSR   $1B6B
+                ADC   #$10
+                STA   $1050,X
+                RTS
+
+                JSR   $1B6B
+                LDY   #$0A
+                ADC   ($FE),Y
+                STA   $1051,X
+                LDA   #$00
+                STA   $1028,X
+                RTS
+
+                JSR   $1B6B
+                LDY   #$0B
+                ADC   ($FE),Y
+                STA   $1718
+                LDA   #$00
+                STA   $171F
+                RTS
+
+                STA   $10A6,X
+                RTS
+
+                AND   #$0F
+                STA   $1025,X
+                RTS
+
+                CPX   #$15
+                BCC   L1CBF
+                STA   $1294
+                RTS
+
+L1CBF           STA   $126B
+                RTS
+
+                ORA   #$80
+L1CC5           STA   $2C6C
+                LDA   #$00
+L1CCA           STA   $10F5
+                STA   $10FC
+                STA   $1103
+                STA   $10F4
+                STA   $10FB
+                STA   $1102
+                STA   $110A
+                STA   $1111
+                STA   $1118
+                STA   $1109
+                STA   $1110
+                STA   $1117
+                RTS
+
+                PHA
+                AND   #$0F
+                ORA   #$80
+                STA   $2C6D
+                PLA
+                LSR   A
+                LSR   A
+                LSR   A
+                LSR   A
+                BPL   L1CC5
+
+                BEQ   L1D7E
+                TAY
+                LDA   $2C8A,Y
+                JMP   L1CCA
+
+                ORA   #$80
+L1D09           LDY   $10A2,X
+                STA   $2C6C,Y
+                TYA
+L1D10           STA   $10F4,X
+                STA   $10F5,X
+                RTS
+
+                PHA
+                LSR   A
+                LSR   A
+                LSR   A
+                LSR   A
+                JSR   L1D09
+                PLA
+                AND   #$0F
+                ORA   #$80
+                STA   $2C6D,Y
+                RTS
+
+                BEQ   L1D7E
+                TAY
+                LDA   $2C8A,Y
+                JMP   L1D10
+
+                CPX   #$15
+                BCC   L1D39
+                STA   $1296
+                RTS
+
+L1D39           STA   $126D
+                RTS
+
+L1D3D           LDY   $10A3,X
+                BEQ   L1D4D
+                INY
+                BNE   L1D48
+                STA   $10A3,X
+L1D48           LDA   #$02
+                STA   $104D,X
+L1D4D           DEC   $10A3,X
+                RTS
+
+                LDY   $10A3,X
+                BNE   L1D5D
+                CLC
+                ADC   $104D,X
+                STA   $104D,X
+L1D5D           JMP   L1D3D
+
+                PHA
+                AND   #$0F
+                CPX   #$15
+                BCC   L1D6D
+                STA   $1277
+                JMP   L1D70
+
+L1D6D           STA   $124E
+L1D70           PLA
+                AND   #$F0
+                CPX   #$15
+                BCC   L1D7B
+                STA   $1279
+                RTS
+
+L1D7B           STA   $1250
+L1D7E           RTS
 
 ; data here
 .byte $02
