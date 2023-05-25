@@ -78,7 +78,7 @@ Some other details:
 * Although it could talk to F256K microkernel since the microkernel is all 6502-based, it doesn't. Instead, it talks directly to the device. So when loading it, you can feel free to blow away the kernelcode.
 
 How to build and load it:
-  * The build step uses 64tass as usual. 
+  * The build step uses [64tass](https://tass64.sourceforge.net) as usual. 
   * The build creates a .bin file, which is a raw dump of bytes to be patched in at an externally-chosen location.
   * Use a tool like the 'F256 Uploader', distributed by the hardware vendor, or FoenixMgr available [here](https://github.com/pweingar/FoenixMgr) to transmit the binary over COM3 (USB) interface. Choose "Boot from RAM" and load it at 0x800.
 
