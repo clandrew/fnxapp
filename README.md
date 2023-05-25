@@ -68,7 +68,19 @@ Segments are allowed to straddle bank boundaries. You can have one segment take 
 ![alt text](https://raw.githubusercontent.com/clandrew/fnxapp/main/Images/execpgz.PNG?raw=true)
 
 ### spaceoddity
-A sample (NOT written by me) which plays sound on the F256K.
+A sample oiginally written by [noyen1973](https://github.com/noyen1973), adapted and reorganized a little with permission. It displays a title graphic and plays sound on the F256K system.
+
+This sample is written for F256K hardware and has been tested there, as opposed to the FoenixIDE emulator.
+
+Some other details:
+* This sample is written entirely in 6502 comaptibility mode.
+* Graphics and sound assets are baked into the built binary.
+* Although it could talk to F256K microkernel since the microkernel is all 6502-based, it doesn't. Instead, it talks directly to the device. So when loading it, you can feel free to blow away the kernelcode.
+
+How to build and load it:
+  * The build step uses 64tass as usual. 
+  * The build creates a .bin file, which is a raw dump of bytes to be patched in at an externally-chosen location.
+  * Use a tool like the 'F256 Uploader', distributed by the hardware vendor, or FoenixMgr available [here](https://github.com/pweingar/FoenixMgr) to transmit the binary over COM3 (USB) interface. Choose "Boot from RAM" and load it at 0x800.
 
 ### wormhole
 
