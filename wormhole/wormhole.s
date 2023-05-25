@@ -4,9 +4,6 @@
 
 .cpu "65816"
 
-PUTS = $00101C                      ; Print a string to the currently selected channel
-PUTC = $001018                      ;
-
 .include "kernel.s"
 .include "vicky_ii_def.s"
 .include "macros.s"
