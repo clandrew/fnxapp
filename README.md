@@ -68,7 +68,7 @@ Segments are allowed to straddle bank boundaries. You can have one segment take 
 ![alt text](https://raw.githubusercontent.com/clandrew/fnxapp/main/Images/execpgz.PNG?raw=true)
 
 ### spaceoddity
-A sample oiginally written by [noyen1973](https://github.com/noyen1973), adapted and reorganized a little with permission. It displays a title graphic and plays sound on the F256K system.
+A sample oiginally written by [noyen1973](https://github.com/noyen1973), adapted and reorganized with permission. It displays a title graphic and plays sound on the F256K system.
 
 This sample is written for F256K hardware and has been tested there, as opposed to the FoenixIDE emulator.
 
@@ -81,6 +81,8 @@ How to build and load it:
   * The build step uses 64tass as usual. 
   * The build creates a .bin file, which is a raw dump of bytes to be patched in at an externally-chosen location.
   * Use a tool like the 'F256 Uploader', distributed by the hardware vendor, or FoenixMgr available [here](https://github.com/pweingar/FoenixMgr) to transmit the binary over COM3 (USB) interface. Choose "Boot from RAM" and load it at 0x800.
+
+If you do want to expand this sample to call kernel functions, heads up that it will likely (depending on how your machine is setup) be a completely different layer from what's used by the other samples here. Typically it will be the [TinyCore microkernel](https://github.com/ghackwrench/F256_Jr_Kernel_DOS), where the other samples here use the main [C256 project kernel](https://github.com/Trinity-11/Kernel).
 
 ### wormhole
 
