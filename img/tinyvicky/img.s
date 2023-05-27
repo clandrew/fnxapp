@@ -2287,33 +2287,6 @@ DoneUpdateSpeed
     RTI
 
 Init_IRQHandler
-    LDA MMU_IO_CTRL
-    PHA                 ;<<<="PushMMUIO"
-    STZ MMU_IO_CTRL     ;<<<="SetMMUIO"
-    SEI
-    LDA #$4B ; #<(loword(val(copy('#IRQ_Handler',2))))
-    STA $FFFE ; VECTOR_IRQ
-    LDA #$E6 ; #>(loword(val(copy('#IRQ_Handler',2))))
-    STA $FFFF ; (VECTOR_IRQ)+1
-    LDA #$FA ; #~(JR0_INT00_SOF|JR0_INT02_KBD)
-
-    STA $D66C ; INT_MASK_REG0
-
-    LDA #$00 ; #<(loword(val(copy('#0',2))))
-    STA $4D  ; SOFCounter
-    
-    LDA #$00 ; #>(loword(val(copy('#0',2))))
-    STA ($4D) ; (SOFCounter)+1
-    
-    LDA #$00 ; #<(hiword(val(copy('#0',2))))
-    STA ($4D) ; (SOFCounter)+2 
-
-    LDA #$00 ; #>(hiword(val(copy('#0',2))))
-    STA ($4D) ; (SOFCounter)+3 
-
-    CLI
-    PLA
-    STA MMU_IO_CTRL ;<<<="PullMMUIO"
     RTS
 
 Init_Audio
