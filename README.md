@@ -84,6 +84,8 @@ How to build and load it:
 
 If you do want to expand this sample to call kernel functions, heads up that it will likely (depending on how your machine is setup) be a completely different layer from what's used by the other samples here. Typically it will be the [TinyCore microkernel](https://github.com/ghackwrench/F256_Jr_Kernel_DOS), where the other samples here use the main [C256 project kernel](https://github.com/Trinity-11/Kernel).
 
+![alt text](https://raw.githubusercontent.com/clandrew/fnxapp/main/Images/spaceoddity.jpg?raw=true)
+
 ### wormhole
 
 Do you remember DirectDraw? The DirectX 5 SDK disc came with a bunch of samples, including one called "Wormhole". 
