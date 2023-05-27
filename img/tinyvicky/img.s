@@ -2414,20 +2414,11 @@ MAIN
     STA @w MASTER_CTRL_REG_H
     
     JSR Init_GameFont
-    JSR Init_Audio
-    JSR Init_IRQHandler
 
     LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK
     STA $48 ; CursorColor
 
     JSR $E040 ; JSR ClearScreen
-
-    ; map in title screen code as $06000
-    ;	lda MMU_MEM_CTRL : ora #MMU_EDIT_EN : sta MMU_MEM_CTRL ;<<<=";	UnlockMMU"
-    ;	lda #(TitleScreenCode/$2000)
-    ;	sta MMU_MEM_BANK_3
-    ;	lda MMU_MEM_CTRL : and #~(MMU_EDIT_EN) : sta MMU_MEM_CTRL ;<<<=";	LockMMU"
-    ;	jsr ShowTitle
 
     LDA #$00
     STA $49 ; CursorColumn
