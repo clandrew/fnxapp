@@ -2221,7 +2221,6 @@ F256_RESET
     LDA INT_PENDING_REG1
     STA INT_PENDING_REG1
 
-    JSR Init_CODEC      ; Init_Sound
     JSR Init_Graphics   ; Init_Graphics
     JSR Init_Keyboard   ; Init_Keyboard
     CLI
@@ -2319,6 +2318,7 @@ Init_IRQHandler
     RTS
 
 Init_Audio
+    ; Dead code?
     LDA MMU_IO_CTRL
     PHA                 ;<<<="PushMMUIO"
     STZ MMU_IO_CTRL     ; ;<<<="SetMMUIO"
