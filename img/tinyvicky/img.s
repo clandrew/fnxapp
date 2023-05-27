@@ -2222,7 +2222,6 @@ F256_RESET
     STA INT_PENDING_REG1
 
     JSR Init_Graphics   ; Init_Graphics
-    JSR Init_Keyboard   ; Init_Keyboard
     CLI
     JMP MAIN
 
