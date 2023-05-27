@@ -86,11 +86,18 @@ If you do want to expand this sample to call kernel functions, heads up that it 
 
 ![alt text](https://raw.githubusercontent.com/clandrew/fnxapp/main/Images/spaceoddity.jpg?raw=true)
 
+### img
+A sample that uses Vicky II to display a single, 256-color image. The image is baked into the binary. 
+
+Like many of the other samples here it runs on emulator.
+
+![alt text](https://raw.githubusercontent.com/clandrew/fnxapp/main/Images/img.PNG?raw=true)
+
 ### wormhole
 
 Do you remember DirectDraw? The DirectX 5 SDK disc came with a bunch of samples, including one called "Wormhole". 
 
-This is a port of that sample. Some details are described more [in this blog post](http://cml-a.com/content/).
+This is a port of that sample. Some details are described more [in this blog post](http://cml-a.com/content/). It's similar to 'img', except the palette is updated every frame.
 
 ![alt text](https://raw.githubusercontent.com/clandrew/fnxapp/main/Images/wormhole.PNG?raw=true)
 
