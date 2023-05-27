@@ -9,20 +9,10 @@
 ; Constants
 VIA_ORB_IRB = $DC00
 VIA_ORB_IRA = $DC01
-SIDSTART=$1000
-SIDINIT=$1000
-SIDPLAY=$1003
-SIDMODE=5
-SIDFILE='Space_Oddity_2SID'
 
 ; Code
-
 * = $000000 
         .byte 0
-
-* = $000800 
-    .logical $1000
-.endlogical
 
 * = $00D800
 .logical $E000
