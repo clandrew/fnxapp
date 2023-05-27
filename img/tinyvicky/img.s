@@ -1813,16 +1813,6 @@ CheckControlCodes_Cond4
 ; db00
 * = $00DB00
 .logical $E300
-    CPX #$CE
-    BNE LE30E ; .byte $d0, $0a ; BNE
-    LDA $E16F ; KeyboardState
-    EOR #$20 ; #KEYBOARDSTATES.CAPSLK
-    STA $E16F ; KeyboardState
-    BRA LE30E ; This seems pointless but ok
-LE30E
-    LDA #$00
-    SEC
-    PLX
     RTS
 
 Init_Graphics
