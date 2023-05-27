@@ -18,9 +18,9 @@
 /wormhole/Debug
 /wormhole/Release
 /wormhole/Demo
-/img/.vs/*
-/img/Debug
-/img/Release
+/img/vickyii/.vs/*
+/img/vickyii/Debug
+/img/vickyii/Release
 /BitmapEmbedder/.vs/*
 /BitmapEmbedder/Debug/*
 /BitmapEmbedder/Release/*
