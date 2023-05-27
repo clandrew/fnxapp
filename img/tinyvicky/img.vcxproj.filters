@@ -15,9 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="spaceoddity.s">
-      <Filter>Source Files</Filter>
-    </CustomBuild>
+    <CustomBuild Include="img.s" />
   </ItemGroup>
   <ItemGroup>
     <None Include="platform.s">
