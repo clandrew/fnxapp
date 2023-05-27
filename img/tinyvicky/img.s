@@ -2244,48 +2244,6 @@ DoneUpdateSpeed
     JSR $1003 ; SIDPLAY
     RTS
 
-; IRQ_Handler
-    PHP
-    PHA
-    PHX
-    PHY                ;<<<="PushAXY"
-    CLD
-    LDA MMU_MEM_CTRL
-    PHA
-    LDA MMU_IO_CTRL
-    PHA
-                       ;<<<="PushMMUIO"
-    STZ MMU_IO_CTRL    ; use i/o registers ;<<<="SetMMUIO	; use i/o registers"
-    LDA INT_PENDING_REG0
-    STA $20 ; TempIRQ
-    BIT #JR0_INT00_SOF
-
-.byte $f0, $08 ; BEQ
-    STA INT_PENDING_REG0 ; clear irq
-
-    JSR $E638 ; SOFIRQ ;Increase_SOFCounter
-
-    LDA $20 ; TempIRQ
-
-    BIT #JR0_INT02_KBD
-
-.byte $f0, $08 ; BEQ __
-
-    STA INT_PENDING_REG0
-
-    JSR KeyboardIRQ
-
-    LDA $20 ; TempIRQ
-    PLA
-    STA MMU_IO_CTRL ;<<<="PullMMUIO"
-    PLA
-    STA MMU_MEM_CTRL
-    PLY
-    PLX
-    PLA
-    PLP
-    RTI
-
 Init_IRQHandler
     RTS
 
