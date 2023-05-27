@@ -2013,13 +2013,6 @@ F256_RESET
     CLI
     JMP MAIN
 
-DoneUpdateSpeed
-    JSR $1003 ; SIDPLAY
-    RTS
-
-Init_IRQHandler
-    RTS
-
 Init_Audio
     ; Dead code?
     RTS
