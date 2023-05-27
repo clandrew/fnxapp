@@ -2296,13 +2296,6 @@ Init_Audio
     STZ MMU_IO_CTRL     ; ;<<<="SetMMUIO"
     LDX #$00
 
-    ClearAudioElement
-    STZ $D400,x         ; SID_LEFT,x
-    STZ $D500,x         ; SID_RIGHT,x
-    INX
-    CPX #$20
-    BNE ClearAudioElement
-
     PLA
     STA MMU_IO_CTRL ;<<<="PullMMUIO"
     RTS
