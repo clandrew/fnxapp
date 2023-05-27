@@ -2225,21 +2225,6 @@ F256_RESET
     CLI
     JMP MAIN
 
-.byte $00
-
-    ; SOFIRQ ;	proc Increase_SOFCounter
-                    ;	Increase_SOF_Counter()
-                    ;	SID_Play_Frame()
-    LDA #$05 ; SIDMODE
-    CMP #$06
-    BEQ DoneUpdateSpeed
-
-    DEC $E637 ; SIDSpeed
-    BNE DoneUpdateSpeed
-
-    STA $E637 ; SIDSpeed
-    RTS
-
 DoneUpdateSpeed
     JSR $1003 ; SIDPLAY
     RTS
