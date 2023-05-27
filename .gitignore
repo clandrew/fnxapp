@@ -21,6 +21,10 @@
 /img/vickyii/.vs/*
 /img/vickyii/Debug
 /img/vickyii/Release
+/img/tinyvicky/.vs/*
+/img/tinyvicky/Debug
+/img/tinyvicky/Release
+/img/tinyvicky/reference/*
 /BitmapEmbedder/.vs/*
 /BitmapEmbedder/Debug/*
 /BitmapEmbedder/Release/*
