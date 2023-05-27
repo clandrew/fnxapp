@@ -2022,13 +2022,6 @@ Init_IRQHandler
 
 Init_Audio
     ; Dead code?
-    LDA MMU_IO_CTRL
-    PHA                 ;<<<="PushMMUIO"
-    STZ MMU_IO_CTRL     ; ;<<<="SetMMUIO"
-    LDX #$00
-
-    PLA
-    STA MMU_IO_CTRL ;<<<="PullMMUIO"
     RTS
 
 .endlogical
