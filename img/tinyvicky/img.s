@@ -9,14 +9,6 @@
 ; Constants
 VIA_ORB_IRB = $DC00
 VIA_ORB_IRA = $DC01
-
-;const SIDSTART=$a000,SIDINIT=$a000,SIDPLAY=$a003,SIDMODE=5,SIDFILE='toccata_v3.a000'
-;const SIDSTART=$a000,SIDINIT=$a048,SIDPLAY=$a021,SIDMODE=5,SIDFILE='viola_duet.a000'
-;const SIDSTART=$1000,SIDINIT=$1000,SIDPLAY=$1003,SIDMODE=5,SIDFILE='Super_Mario_Bros_2SID'
-;const SIDSTART=$1000,SIDINIT=$1000,SIDPLAY=$1003,SIDMODE=5,SIDFILE='mrdo'
-;const SIDSTART=$4000,SIDINIT=$4000,SIDPLAY=$4003,SIDMODE=5,SIDFILE='Airwolf_2SID'
-;const SIDSTART=$1000,SIDINIT=$1000,SIDPLAY=$1003,SIDMODE=5,SIDFILE='Space_Oddity_2SID'
-;const SIDSTART=$0FF6,SIDINIT=$0FF6,SIDPLAY=$1003,SIDMODE=6,SIDFILE='Girl_from_Tomorrow_2SID'
 SIDSTART=$1000
 SIDINIT=$1000
 SIDPLAY=$1003
@@ -2428,7 +2420,7 @@ MAIN
     LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK
     STA $48 ; CursorColor
 
-    JSR $E040 ; JSR CearScreen
+    JSR $E040 ; JSR ClearScreen
 
     ; map in title screen code as $06000
     ;	lda MMU_MEM_CTRL : ora #MMU_EDIT_EN : sta MMU_MEM_CTRL ;<<<=";	UnlockMMU"
@@ -2459,19 +2451,6 @@ MAIN
     STA $31  ; STA TempSrc+1
     
     JSR PrintAnsiString
-
-    STZ MMU_IO_CTRL         ;<<<="SetMMUIO"
-    LDA #$01
-    STA $E637 ; SIDSpeed
-
-    LDA #$00
-    JSR SIDINIT
-
-                            ;	SID_Initialize(0,0)
-                            ;	SID_SetVolume(-1)
-                            ;	SID_Play()
-                            ;<<<="SetMMUIO"
-    STZ MMU_IO_CTRL
 
 Lock
     JMP Lock
