@@ -59,6 +59,8 @@ LE034
 
 LE038
 .byte $84, $49, $68, $85, $01, $7a, $68, $60
+
+ClearScreen
 .byte $48, $da, $a5, $01, $48, $9c, $73, $e0, $64, $4b, $a9, $c0, $8d, $74, $e0, $85
 .byte $4c, $a9, $02, $85, $01, $a2, $20, $20, $71, $e0, $9c, $73, $e0, $a9, $c0, $8d
 .byte $74, $e0, $a9, $03, $85, $01, $a6, $48, $20, $71, $e0, $68, $85, $01, $fa, $68
@@ -126,7 +128,7 @@ CheckControlCodes_Cond2
     CMP #$0C
 
     BNE CheckControlCodes_Cond3 
-    JSR $E040
+    JSR ClearScreen
     BRA NextByte
 CheckControlCodes_Cond3
     RTS
@@ -215,7 +217,7 @@ GraphicsLoop3
 
     LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK  [224/$E0/"…"] ;<<<="lda #DoC64COLOR(LTBLUE,BLACK)"
     STA $48 ; CursorColor
-    JSR $E040 ; ClearScreen
+    JSR ClearScreen
 
     LDA #$00 ; #<(loword(val(copy('#VKY_TEXT_MEMORY',2))))
     STA $4B ; CursorPointer
@@ -385,7 +387,7 @@ MAIN
     LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK
     STA $48 ; CursorColor
 
-    JSR $E040 ; JSR ClearScreen
+    JSR ClearScreen
 
     LDA #$00
     STA $49 ; CursorColumn
