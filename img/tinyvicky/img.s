@@ -433,10 +433,6 @@ MAIN
     STA $D00E ; Background green channel
     LDA #$FF
     STA $D00F ; Background blue channel
-
-    ; Enable bitmap layer0
-    LDA $3 ; Enable, LUT0
-    STA $D100
     
     ; Switch to page 1 because the lut lives there
     LDA #1
@@ -467,6 +463,15 @@ MAIN
     STA $D00E
     STA $D00F
 
+    ; Go back to I/O page 0
+    LDA #0
+    STA MMU_IO_CTRL
+
+    ; Enable bitmap layer0
+    LDA $3 ; Enable, LUT0
+    STA $D100
+
+    ; Now copy graphics data
     
     ;LDA #$00    
     ;STA $D101 ; Layer0 VRAM Lo
@@ -490,7 +495,11 @@ TX_GAMETITLE
 ; Emitted with 
 ;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\img\rsrc\vcf.bmp D:\repos\fnxapp\img\rsrc\colors.s D:\repos\fnxapp\img\rsrc\pixmap.s
 .include "rsrc/colors.s"
-;.include "rsrc/pixmap.s"
+
+* = $10000-$800
+.logical $10000
+.include "rsrc/pixmap.s"
+.endlogical
 
 ; Write the system vectors
 * = $00F7F8
