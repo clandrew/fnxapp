@@ -329,57 +329,6 @@ Init_Audio
 * = $00DEC0
 .logical $e6c0
 Init_GameFont
-    LDA MMU_IO_CTRL
-    PHA                ;<<<="PushMMUIO"
-    STZ MMU_IO_CTRL    ;<<<="SetMMUIO"
-
-    LDA #MMU_IO_PAGE_1
-    STA MMU_IO_CTRL
-
-CopyMemSmall
-                    ;		AssignWord(FONT_FANTASY,.asrcaddr)
-    LDA #<(FONT_FANTASY)
-    STA local_srcaddr
-
-    LDA #>(FONT_FANTASY)
-    STA local_srcaddr+1
-    
-    LDA #$00 ; #<(FONT_MEM) 
-    STA local_destaddr
-    
-    LDA #$C0 ; #>(FONT_MEM)
-    STA local_destaddr+1
-
-    LDY #$00
-
-LoadNextFontData
-    
-    local_srcaddr = *+1
-    LDA $1234
-
-    local_destaddr = *+1
-    STA $4321
-
-    INC local_srcaddr
-    BNE done_updating_srcaddr
-    INC local_srcaddr+1
-
-done_updating_srcaddr
-    INC local_destaddr
-    BNE done_updating_destaddr
-    INC local_destaddr+1
-
-done_updating_destaddr
-    LDA local_srcaddr
-    CMP #$07 ; #<(FONT_FANTASY+sizeof(FONT_FANTASY))  [217/$D9/"U"]
-    BNE LoadNextFontData
-
-    LDA local_srcaddr+1
-    CMP #$EF ; #>(FONT_FANTASY+sizeof(FONT_FANTASY))  [247/$F7/"ö"]
-    BNE LoadNextFontData
-
-    PLA
-    STA MMU_IO_CTRL ;<<<="PullMMUIO"
     RTS
 .endlogical
 
@@ -472,8 +421,7 @@ MAIN
 
     LDX #$00
 
-    ; It won't load from src_pointer, probably the MMU is not set to the right thing.
-    ; Is value 0 reserved somehow?
+    ; Can not load from src_pointer as-is, because of mmu switching.
 
 ;LutLoop
     LDY #$0
