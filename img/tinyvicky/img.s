@@ -372,7 +372,7 @@ MAIN
     
     JSR PrintAnsiString
          
-    ; Clear to magenta
+    ; Clear to black
     LDA #$00
     STA $D00D ; Background red channel
     LDA #$00
@@ -424,8 +424,6 @@ LutLoop
     INY
     LDA (src_pointer),Y
     STA (dst_pointer),Y
-    INY
-    INY    
 
     INX
     BEQ LutDone     ; When X overflows, exit
