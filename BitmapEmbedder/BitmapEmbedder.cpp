@@ -105,7 +105,9 @@ int main(int argc, void** argv)
 		// Dump the palette
 		std::wstring outputFile = destPaletteFilename;
 		std::ofstream out(outputFile);
-		out << "LUT_START\n";
+		int index = 0;
+		int dstPointer = 0xd000;
+
 		for (auto it = colors.begin(); it != colors.end(); ++it)
 		{
 			UINT rgb = *it;
@@ -117,19 +119,22 @@ int main(int argc, void** argv)
 			int r = rgb & 0xFF;
 			rgb >>= 8;
 
-			out << ".byte $" 
-				<< std::setfill('0') << std::setw(2) << std::hex << b << ", $" 
-				<< std::setfill('0') << std::setw(2) << std::hex << g << ", $" 
-				<< std::setfill('0') << std::setw(2) << std::hex << r << ", $00\n";
-		}
-		int fillerColors = 256 - colors.size();
-		for (int i = 0; i < fillerColors; ++i)
-		{
-			out << ".byte $FF, $00, $FF, 0\n";
-		}
+			out << "; Color index " << index << "\n";
+			out << "LDA #$" << std::setfill('0') << std::setw(2) << std::hex << b << "\n";
+			out << "STA $" << std::setfill('0') << std::setw(4) << std::hex << dstPointer << "\n";
+			dstPointer++;
 
-		out << "\n";
-		out << "LUT_END = *";
+			out << "LDA #$" << std::setfill('0') << std::setw(2) << std::hex << g << "\n";
+			out << "STA $" << std::setfill('0') << std::setw(4) << std::hex << dstPointer << "\n";
+			dstPointer++;
+			
+			out	<< "LDA #$" << std::setfill('0') << std::setw(2) << std::hex << r << "\n";
+			out << "STA $" << std::setfill('0') << std::setw(4) << std::hex << dstPointer << "\n";
+			dstPointer++;
+			dstPointer++;
+
+			++index;
+		}
 	}
 	{
 		std::wstring outputFile = destImageFilename;
