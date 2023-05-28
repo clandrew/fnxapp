@@ -10,9 +10,10 @@
 VIA_ORB_IRB = $DC00
 VIA_ORB_IRA = $DC01
 
-pointer = $30
-column = $32
-bm_bank = $33
+dst_pointer = $30
+src_pointer = $32
+column = $34
+bm_bank = $35
 bitmap_base = IMG_START
 line = $40
 
@@ -460,81 +461,49 @@ MAIN
 
     ; Store a dest pointer in $30-$31
     LDA #<VKY_GR_CLUT_0
-    STA pointer
+    STA dst_pointer
     LDA #>VKY_GR_CLUT_0
-    STA pointer+1
+    STA dst_pointer+1
 
     ; Store a source pointer
-    ;LDA #<LUT_START
-    ;STA $32
-    ;LDA #>LUT_START
-    ;STA $33
+    LDA #<LUT_START
+    STA src_pointer
+    LDA #>LUT_START
+    STA src_pointer+1
 
     LDX #$00
 
-    ;LDA #$00
-    ;PHA
-    ;PLD
-
 LutLoop
     LDY #$0
-
-    LDA #$0
-
-    STA (pointer),Y
+        
+    LDA (src_pointer),Y
+    STA (dst_pointer),Y
     INY    
-    STA (pointer),Y
+    LDA (src_pointer),Y
+    STA (dst_pointer),Y
     INY
-    STA (pointer),Y
+    LDA (src_pointer),Y
+    STA (dst_pointer),Y
     INY
-    STA (pointer),Y
-    INY
-    ;;;;;;;;;;;;
-    STA (pointer),Y
-    INY    
-    STA (pointer),Y
-    INY
-    STA (pointer),Y
-    INY
-    STA (pointer),Y
-    INY
-    ;;;;;;;;;;;;
-    STA (pointer),Y
-    INY    
-    STA (pointer),Y
-    INY
-    STA (pointer),Y
-    INY
-    STA (pointer),Y
-    INY
-    ;;;;;;;;;;;;
-    STA (pointer),Y
-    INY    
-    STA (pointer),Y
-    INY
-    STA (pointer),Y
-    INY
-    STA (pointer),Y
-    ;;;;;;;;;;;;
 
     INX
     BEQ LutDone     ; When X overflows, exit
 
     CLC
-    LDA pointer
+    LDA dst_pointer
     ADC #$04
-    STA pointer
-    LDA pointer+1
+    STA dst_pointer
+    LDA dst_pointer+1
     ADC #$00 ; Add carry
-    STA pointer+1
+    STA dst_pointer+1
     
-    ;CLC
-    ;LDA $32
-    ;ADC #$04
-    ;STA $32
-    ;LDA $33
-    ;ADC #$00 ; Add carry
-    ;STA $33
+    CLC
+    LDA src_pointer
+    ADC #$04
+    STA src_pointer
+    LDA src_pointer+1
+    ADC #$00 ; Add carry
+    STA src_pointer+1
     BRA LutLoop
     
 LutDone
@@ -568,9 +537,9 @@ LutDone
     ; Calculate the bank number for the bitmap
     lda #(IMG_START >> 13)
     sta bm_bank
-    bank_loop: stz pointer ; Set the pointer to start of the current bank
+    bank_loop: stz dst_pointer ; Set the pointer to start of the current bank
     lda #$20
-    sta pointer+1
+    sta dst_pointer+1
     ; Set the column to 0
     stz column
     stz column+1
@@ -586,7 +555,7 @@ LutDone
 loop2
     lda line ; The line number is the color of the line
 
-    sta (pointer)
+    sta (dst_pointer)
     inc_column: inc column ; Increment the column number
     bne chk_col
     inc column+1
@@ -605,10 +574,10 @@ loop2
 
     stz column ; Set the column to 0
     stz column+1
-    inc_point: inc pointer ; Increment pointer
+    inc_point: inc dst_pointer ; Increment pointer
     bne loop2 ; If < $4000, keep looping
-    inc pointer+1
-    lda pointer+1
+    inc dst_pointer+1
+    lda dst_pointer+1
     cmp #$40
     bne loop2
     inc bm_bank ; Move to the next bank
