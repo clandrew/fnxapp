@@ -92,6 +92,10 @@ int main(int argc, void** argv)
 	UINT uiActualColorCount = 0;
 	VerifyHR(spPalette->GetColors(uiColorCount, colors.data(), &uiActualColorCount));
 
+	// Only 255 actual colors are allowed, because you need to make room for transparency
+	WICColor magenta = 0xFF00FF;
+	colors.insert(colors.begin(), magenta);
+
 	std::vector<byte> result;
 	result.resize(srcImageWidth * srcImageHeight);
 
@@ -106,7 +110,8 @@ int main(int argc, void** argv)
 		std::wstring outputFile = destPaletteFilename;
 		std::ofstream out(outputFile);
 		out << "LUT_START\n";
-		for (auto it = colors.begin(); it != colors.end(); ++it)
+		int colorIndex = 0;
+		for (auto it = colors.begin(); it != colors.end() && colorIndex < 256; ++it)
 		{
 			UINT rgb = *it;
 
@@ -121,6 +126,8 @@ int main(int argc, void** argv)
 				<< std::setfill('0') << std::setw(2) << std::hex << b << ", $" 
 				<< std::setfill('0') << std::setw(2) << std::hex << g << ", $" 
 				<< std::setfill('0') << std::setw(2) << std::hex << r << ", $00\n";
+
+			++colorIndex;
 		}
 		int fillerColors = 256 - colors.size();
 		for (int i = 0; i < fillerColors; ++i)
@@ -162,7 +169,9 @@ int main(int argc, void** argv)
 
 			for (int j = 0; j < lineLength; ++j)
 			{
-				out << "$" << std::setfill('0') << std::setw(2) << std::hex << (int)(indexedBuffer[i + j]);
+				int datum = (int)(indexedBuffer[i + j]);
+				datum++; // Allow for magenta
+				out << "$" << std::setfill('0') << std::setw(2) << std::hex << datum;
 				if (j < lineLength - 1)
 				{
 					out << ", ";

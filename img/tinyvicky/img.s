@@ -465,10 +465,10 @@ MAIN
     STA dst_pointer+1
 
     ; Store a source pointer
-    LDA #<LUT_START
-    STA src_pointer
-    LDA #>LUT_START
-    STA src_pointer+1
+    ;LDA #<LUT_START
+    ;STA src_pointer
+    ;LDA #>LUT_START
+    ;STA src_pointer+1
 
     LDX #$00
 
@@ -478,37 +478,61 @@ MAIN
 ;LutLoop
     LDY #$0
     
-    ; Blue
+    ; color 0 - placeholder magenta
     LDA #$FF
     STA $D000
     LDA #$00
     STA $D001
-    LDA #$00
+    LDA #$FF
     STA $D002
     
-    ; Green
-    LDA #$00
-    STA $D004
+    ; color 1 - blue
     LDA #$FF
+    STA $D004
+    LDA #$00
     STA $D005
     LDA #$00
     STA $D006
     
-    ; Red
-    LDA #$00
-    STA $D008
-    LDA #$00
-    STA $D009
+    ; color 2 - cyan
     LDA #$FF
+    STA $D008
+    LDA #$FF
+    STA $D009
+    LDA #$00
     STA $D00A
     
-    ; White
-    LDA #$FF
+    ; color 3 - green
+    LDA #$00
     STA $D00C
     LDA #$FF
     STA $D00D
-    LDA #$FF
+    LDA #$00
     STA $D00E
+    
+    ; color 4 - red
+    LDA #$00
+    STA $D010
+    LDA #$00
+    STA $D011
+    LDA #$FF
+    STA $D012
+    
+    ; color 5 - white
+    LDA #$FF
+    STA $D014
+    LDA #$FF
+    STA $D015
+    LDA #$FF
+    STA $D016
+    
+    ; color 6 - idk
+    LDA #$07
+    STA $D018
+    LDA #$07
+    STA $D019
+    LDA #$07
+    STA $D01A
 
     ;INX
     ;BEQ LutDone     ; When X overflows, exit
@@ -621,7 +645,7 @@ TX_GAMETITLE
 
 * = $F800
 .logical $F000
-.include "rsrc/colors.s"
+;.include "rsrc/colors.s"
 .endlogical
 
 * = $10000-$800

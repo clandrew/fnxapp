@@ -1,4 +1,5 @@
 LUT_START
+.byte $ff, $00, $ff, $00
 .byte $ff, $00, $00, $00
 .byte $ff, $ff, $00, $00
 .byte $00, $ff, $00, $00
@@ -6,7 +7,6 @@ LUT_START
 .byte $ff, $ff, $ff, $00
 .byte $07, $07, $07, $00
 .byte $00, $00, $00, $00
-.byte $FF, $00, $FF, 0
 .byte $FF, $00, $FF, 0
 .byte $FF, $00, $FF, 0
 .byte $FF, $00, $FF, 0
