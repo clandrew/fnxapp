@@ -465,10 +465,10 @@ MAIN
     STA dst_pointer+1
 
     ; Store a source pointer
-    ;LDA #<LUT_START
-    ;STA src_pointer
-    ;LDA #>LUT_START
-    ;STA src_pointer+1
+    LDA #<LUT_START
+    STA src_pointer
+    LDA #>LUT_START
+    STA src_pointer+1
 
     LDX #$00
 
@@ -645,7 +645,7 @@ TX_GAMETITLE
 
 * = $F800
 .logical $F000
-;.include "rsrc/colors.s"
+.include "rsrc/colors.s"
 .endlogical
 
 * = $10000-$800
