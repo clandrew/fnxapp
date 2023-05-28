@@ -434,44 +434,128 @@ MAIN
     LDA #$FF
     STA $D00F ; Background blue channel
     
+    STZ TyVKY_BM1_CTRL_REG ; Make sure bitmap 1 is turned off
+    STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off
+
+    ; Enable bitmap layer0
+    LDA #$1 ; set Enable. Setting no more bits leaves LUT selection to 0
+    STA TyVKY_BM0_CTRL_REG    
+
+    ; Now copy graphics data
+    lda #<IMG_START ; Set the low byte of the bitmap’s address
+    sta $D101
+    lda #>IMG_START ; Set the middle byte of the bitmap’s address
+    sta $D102
+    lda #`IMG_START ; Set the upper two bits of the address
+    and #$03
+    sta $D103
+    
     ; Switch to page 1 because the lut lives there
     LDA #1
     STA MMU_IO_CTRL
 
-    ; Copy to lut
-    LDA $20
-    STA $D000
-    STA $D001
-    STA $D002
-    STA $D003
+    ; Store a dest pointer in $30-$31
+    LDA #<VKY_GR_CLUT_0
+    STA $30
+    LDA #>VKY_GR_CLUT_0
+    STA $31
+
+    ; Store a source pointer
+    LDA #<LUT_START
+    STA $32
+    LDA #>LUT_START
+    STA $33
+
+    LDX #$00
+
+    LDA #$00
+    PHA
+    PLD
+
+LutLoop
+    LDY #$0
+
+    LDA #$80
+
+    STA ($30),Y
+    INY    
+    STA ($30),Y
+    INY
+    STA ($30),Y
+    INY
+    STA ($30),Y
+    ;;;;;;;;;;;;
+    STA ($30),Y
+    INY    
+    STA ($30),Y
+    INY
+    STA ($30),Y
+    INY
+    STA ($30),Y
+    ;;;;;;;;;;;;
+    STA ($30),Y
+    INY    
+    STA ($30),Y
+    INY
+    STA ($30),Y
+    INY
+    STA ($30),Y
+    ;;;;;;;;;;;;
+    STA ($30),Y
+    INY    
+    STA ($30),Y
+    INY
+    STA ($30),Y
+    INY
+    STA ($30),Y
+    ;;;;;;;;;;;;
+
+    INX
+    BEQ LutDone     ; When X overflows, exit
+
+    CLC
+    LDA $30
+    ADC #$04
+    STA $30
+    LDA $31
+    ADC #$00 ; Add carry
+    STA $31
     
-    LDA $50
-    STA $D004
-    STA $D005
-    STA $D006
-    STA $D007
+    CLC
+    LDA $32
+    ADC #$04
+    STA $32
+    LDA $33
+    ADC #$00 ; Add carry
+    STA $33
+    BRA LutLoop
     
-    LDA $80
-    STA $D008
-    STA $D009
-    STA $D00A
-    STA $D00B
-    
-    LDA $A0
-    STA $D00C
-    STA $D00D
-    STA $D00E
-    STA $D00F
+LutDone
 
     ; Go back to I/O page 0
     LDA #0
     STA MMU_IO_CTRL
 
+    
+    STZ TyVKY_BM1_CTRL_REG ; Make sure bitmap 1 is turned off
+    STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off
+
     ; Enable bitmap layer0
-    LDA $3 ; Enable, LUT0
-    STA $D100
+    LDA #$1 ; set Enable. Setting no more bits leaves LUT selection to 0
+    STA TyVKY_BM0_CTRL_REG    
 
     ; Now copy graphics data
+    lda #<IMG_START ; Set the low byte of the bitmap’s address
+    sta $D101
+    lda #>IMG_START ; Set the middle byte of the bitmap’s address
+    sta $D102
+    lda #`IMG_START ; Set the upper two bits of the address
+    and #$03
+    sta $D103
+
+    ;STZ VKY_BM1_CTRL ; Make sure bitmap 1 is turned off
+    ;LDA #$01 ; Use graphics LUT #0, and enable bitmap
+    ;STA VKY_BM0_CTRL
     
     ;LDA #$00    
     ;STA $D101 ; Layer0 VRAM Lo
@@ -494,7 +578,11 @@ TX_GAMETITLE
 
 ; Emitted with 
 ;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\img\rsrc\vcf.bmp D:\repos\fnxapp\img\rsrc\colors.s D:\repos\fnxapp\img\rsrc\pixmap.s
+
+* = $F800
+.logical $F000
 .include "rsrc/colors.s"
+.endlogical
 
 * = $10000-$800
 .logical $10000
