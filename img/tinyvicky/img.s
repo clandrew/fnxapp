@@ -438,15 +438,45 @@ MAIN
     LDA $3 ; Enable, LUT0
     STA $D100
     
-    LDA #$00
+    ; Switch to page 1 because the lut lives there
+    LDA #1
+    STA MMU_IO_CTRL
+
+    ; Copy to lut
+    LDA $20
+    STA $D000
+    STA $D001
+    STA $D002
+    STA $D003
     
-    STA $D101 ; Layer0 VRAM Lo
-    STA $D102 ; Layer0 VRAM Med    
-    STA $D103 ; Layer0 VRAM Hi
+    LDA $50
+    STA $D004
+    STA $D005
+    STA $D006
+    STA $D007
+    
+    LDA $80
+    STA $D008
+    STA $D009
+    STA $D00A
+    STA $D00B
+    
+    LDA $A0
+    STA $D00C
+    STA $D00D
+    STA $D00E
+    STA $D00F
+
+    
+    ;LDA #$00    
+    ;STA $D101 ; Layer0 VRAM Lo
+    ;STA $D102 ; Layer0 VRAM Med    
+    ;STA $D103 ; Layer0 VRAM Hi
 
     ; Probably need to DMA to VRAM
 
     ; Maybe can CPU copy the LUT since you can do that on Vicky II
+    ; Graphics LUT0 lives at $D000-$D3FF
 
 Lock
     JMP Lock
