@@ -387,13 +387,6 @@ MAIN
     LDA #$1 ; set Enable. Setting no more bits leaves LUT selection to 0
     STA TyVKY_BM0_CTRL_REG    
 
-    lda #$40 ; Layer 0 = BM 0, Layer 1 = TM 0
-    sta VKY_LAYER_CTRL_0
-    lda #$01 ; Layer 2 = BM 1
-    sta VKY_LAYER_CTRL_1
-
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    
     ; Switch to page 1 because the lut lives there
     LDA #1
     STA MMU_IO_CTRL
@@ -415,7 +408,6 @@ MAIN
 LutLoop
     LDY #$0
     
-    ; color 0 - placeholder magenta
     LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
