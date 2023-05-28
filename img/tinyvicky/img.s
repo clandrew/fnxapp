@@ -326,18 +326,6 @@ Init_Audio
 
 .endlogical
 
-* = $00DEC0
-.logical $e6c0
-Init_GameFont
-    RTS
-.endlogical
-
-* = $00DF07
-.logical $E707
-FONT_FANTASY
-.binary 'assets/gamefont2.bin'
-.endlogical
-
 * = $00E707
 .logical $EF07
 ; Main
@@ -350,8 +338,6 @@ MAIN
     STA @w MASTER_CTRL_REG_L 
     LDA #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
     STA @w MASTER_CTRL_REG_H
-    
-    JSR Init_GameFont
 
     LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK
     STA $48 ; CursorColor
