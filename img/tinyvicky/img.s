@@ -473,30 +473,53 @@ MAIN
     LDX #$00
 
     ; It won't load from src_pointer, probably the MMU is not set to the right thing.
+    ; Is value 0 reserved somehow?
 
-LutLoop
+;LutLoop
     LDY #$0
-        
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY    
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
+    
+    ; Blue
+    LDA #$FF
+    STA $D000
+    LDA #$00
+    STA $D001
+    LDA #$00
+    STA $D002
+    
+    ; Green
+    LDA #$00
+    STA $D004
+    LDA #$FF
+    STA $D005
+    LDA #$00
+    STA $D006
+    
+    ; Red
+    LDA #$00
+    STA $D008
+    LDA #$00
+    STA $D009
+    LDA #$FF
+    STA $D00A
+    
+    ; White
+    LDA #$FF
+    STA $D00C
+    LDA #$FF
+    STA $D00D
+    LDA #$FF
+    STA $D00E
 
-    INX
-    BEQ LutDone     ; When X overflows, exit
+    ;INX
+    ;BEQ LutDone     ; When X overflows, exit
 
-    CLC
-    LDA dst_pointer
-    ADC #$04
-    STA dst_pointer
-    LDA dst_pointer+1
-    ADC #$00 ; Add carry
-    STA dst_pointer+1
+    ;CLC
+    ;LDA dst_pointer
+    ;ADC #$04
+    ;STA dst_pointer
+    ;LDA dst_pointer+1
+    ;ADC #$00 ; Add carry
+    ;STA dst_pointer+1
     
     ;CLC
     ;LDA src_pointer
@@ -505,7 +528,7 @@ LutLoop
     ;LDA src_pointer+1
     ;ADC #$00 ; Add carry
     ;STA src_pointer+1
-    BRA LutLoop
+    ;BRA LutLoop
     
 LutDone
 
