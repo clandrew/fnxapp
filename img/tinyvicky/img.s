@@ -326,6 +326,11 @@ Init_Audio
 
 .endlogical
 
+* = $00DF00
+.logical $E700
+.include "rsrc/colors.s"
+.endlogical
+
 * = $00E707
 .logical $EF07
 ; Main
@@ -602,11 +607,6 @@ TX_GAMETITLE
 
 ; Emitted with 
 ;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\img\tinyvicky\rsrc\vcf.bmp D:\repos\fnxapp\img\tinyvicky\rsrc\colors.s D:\repos\fnxapp\img\tinyvicky\rsrc\pixmap.s
-
-* = $F800
-.logical $F000
-.include "rsrc/colors.s"
-.endlogical
 
 * = $10000-$800
 .logical $10000
