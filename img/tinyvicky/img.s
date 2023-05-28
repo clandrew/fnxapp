@@ -381,11 +381,9 @@ MAIN
     STA $D00F ; Background blue channel
     
     STZ TyVKY_BM1_CTRL_REG ; Make sure bitmap 1 is turned off
-    STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off
-
-    ; Enable bitmap layer0
-    LDA #$1 ; set Enable. Setting no more bits leaves LUT selection to 0
-    STA TyVKY_BM0_CTRL_REG    
+    STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off    
+    LDA #$01 
+    STA TyVKY_BM0_CTRL_REG ; Make sure bitmap 0 is turned on. Setting no more bits leaves LUT selection to 0
 
     ; Switch to page 1 because the lut lives there
     LDA #1
@@ -441,15 +439,7 @@ LutDone
 
     ; Go back to I/O page 0
     LDA #0
-    STA MMU_IO_CTRL
-
-    
-    STZ TyVKY_BM1_CTRL_REG ; Make sure bitmap 1 is turned off
-    STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off
-
-    ; Enable bitmap layer0
-    LDA #$1 ; set Enable. Setting no more bits leaves LUT selection to 0
-    STA TyVKY_BM0_CTRL_REG    
+    STA MMU_IO_CTRL 
 
     ; Now copy graphics data
     lda #<IMG_START ; Set the low byte of the bitmap’s address
