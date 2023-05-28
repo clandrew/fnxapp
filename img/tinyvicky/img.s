@@ -457,124 +457,57 @@ MAIN
     ; Switch to page 1 because the lut lives there
     LDA #1
     STA MMU_IO_CTRL
-        
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ;~~~~~~~~~~~~~~~~~~~~~~
-    ; Color index 0
-LDA #$31
-STA $d000
-LDA #$2f
-STA $d001
-LDA #$cb
-STA $d002
-; Color index 1
-LDA #$35
-STA $d004
-LDA #$34
-STA $d005
-LDA #$7c
-STA $d006
-; Color index 2
-LDA #$6c
-STA $d008
-LDA #$67
-STA $d009
-LDA #$ef
-STA $d00a
-; Color index 3
-LDA #$14
-STA $d00c
-LDA #$11
-STA $d00d
-LDA #$46
-STA $d00e
-; Color index 4
-LDA #$39
-STA $d010
-LDA #$38
-STA $d011
-LDA #$48
-STA $d012
-; Color index 5
-LDA #$69
-STA $d014
-LDA #$68
-STA $d015
-LDA #$79
-STA $d016
-; Color index 6
-LDA #$16
-STA $d018
-LDA #$0e
-STA $d019
-LDA #$6e
-STA $d01a
-; Color index 7
-LDA #$27
-STA $d01c
-LDA #$1b
-STA $d01d
-LDA #$8a
-STA $d01e
-; Color index 8
-LDA #$2e
-STA $d020
-LDA #$28
-STA $d021
-LDA #$5e
-STA $d022
-; Color index 9
-LDA #$3d
-STA $d024
-LDA #$38
-STA $d025
-LDA #$5e
-STA $d026
-; Color index a
-LDA #$5f
-STA $d028
-LDA #$58
-STA $d029
-LDA #$91
-STA $d02a
-; Color index b
-LDA #$89
-STA $d02c
-LDA #$87
-STA $d02d
-LDA #$98
-STA $d02e
-; Color index c
-LDA #$26
-STA $d030
-LDA #$18
-STA $d031
-LDA #$77
-STA $d032
-; Color index d
-LDA #$42
-STA $d034
-LDA #$33
-STA $d035
-LDA #$99
-STA $d036
-; Color index e
-LDA #$4f
-STA $d038
-LDA #$48
-STA $d039
-LDA #$70
-STA $d03a
-; Color index f
-LDA #$6c
-STA $d03c
-LDA #$55
-STA $d03d
-LDA #$b2
-STA $d03e
 
-    ;~~~~~~~~~~~~~~~~~~~~~~
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Store a dest pointer in $30-$31
+    LDA #<VKY_GR_CLUT_0
+    STA dst_pointer
+    LDA #>VKY_GR_CLUT_0
+    STA dst_pointer+1
+
+    ; Store a source pointer
+    LDA #<LUT_START
+    STA src_pointer
+    LDA #>LUT_START
+    STA src_pointer+1
+
+    LDX #$00
+
+    ; It won't load from src_pointer, probably the MMU is not set to the right thing.
+
+LutLoop
+    LDY #$0
+        
+    LDA (src_pointer),Y
+    STA (dst_pointer),Y
+    INY    
+    LDA (src_pointer),Y
+    STA (dst_pointer),Y
+    INY
+    LDA (src_pointer),Y
+    STA (dst_pointer),Y
+    INY
+
+    INX
+    BEQ LutDone     ; When X overflows, exit
+
+    CLC
+    LDA dst_pointer
+    ADC #$04
+    STA dst_pointer
+    LDA dst_pointer+1
+    ADC #$00 ; Add carry
+    STA dst_pointer+1
+    
+    ;CLC
+    ;LDA src_pointer
+    ;ADC #$04
+    ;STA src_pointer
+    ;LDA src_pointer+1
+    ;ADC #$00 ; Add carry
+    ;STA src_pointer+1
+    BRA LutLoop
+    
+LutDone
 
     ; Go back to I/O page 0
     LDA #0
@@ -663,10 +596,10 @@ TX_GAMETITLE
 ; Emitted with 
 ;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\img\tinyvicky\rsrc\vcf.bmp D:\repos\fnxapp\img\tinyvicky\rsrc\colors.s D:\repos\fnxapp\img\tinyvicky\rsrc\pixmap.s
 
-;* = $F800
-;.logical $F000
-;.include "rsrc/colors.s"
-;.endlogical
+* = $F800
+.logical $F000
+.include "rsrc/colors.s"
+.endlogical
 
 * = $10000-$800
 .logical $10000
