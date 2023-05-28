@@ -447,6 +447,11 @@ MAIN
     LDA #$1 ; set Enable. Setting no more bits leaves LUT selection to 0
     STA TyVKY_BM0_CTRL_REG    
 
+    lda #$40 ; Layer 0 = BM 0, Layer 1 = TM 0
+    sta VKY_LAYER_CTRL_0
+    lda #$01 ; Layer 2 = BM 1
+    sta VKY_LAYER_CTRL_1
+
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
     ; Switch to page 1 because the lut lives there
@@ -455,82 +460,81 @@ MAIN
 
     ; Store a dest pointer in $30-$31
     LDA #<VKY_GR_CLUT_0
-    STA $30
+    STA pointer
     LDA #>VKY_GR_CLUT_0
-    STA $31
+    STA pointer+1
 
     ; Store a source pointer
-    LDA #<LUT_START
-    STA $32
-    LDA #>LUT_START
-    STA $33
+    ;LDA #<LUT_START
+    ;STA $32
+    ;LDA #>LUT_START
+    ;STA $33
 
     LDX #$00
 
-    LDA #$00
-    PHA
-    PLD
+    ;LDA #$00
+    ;PHA
+    ;PLD
 
 LutLoop
     LDY #$0
 
-    LDA #$80
+    LDA #$0
 
-    STA ($30),Y
+    STA (pointer),Y
     INY    
-    STA ($30),Y
+    STA (pointer),Y
     INY
-    STA ($30),Y
+    STA (pointer),Y
     INY
-    STA ($30),Y
+    STA (pointer),Y
     INY
     ;;;;;;;;;;;;
-    STA ($30),Y
+    STA (pointer),Y
     INY    
-    STA ($30),Y
+    STA (pointer),Y
     INY
-    STA ($30),Y
+    STA (pointer),Y
     INY
-    STA ($30),Y
+    STA (pointer),Y
     INY
     ;;;;;;;;;;;;
-    STA ($30),Y
+    STA (pointer),Y
     INY    
-    STA ($30),Y
+    STA (pointer),Y
     INY
-    STA ($30),Y
+    STA (pointer),Y
     INY
-    STA ($30),Y
+    STA (pointer),Y
     INY
     ;;;;;;;;;;;;
-    STA ($30),Y
+    STA (pointer),Y
     INY    
-    STA ($30),Y
+    STA (pointer),Y
     INY
-    STA ($30),Y
+    STA (pointer),Y
     INY
-    STA ($30),Y
-    INY
+    STA (pointer),Y
     ;;;;;;;;;;;;
 
     INX
     BEQ LutDone     ; When X overflows, exit
 
     CLC
-    LDA $30
+    LDA pointer
     ADC #$04
-    STA $30
-    LDA $31
+    STA pointer
+    LDA pointer+1
     ADC #$00 ; Add carry
-    STA $31
+    STA pointer+1
     
-    CLC
-    LDA $32
-    ADC #$04
-    STA $32
-    LDA $33
-    ADC #$00 ; Add carry
-    STA $33
+    ;CLC
+    ;LDA $32
+    ;ADC #$04
+    ;STA $32
+    ;LDA $33
+    ;ADC #$00 ; Add carry
+    ;STA $33
     BRA LutLoop
     
 LutDone
