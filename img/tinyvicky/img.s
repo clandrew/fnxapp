@@ -412,9 +412,7 @@ MAIN
 
     LDX #$00
 
-    ; Can not load from src_pointer as-is, because of mmu switching.
-
-;LutLoop
+LutLoop
     LDY #$0
     
     ; color 0 - placeholder magenta
@@ -427,97 +425,27 @@ MAIN
     LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
-    INY
-    
-    ; color 1 - blue
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    INY
-    
-    ; color 2 - cyan
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    INY
-    
-    ; color 3 - green
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    INY
-    
-    ; color 4 - red
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    INY
-    
-    ; color 5 - white
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    INY
-    
-    ; color 6 - idk
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
+    INY    
 
-    ;INX
-    ;BEQ LutDone     ; When X overflows, exit
+    INX
+    BEQ LutDone     ; When X overflows, exit
 
-    ;CLC
-    ;LDA dst_pointer
-    ;ADC #$04
-    ;STA dst_pointer
-    ;LDA dst_pointer+1
-    ;ADC #$00 ; Add carry
-    ;STA dst_pointer+1
+    CLC
+    LDA dst_pointer
+    ADC #$04
+    STA dst_pointer
+    LDA dst_pointer+1
+    ADC #$00 ; Add carry
+    STA dst_pointer+1
     
-    ;CLC
-    ;LDA src_pointer
-    ;ADC #$04
-    ;STA src_pointer
-    ;LDA src_pointer+1
-    ;ADC #$00 ; Add carry
-    ;STA src_pointer+1
-    ;BRA LutLoop
+    CLC
+    LDA src_pointer
+    ADC #$04
+    STA src_pointer
+    LDA src_pointer+1
+    ADC #$00 ; Add carry
+    STA src_pointer+1
+    BRA LutLoop
     
 LutDone
 
