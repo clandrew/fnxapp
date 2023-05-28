@@ -14,7 +14,6 @@ dst_pointer = $30
 src_pointer = $32
 column = $34
 bm_bank = $35
-bitmap_base = IMG_START
 line = $40
 
 ; Code
@@ -473,6 +472,8 @@ MAIN
 
     LDX #$00
 
+    ; It won't load from src_pointer, probably the MMU is not set to the right thing.
+
 LutLoop
     LDY #$0
         
@@ -497,13 +498,13 @@ LutLoop
     ADC #$00 ; Add carry
     STA dst_pointer+1
     
-    CLC
-    LDA src_pointer
-    ADC #$04
-    STA src_pointer
-    LDA src_pointer+1
-    ADC #$00 ; Add carry
-    STA src_pointer+1
+    ;CLC
+    ;LDA src_pointer
+    ;ADC #$04
+    ;STA src_pointer
+    ;LDA src_pointer+1
+    ;ADC #$00 ; Add carry
+    ;STA src_pointer+1
     BRA LutLoop
     
 LutDone
@@ -593,7 +594,7 @@ TX_GAMETITLE
 .endlogical
 
 ; Emitted with 
-;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\img\rsrc\vcf.bmp D:\repos\fnxapp\img\rsrc\colors.s D:\repos\fnxapp\img\rsrc\pixmap.s
+;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\img\tinyvicky\rsrc\vcf.bmp D:\repos\fnxapp\img\tinyvicky\rsrc\colors.s D:\repos\fnxapp\img\tinyvicky\rsrc\pixmap.s
 
 * = $F800
 .logical $F000
