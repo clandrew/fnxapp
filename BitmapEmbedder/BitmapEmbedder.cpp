@@ -104,7 +104,7 @@ int main(int argc, void** argv)
 	{
 		// Dump the palette
 		std::wstring outputFile = destPaletteFilename;
-		std::wofstream out(outputFile);
+		std::ofstream out(outputFile);
 		out << "LUT_START\n";
 		for (auto it = colors.begin(); it != colors.end(); ++it)
 		{
@@ -117,22 +117,25 @@ int main(int argc, void** argv)
 			int r = rgb & 0xFF;
 			rgb >>= 8;
 
-			out << L".byte " << b << L", " << g << L", " << r << L", 0\n";
+			out << ".byte $" 
+				<< std::setfill('0') << std::setw(2) << std::hex << b << ", $" 
+				<< std::setfill('0') << std::setw(2) << std::hex << g << ", $" 
+				<< std::setfill('0') << std::setw(2) << std::hex << r << ", $00\n";
 		}
 		int fillerColors = 256 - colors.size();
 		for (int i = 0; i < fillerColors; ++i)
 		{
-			out << L".byte 255, 0, 255, 0\n";
+			out << ".byte $FF, $00, $FF, 0\n";
 		}
 
-		out << L"\n";
-		out << L"LUT_END = *";
+		out << "\n";
+		out << "LUT_END = *";
 	}
 	{
 		std::wstring outputFile = destImageFilename;
-		std::wofstream out(outputFile);
+		std::ofstream out(outputFile);
 
-		out << L"\n";
+		out << "\n";
 
 		int bank = 2;
 		int lineLength = 16;
@@ -142,34 +145,34 @@ int main(int argc, void** argv)
 		{
 			if (lineCount % 4096 == 0)
 			{
-				out << L"* = $";
+				out << "* = $";
 				if (lineCount == 0)
 				{
-					out << L"0";
+					out << "0";
 				}
-				out << bank << L"0000\n";
+				out << bank << "0000\n";
 				bank++;
 			}
 			if (lineCount == 0)
 			{
-				out << L"IMG_START = *\n";
+				out << "IMG_START = *\n";
 			}
 
-			out << L".byte ";
+			out << ".byte ";
 
 			for (int j = 0; j < lineLength; ++j)
 			{
-				out << (int)(indexedBuffer[i + j]);
+				out << "$" << std::setfill('0') << std::setw(2) << std::hex << (int)(indexedBuffer[i + j]);
 				if (j < lineLength - 1)
 				{
-					out << L", ";
+					out << ", ";
 				}
 			}
-			out << L"\n";
+			out << "\n";
 
 			lineCount++;
 		}
 
-		out << L"IMG_END = *";
+		out << "IMG_END = *";
 	}
 }
