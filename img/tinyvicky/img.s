@@ -58,7 +58,12 @@ LE034
     LDY #$00
 
 LE038
-.byte $84, $49, $68, $85, $01, $7a, $68, $60
+    STY $49
+    PLA
+    STA $01
+    PLY
+    PLA
+    RTS
 
 ClearScreen
 .byte $48, $da, $a5, $01, $48, $9c, $73, $e0, $64, $4b, $a9, $c0, $8d, $74, $e0, $85
