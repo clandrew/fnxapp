@@ -32,7 +32,7 @@ ChrOut
     STA ($4B),Y
     INY
     CPY #$28
-    BNE LE038
+    BNE ChrOut_Done
 
     CLC
     LDA $4B
@@ -57,7 +57,7 @@ LE034
     STA $4A
     LDY #$00
 
-LE038
+ChrOut_Done
     STY $49
     PLA
     STA $01
@@ -66,10 +66,19 @@ LE038
     RTS
 
 ClearScreen
-.byte $48, $da, $a5, $01, $48, $9c, $73, $e0, $64, $4b, $a9, $c0, $8d, $74, $e0, $85
+    PHA
+    PHX
+    LDA $01
+    PHA
+    STZ $E073
+    STZ $4B
+.byte $a9, $c0, $8d, $74, $e0, $85
 .byte $4c, $a9, $02, $85, $01, $a2, $20, $20, $71, $e0, $9c, $73, $e0, $a9, $c0, $8d
-.byte $74, $e0, $a9, $03, $85, $01, $a6, $48, $20, $71, $e0, $68, $85, $01, $fa, $68
-.byte $60, $8a, $8d, $34, $12, $ee, $73, $e0, $d0, $03, $ee, $74, $e0, $ad, $73, $e0
+.byte $74, $e0, $a9, $03, $85, $01, $a6, $48, $20, $71, $e0, $68, $85, $01, $fa
+    PLA
+    RTS
+
+.byte $8a, $8d, $34, $12, $ee, $73, $e0, $d0, $03, $ee, $74, $e0, $ad, $73, $e0
 .byte $c9, $c0, $d0, $ed, $ad, $74, $e0, $c9, $d2, $d0, $e6
     RTS
 
