@@ -480,59 +480,85 @@ MAIN
     
     ; color 0 - placeholder magenta
     LDA #$FF
-    STA $D000
+    STA (dst_pointer),Y
+    INY
     LDA #$00
-    STA $D001
+    STA (dst_pointer),Y
+    INY
     LDA #$FF
-    STA $D002
+    STA (dst_pointer),Y
+    INY
+    INY
     
     ; color 1 - blue
     LDA #$FF
-    STA $D004
+    STA (dst_pointer),Y
+    INY
     LDA #$00
-    STA $D005
+    STA (dst_pointer),Y
+    INY
     LDA #$00
-    STA $D006
+    STA (dst_pointer),Y
+    INY
+    INY
     
     ; color 2 - cyan
     LDA #$FF
-    STA $D008
+    STA (dst_pointer),Y
+    INY
     LDA #$FF
-    STA $D009
+    STA (dst_pointer),Y
+    INY
     LDA #$00
-    STA $D00A
+    STA (dst_pointer),Y
+    INY
+    INY
     
     ; color 3 - green
     LDA #$00
-    STA $D00C
+    STA (dst_pointer),Y
+    INY
     LDA #$FF
-    STA $D00D
+    STA (dst_pointer),Y
+    INY
     LDA #$00
-    STA $D00E
+    STA (dst_pointer),Y
+    INY
+    INY
     
     ; color 4 - red
     LDA #$00
-    STA $D010
+    STA (dst_pointer),Y
+    INY
     LDA #$00
-    STA $D011
+    STA (dst_pointer),Y
+    INY
     LDA #$FF
-    STA $D012
+    STA (dst_pointer),Y
+    INY
+    INY
     
     ; color 5 - white
     LDA #$FF
-    STA $D014
+    STA (dst_pointer),Y
+    INY
     LDA #$FF
-    STA $D015
+    STA (dst_pointer),Y
+    INY
     LDA #$FF
-    STA $D016
+    STA (dst_pointer),Y
+    INY
+    INY
     
     ; color 6 - idk
     LDA #$07
-    STA $D018
+    STA (dst_pointer),Y
+    INY
     LDA #$07
-    STA $D019
+    STA (dst_pointer),Y
+    INY
     LDA #$07
-    STA $D01A
+    STA (dst_pointer),Y
 
     ;INX
     ;BEQ LutDone     ; When X overflows, exit
