@@ -418,85 +418,85 @@ MAIN
     LDY #$0
     
     ; color 0 - placeholder magenta
-    LDA #$FF
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
-    LDA #$00
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
-    LDA #$FF
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
     INY
     
     ; color 1 - blue
-    LDA #$FF
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
-    LDA #$00
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
-    LDA #$00
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
     INY
     
     ; color 2 - cyan
-    LDA #$FF
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
-    LDA #$FF
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
-    LDA #$00
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
     INY
     
     ; color 3 - green
-    LDA #$00
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
-    LDA #$FF
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
-    LDA #$00
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
     INY
     
     ; color 4 - red
-    LDA #$00
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
-    LDA #$00
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
-    LDA #$FF
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
     INY
     
     ; color 5 - white
-    LDA #$FF
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
-    LDA #$FF
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
-    LDA #$FF
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
     INY
     
     ; color 6 - idk
-    LDA #$07
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
-    LDA #$07
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
     INY
-    LDA #$07
+    LDA (src_pointer),Y
     STA (dst_pointer),Y
 
     ;INX
