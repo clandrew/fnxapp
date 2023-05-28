@@ -425,14 +425,42 @@ MAIN
     STA $31  ; STA TempSrc+1
     
     JSR PrintAnsiString
+         
+    ; Clear to magenta
+    LDA #$FF
+    STA $D00D ; Background red channel
+    LDA #$00
+    STA $D00E ; Background green channel
+    LDA #$FF
+    STA $D00F ; Background blue channel
+
+    ; Enable bitmap layer0
+    LDA $3 ; Enable, LUT0
+    STA $D100
+    
+    LDA #$00
+    
+    STA $D101 ; Layer0 VRAM Lo
+    STA $D102 ; Layer0 VRAM Med    
+    STA $D103 ; Layer0 VRAM Hi
+
+    ; Probably need to DMA to VRAM
+
+    ; Maybe can CPU copy the LUT since you can do that on Vicky II
 
 Lock
     JMP Lock
 
 ; String for stylized title
 TX_GAMETITLE
-.text "Space Oddity"
+.text "Test text"
+.byte 0 ; null term
 .endlogical
+
+; Emitted with 
+;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\img\rsrc\vcf.bmp D:\repos\fnxapp\img\rsrc\colors.s D:\repos\fnxapp\img\rsrc\pixmap.s
+.include "rsrc/colors.s"
+;.include "rsrc/pixmap.s"
 
 ; Write the system vectors
 * = $00F7F8
