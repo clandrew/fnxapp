@@ -10,6 +10,12 @@
 VIA_ORB_IRB = $DC00
 VIA_ORB_IRA = $DC01
 
+pointer = $30
+column = $32
+bm_bank = $33
+bitmap_base = IMG_START
+line = $40
+
 ; Code
 * = $000000 
         .byte 0
@@ -427,11 +433,11 @@ MAIN
     JSR PrintAnsiString
          
     ; Clear to magenta
-    LDA #$FF
+    LDA #$00
     STA $D00D ; Background red channel
     LDA #$00
     STA $D00E ; Background green channel
-    LDA #$FF
+    LDA #$00
     STA $D00F ; Background blue channel
     
     STZ TyVKY_BM1_CTRL_REG ; Make sure bitmap 1 is turned off
@@ -441,14 +447,7 @@ MAIN
     LDA #$1 ; set Enable. Setting no more bits leaves LUT selection to 0
     STA TyVKY_BM0_CTRL_REG    
 
-    ; Now copy graphics data
-    lda #<IMG_START ; Set the low byte of the bitmap’s address
-    sta $D101
-    lda #>IMG_START ; Set the middle byte of the bitmap’s address
-    sta $D102
-    lda #`IMG_START ; Set the upper two bits of the address
-    and #$03
-    sta $D103
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
     ; Switch to page 1 because the lut lives there
     LDA #1
@@ -484,6 +483,7 @@ LutLoop
     STA ($30),Y
     INY
     STA ($30),Y
+    INY
     ;;;;;;;;;;;;
     STA ($30),Y
     INY    
@@ -492,6 +492,7 @@ LutLoop
     STA ($30),Y
     INY
     STA ($30),Y
+    INY
     ;;;;;;;;;;;;
     STA ($30),Y
     INY    
@@ -500,6 +501,7 @@ LutLoop
     STA ($30),Y
     INY
     STA ($30),Y
+    INY
     ;;;;;;;;;;;;
     STA ($30),Y
     INY    
@@ -508,6 +510,7 @@ LutLoop
     STA ($30),Y
     INY
     STA ($30),Y
+    INY
     ;;;;;;;;;;;;
 
     INX
@@ -553,19 +556,59 @@ LutDone
     and #$03
     sta $D103
 
-    ;STZ VKY_BM1_CTRL ; Make sure bitmap 1 is turned off
-    ;LDA #$01 ; Use graphics LUT #0, and enable bitmap
-    ;STA VKY_BM0_CTRL
-    
-    ;LDA #$00    
-    ;STA $D101 ; Layer0 VRAM Lo
-    ;STA $D102 ; Layer0 VRAM Med    
-    ;STA $D103 ; Layer0 VRAM Hi
+    ;;;;;;;;;;;;;;;
 
-    ; Probably need to DMA to VRAM
+    ; Set the line number to 0
+    stz line
 
-    ; Maybe can CPU copy the LUT since you can do that on Vicky II
-    ; Graphics LUT0 lives at $D000-$D3FF
+    ; Calculate the bank number for the bitmap
+    lda #(IMG_START >> 13)
+    sta bm_bank
+    bank_loop: stz pointer ; Set the pointer to start of the current bank
+    lda #$20
+    sta pointer+1
+    ; Set the column to 0
+    stz column
+    stz column+1
+    ; Alter the LUT entries for $2000 -> $bfff
+
+    lda #$80 ; Turn on editing of MMU LUT #0, and use #0
+    sta MMU_MEM_CTRL
+    lda bm_bank
+    sta MMU_MEM_BANK_1 ; Set the bank we will map to $2000 - $3fff
+    stz MMU_MEM_CTRL ; Turn off editing of MMU LUT #0
+
+    ; Fill the line with the color..
+loop2
+    lda line ; The line number is the color of the line
+
+    sta (pointer)
+    inc_column: inc column ; Increment the column number
+    bne chk_col
+    inc column+1
+    chk_col: lda column ; Check to see if we have finished the row
+    cmp #<320
+    bne inc_point
+    lda column+1
+    cmp #>320
+    bne inc_point
+
+    LDA line ; If so, increment the line number
+    inc a
+    STA line
+    cmp #240 ; If line = 240, we’re done
+    beq Lock
+
+    stz column ; Set the column to 0
+    stz column+1
+    inc_point: inc pointer ; Increment pointer
+    bne loop2 ; If < $4000, keep looping
+    inc pointer+1
+    lda pointer+1
+    cmp #$40
+    bne loop2
+    inc bm_bank ; Move to the next bank
+    bra bank_loop ; And start filling it
 
 Lock
     JMP Lock
