@@ -78,34 +78,39 @@ ClearScreen
     LDA #$02
     STA $01
     LDX #$20
-    JSR $E071
+
+    JSR Fn_E071
     STZ $E073
     LDA #$C0
     STA $E074
     LDA #$03
     STA $01
     LDX $48
-    JSR $E071
+
+    JSR Fn_E071
     PLA
     STA $01
     PLX
     PLA
     RTS
 
+Fn_E071
     TXA
     STA $1234
     INC $E073
-.byte $d0, $03
+    BNE LE07A
     INC $E074
+
+LE07A
     LDA $E073
     CMP #$C0
 
-.byte $d0, $ed
+    BNE Fn_E071
 
     LDA $E074
     CMP #$D2
 
-.byte $d0, $e6
+    BNE Fn_E071
     RTS
 
 ; Procedure: PrintAnsiString
