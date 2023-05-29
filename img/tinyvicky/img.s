@@ -9,6 +9,7 @@ src_pointer = $32
 column = $34
 bm_bank = $35
 line = $40
+CursorColor = $48
 
 ; Code
 * = $000000 
@@ -68,28 +69,30 @@ ChrOut_Done
 ClearScreen
     PHA
     PHX
-    LDA $01
+    LDA MMU_IO_CTRL ; Back up MMU page state
     PHA
+
     STZ $E073
     STZ $4B
     LDA #$C0
     STA $E074
     STA $4C
-    LDA #$02
-    STA $01
+    LDA #$02 ; Switch to page 2
+    STA MMU_IO_CTRL
     LDX #$20
 
     JSR Fn_E071
     STZ $E073
     LDA #$C0
     STA $E074
-    LDA #$03
-    STA $01
+    LDA #$03 ; Switch to page 3
+    STA MMU_IO_CTRL
     LDX $48
 
     JSR Fn_E071
+
     PLA
-    STA $01
+    STA MMU_IO_CTRL ; Restore MMU page state
     PLX
     PLA
     RTS
@@ -139,34 +142,34 @@ Print20
 CheckControlCodes
     CMP #$02            ; ctrl-f/set cursor foreground color
     BNE CheckControlCodes_Cond0
-    LDA $48 ; CursorColor
+    LDA CursorColor
     AND #$F0
-    STA $48 ; CursorColor
+    STA CursorColor
     JSR GetNextByte
-    ORA $48 ; CursorColor
-    STA $48 ; CursorColor
+    ORA CursorColor
+    STA CursorColor
     BRA NextByte
 
 CheckControlCodes_Cond0
     CMP #$03
     BNE CheckControlCodes_Cond1 
     JSR $E0E1 ; GetNextByte
-    STA $48 ; CursorColor
+    STA CursorColor
     BRA NextByte
     
 CheckControlCodes_Cond1
     CMP #$06    ; ctrl-f/set cursor foreground color
     BNE CheckControlCodes_Cond2
-    LDA $48 ; CursorColor
+    LDA CursorColor
     AND #$0F
-    STA $48 ; CursorColor
+    STA CursorColor
     JSR GetNextByte
     ASL
     ASL
     ASL
     ASL
-    ORA $48 ; CursorColor
-    STA $48 ; CursorColor
+    ORA CursorColor
+    STA CursorColor
     BRA NextByte
 
 CheckControlCodes_Cond2
@@ -262,7 +265,7 @@ MAIN
     STA @w MASTER_CTRL_REG_H
 
     LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK
-    STA $48 ; CursorColor
+    STA CursorColor
 
     JSR ClearScreen
 
