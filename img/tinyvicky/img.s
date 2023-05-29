@@ -309,10 +309,6 @@ F256_RESET
     CLI
     JMP MAIN
 
-Init_Audio
-    ; Dead code?
-    RTS
-
 .endlogical
 
 * = $00DF00
