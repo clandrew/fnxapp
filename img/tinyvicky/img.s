@@ -191,14 +191,9 @@ CheckControlCodes_Cond4
     RTS    
 .endlogical
 
-* = $00DA00
-.logical $E200
-.endlogical
-
 ; db00
 * = $00DB00
 .logical $E300
-    RTS
 
 Init_Graphics
     LDA $01
