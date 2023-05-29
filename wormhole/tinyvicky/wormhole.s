@@ -362,11 +362,11 @@ LutDone
     STA MMU_IO_CTRL 
 
     ; Now copy graphics data
-    lda #<wormhole_START ; Set the low byte of the bitmap’s address
+    lda #<IMG_START ; Set the low byte of the bitmap’s address
     sta $D101
-    lda #>wormhole_START ; Set the middle byte of the bitmap’s address
+    lda #>IMG_START ; Set the middle byte of the bitmap’s address
     sta $D102
-    lda #`wormhole_START ; Set the upper two bits of the address
+    lda #`IMG_START ; Set the upper two bits of the address
     and #$03
     sta $D103
 
@@ -376,7 +376,7 @@ LutDone
     stz line
 
     ; Calculate the bank number for the bitmap
-    lda #(wormhole_START >> 13)
+    lda #(IMG_START >> 13)
     sta bm_bank
     bank_loop: stz dst_pointer ; Set the pointer to start of the current bank
     lda #$20
