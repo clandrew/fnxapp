@@ -14,10 +14,13 @@
 /ball/.vs/*
 /ball/Debug
 /ball/Release
-/wormhole/.vs
-/wormhole/Debug
-/wormhole/Release
-/wormhole/Demo
+/wormhole/tinyvicky/.vs
+/wormhole/tinyvicky/Debug
+/wormhole/tinyvicky/Release
+/wormhole/vickyii/.vs
+/wormhole/vickyii/Debug
+/wormhole/vickyii/Release
+/wormhole/vickyii/Demo
 /img/vickyii/.vs/*
 /img/vickyii/Debug
 /img/vickyii/Release
