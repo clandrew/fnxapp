@@ -72,9 +72,23 @@ ClearScreen
     PHA
     STZ $E073
     STZ $4B
-.byte $a9, $c0, $8d, $74, $e0, $85
-.byte $4c, $a9, $02, $85, $01, $a2, $20, $20, $71, $e0, $9c, $73, $e0, $a9, $c0, $8d
-.byte $74, $e0, $a9, $03, $85, $01, $a6, $48, $20, $71, $e0, $68, $85, $01, $fa
+    LDA #$C0
+    STA $E074
+    STA $4C
+    LDA #$02
+    STA $01
+    LDX #$20
+    JSR $E071
+    STZ $E073
+    LDA #$C0
+    STA $E074
+    LDA #$03
+    STA $01
+    LDX $48
+    JSR $E071
+    PLA
+    STA $01
+    PLX
     PLA
     RTS
 
