@@ -326,7 +326,7 @@ F256_RESET
     LDA INT_PENDING_REG1
     STA INT_PENDING_REG1
 
-    JSR Init_Graphics   ; Init_Graphics
+    ;JSR Init_Graphics   ; Init_Graphics
     CLI
     JMP MAIN
 
