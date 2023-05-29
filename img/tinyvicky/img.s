@@ -1,13 +1,8 @@
 .cpu "65816"                        ; Tell 64TASS that we are using a 65816
 
-.include "api.asm"
-.include "TinyVicky_Def.asm"
-.include "interrupt_def.asm"
+.include "includes/TinyVicky_Def.asm"
+.include "includes/interrupt_def.asm"
 .include "includes/f256jr_registers.asm"
-
-; Constants
-VIA_ORB_IRB = $DC00
-VIA_ORB_IRA = $DC01
 
 dst_pointer = $30
 src_pointer = $32
