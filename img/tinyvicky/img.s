@@ -134,7 +134,7 @@ NextByte
 Print20
     LDA ($30),y ; (TempSrc),y
     BNE Print10
-    RTS
+    RTS ; Exit if null term
 
 CheckControlCodes
     CMP #$02            ; ctrl-f/set cursor foreground color
@@ -178,9 +178,6 @@ CheckControlCodes_Cond2
 CheckControlCodes_Cond3
     RTS
 
-temp
-.byte $00
-
 GetNextByte
     INY
     BNE CheckControlCodes_Cond4
@@ -189,11 +186,6 @@ GetNextByte
 CheckControlCodes_Cond4
     LDA ($30), y ; (TempSrc),y
     RTS    
-.endlogical
-
-; db00
-* = $00DB00
-.logical $E300
 .endlogical
 
 ; Entrypoint
