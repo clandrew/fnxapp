@@ -3,7 +3,6 @@
 .include "api.asm"
 .include "TinyVicky_Def.asm"
 .include "interrupt_def.asm"
-.include "C256_Jr_SID_def.asm"
 .include "includes/f256jr_registers.asm"
 
 ; Constants
@@ -299,10 +298,6 @@ F256_RESET
     STZ $01
     STZ VIA_ORB_IRB     ; set via i/o port a to read
     STZ VIA_ORB_IRA     ; set via i/o port b to read
-
-    ; enable random number generator
-    LDA #RNG_ENABLE
-    STA RNG_CTRL
 
                         ; initialize interrupts
     LDA #$FF            ; mask off all interrupts
