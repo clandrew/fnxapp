@@ -92,8 +92,20 @@ ClearScreen
     PLA
     RTS
 
-.byte $8a, $8d, $34, $12, $ee, $73, $e0, $d0, $03, $ee, $74, $e0, $ad, $73, $e0
-.byte $c9, $c0, $d0, $ed, $ad, $74, $e0, $c9, $d2, $d0, $e6
+    TXA
+    STA $1234
+    INC $E073
+.byte $d0, $03
+    INC $E074
+    LDA $E073
+    CMP #$C0
+
+.byte $d0, $ed
+
+    LDA $E074
+    CMP #$D2
+
+.byte $d0, $e6
     RTS
 
 ; Procedure: PrintAnsiString
