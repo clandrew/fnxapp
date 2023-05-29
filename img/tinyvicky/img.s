@@ -194,86 +194,6 @@ CheckControlCodes_Cond4
 ; db00
 * = $00DB00
 .logical $E300
-
-Init_Graphics
-    LDA $01
-    PHA
-    STZ $01
-    LDX #$00
-    LDA #$00
-
-GraphicsLoop1
-    STA $D800,x
-    STA $D840,x
-    INX
-    CPX #$40
-    BNE GraphicsLoop1
-
-    LDX #$00
-
-GraphicsLoop2
-    LDA COLODORE_PALETTE,X
-    STA $D800,x ; TEXT_LUT_FG
-    STA $D840,x ; TEXT_LUT_BG
-    INX
-    CPX #$40 ; #sizeof(COLODORE_PALETTE)
-    BNE GraphicsLoop2
-
-    ; initialize border
-    ; set i/o at $d000, use page 0=i/o registers ;<<<="SetMMUIO				; set i/o at $d000, use page 0=i/o registers"
-    ;lda #Border_Ctrl_Enable	; enable border
-    STZ MMU_IO_CTRL
-    STZ BORDER_CTRL_REG
-    STZ BORDER_COLOR_B ; set border color to blue, #0000ff
-    STZ BORDER_COLOR_G
-    STZ BORDER_COLOR_R
-
-    ; set border to 8 pixels high and 8 pixels wide
-    STZ BORDER_Y_SIZE
-    STZ BORDER_X_SIZE
-
-    STZ BACKGROUND_COLOR_B ; set background color to black, #000000
-    STZ BACKGROUND_COLOR_G
-    STZ BACKGROUND_COLOR_R
-                      ; initialize Tiny Vicky registers
-    LDX #$00
-
-GraphicsLoop3
-    STZ $D100,x ; TyVKY_BM0_CTRL_REG,x
-    STZ $D200,x ; TL0_CONTROL_REG,x
-    STZ $D900,x ; SP0_Ctrl,x
-    STZ $DA00,x ; SP0_Ctrl+$0100,x
-    INX
-    BNE GraphicsLoop3
-
-    ; initialize cursor
-    STZ VKY_TXT_CURSOR_CTRL_REG ; disable cursor
-    STZ VKY_TXT_CURSOR_CHAR_REG ; set cursor character as font tile 0
-
-    STZ VKY_TXT_CURSOR_X_REG_L ; set cursor to colum 0
-    STZ VKY_TXT_CURSOR_X_REG_H
-    STZ VKY_TXT_CURSOR_Y_REG_L ; set cursor to row 0
-    STZ VKY_TXT_CURSOR_Y_REG_H
-
-    LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK  [224/$E0/"…"] ;<<<="lda #DoC64COLOR(LTBLUE,BLACK)"
-    STA $48 ; CursorColor
-    JSR ClearScreen
-
-    LDA #$00 ; #<(loword(val(copy('#VKY_TEXT_MEMORY',2))))
-    STA $4B ; CursorPointer
-    LDA #$C0 ; #>(loword(val(copy('#VKY_TEXT_MEMORY',2))))
-    STA ($4B) ; (CursorPointer)
-
-    PLA
-    STA $01
-    RTS
-
-COLODORE_PALETTE
-.byte $00, $00, $00, $00, $ff, $ff, $ff, $00, $38, $33, $81, $00, $c8, $ce, $75, $00
-.byte $97, $3c, $8e, $00, $4d, $ac, $56, $00, $9b, $2c, $2e, $00, $71, $f1, $ed, $00
-.byte $29, $50, $8e, $00, $00, $38, $55, $00, $71, $6c, $c4, $00, $4a, $4a, $4a, $00
-.byte $7b, $7b, $7b, $00, $9f, $ff, $a9, $00, $eb, $6d, $70, $00, $b2, $b2, $b2, $00
-
 .endlogical
 
 ; Entrypoint
@@ -326,7 +246,6 @@ F256_RESET
     LDA INT_PENDING_REG1
     STA INT_PENDING_REG1
 
-    ;JSR Init_Graphics   ; Init_Graphics
     CLI
     JMP MAIN
 
