@@ -293,12 +293,6 @@ F256_RESET
     AND #~(MMU_EDIT_EN)
     STA MMU_MEM_CTRL  ; disable mmu edit, use mmu lut 0 ;<<<="LockMMU	; disable mmu edit, use mmu lut 0"
 
-                        ; initialize via registers
-                        ; reset via registers a/b
-    STZ $01
-    STZ VIA_ORB_IRB     ; set via i/o port a to read
-    STZ VIA_ORB_IRA     ; set via i/o port b to read
-
                         ; initialize interrupts
     LDA #$FF            ; mask off all interrupts
     STA INT_EDGE_REG0
