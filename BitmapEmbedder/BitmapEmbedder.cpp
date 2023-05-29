@@ -12,9 +12,12 @@ void VerifyHR(HRESULT hr)
 
 void PrintUsage()
 {
-	std::cout << "Usage: BitmapEmbedder [source] [dest pallette source file] [dest image source file]\n";
+	std::cout << "Usage: BitmapEmbedder [source] [dest pallette source file] [dest image source file] [--halfsize] [--compile-offsets]\n";
 	std::cout << "For example, \n";
 	std::cout << "    BitmapEmbedder wormhole.bmp colors.s pixmap.s\n";
+	std::cout << "\n";
+	std::cout << "--halfsize:           Optional parameter. Causes dest image to be half the size of the original.";
+	std::cout << "--compile-offsets:    Optional parameter. Causes explicit compile offsets to be emitted for image data, adding additional ones where the data is longer than one bank.";
 }
 
 int main(int argc, void** argv)
@@ -33,6 +36,21 @@ int main(int argc, void** argv)
 
 	std::string destImageFilenameCmdLine = (char*)argv[3];
 	std::wstring destImageFilename(destImageFilenameCmdLine.begin(), destImageFilenameCmdLine.end());
+
+	bool emitCompileOffsets = false;
+	bool halfsize = false;
+	for (int i = 4; i < argc; ++i)
+	{
+		std::string arg = (char*)argv[i];
+		if (arg == "--halfsize")
+		{
+			halfsize = true;
+		}
+		if (arg == "--compile-offsets")
+		{
+			emitCompileOffsets = true;
+		}
+	}
 
 	ComPtr<IWICImagingFactory> m_wicImagingFactory;
 
@@ -150,36 +168,53 @@ int main(int argc, void** argv)
 		assert(result.size() % lineLength == 0);
 		for (int i = 0; i < result.size(); i += lineLength)
 		{
-			if (lineCount % 4096 == 0)
+			if (emitCompileOffsets)
 			{
-				out << "* = $";
-				if (lineCount == 0)
+				if (lineCount % 4096 == 0)
 				{
-					out << "0";
+					out << "* = $";
+					if (lineCount == 0)
+					{
+						out << "0";
+					}
+					out << bank << "0000\n";
+					bank++;
 				}
-				out << bank << "0000\n";
-				bank++;
 			}
 			if (lineCount == 0)
 			{
 				out << "IMG_START = *\n";
 			}
 
-			out << ".byte ";
-
-			for (int j = 0; j < lineLength; ++j)
+			int y = i / srcImageWidth;
+			if (halfsize && (y % 2 == 0))
 			{
-				int datum = (int)(indexedBuffer[i + j]);
-				datum++; // Allow for magenta
-				out << "$" << std::setfill('0') << std::setw(2) << std::hex << datum;
-				if (j < lineLength - 1)
-				{
-					out << ", ";
-				}
-			}
-			out << "\n";
+				out << ".byte ";
 
-			lineCount++;
+				bool firstInLine = true;
+				for (int j = 0; j < lineLength; ++j)
+				{
+					int x = i % srcImageWidth + j;
+					if (halfsize && (x % 2 == 1))
+					{
+						continue; // Skip 
+					}
+
+					{
+						int datum = (int)(indexedBuffer[i + j]);
+						datum++;
+						if (!firstInLine)
+						{
+							out << ", ";
+						}
+						out << "$" << std::setfill('0') << std::setw(2) << std::hex << datum;
+						firstInLine = false;
+					}
+				}
+				out << "\n";
+
+				lineCount++;
+			}
 		}
 
 		out << "IMG_END = *";
