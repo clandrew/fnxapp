@@ -180,8 +180,8 @@
 d:\64tass\64tass --long-address --flat -b --m65816  -o $(TargetDir)wormhole.pgz -D FILETYPE=1 --list=$(TargetDir)wormhole.lst --labels=wormhole.lbl $(ProjectDir)wormhole.s
 echo ==============
 echo Copying result:
-echo copy /Y $(TargetPath) "$(ProjectDir)..\sd"
-copy /Y $(TargetPath) "$(ProjectDir)..\sd"
+echo copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
+copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
 </Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)wormhole.hex --list=$(TargetDir)wormhole.lst --labels=wormhole.lbl $(ProjectDir)wormhole.s
 echo ==============

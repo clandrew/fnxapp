@@ -12,12 +12,13 @@ void VerifyHR(HRESULT hr)
 
 void PrintUsage()
 {
-	std::cout << "Usage: BitmapEmbedder [source] [dest pallette source file] [dest image source file] [--halfsize] [--compile-offsets]\n";
+	std::cout << "Usage: BitmapEmbedder [source] [dest pallette source file] [dest image source file] [--halfsize] [--compile-offsets] [-add-transparency]\n";
 	std::cout << "For example, \n";
 	std::cout << "    BitmapEmbedder wormhole.bmp colors.s pixmap.s\n";
 	std::cout << "\n";
 	std::cout << "--halfsize:           Optional parameter. Causes dest image to be half the size of the original.";
 	std::cout << "--compile-offsets:    Optional parameter. Causes explicit compile offsets to be emitted for image data, adding additional ones where the data is longer than one bank.";
+	std::cout << "--add-transparency:   Optional parameter. Inserts a color at palette index 0, and emits image data with no pixel of palette index 0.";
 }
 
 std::vector<unsigned char> MakeHalfsize(std::vector<unsigned char> indexedBuffer, int imageWidth, int imageHeight)
@@ -60,6 +61,7 @@ int main(int argc, void** argv)
 
 	bool emitCompileOffsets = false;
 	bool halfsize = false;
+	bool addTransparency = false;
 	for (int i = 4; i < argc; ++i)
 	{
 		std::string arg = (char*)argv[i];
@@ -67,9 +69,13 @@ int main(int argc, void** argv)
 		{
 			halfsize = true;
 		}
-		if (arg == "--compile-offsets")
+		else if (arg == "--compile-offsets")
 		{
 			emitCompileOffsets = true;
+		}
+		else if (arg == "--add-transparency")
+		{
+			addTransparency = true;
 		}
 	}
 
@@ -131,9 +137,11 @@ int main(int argc, void** argv)
 	UINT uiActualColorCount = 0;
 	VerifyHR(spPalette->GetColors(uiColorCount, colors.data(), &uiActualColorCount));
 
-	// Only 255 actual colors are allowed, because you need to make room for transparency
-	WICColor transparentPlaceholder = 0x563412;
-	colors.insert(colors.begin(), transparentPlaceholder);
+	if (addTransparency)
+	{
+		WICColor transparentPlaceholder = 0x563412;
+		colors.insert(colors.begin(), transparentPlaceholder);
+	}
 
 	std::vector<byte> result;
 	result.resize(srcImageWidth * srcImageHeight);
@@ -219,7 +227,10 @@ int main(int argc, void** argv)
 				for (int j = 0; j < lineLength; ++j)
 				{
 					int datum = (int)(indexedBuffer[i + j]);
-					datum++;
+					if (addTransparency)
+					{
+						datum++;
+					}
 					if (!firstInLine)
 					{
 						out << ", ";
