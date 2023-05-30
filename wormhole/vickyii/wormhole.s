@@ -453,6 +453,9 @@ yield           PLD                         ; Restore DP and status
 ; Easier to simply not have to do this programmatically.
 indcache .word 176, 236, 296, 356, 416, 476, 536, 596, 656, 716, 776, 836, 896, 956, 1016
 
+; Created by 
+; D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\wormhole\vickyii\rsrc\wormhole.bmp D:\repos\fnxapp\wormhole\vickyii\rsrc\colors.s D:\repos\fnxapp\wormhole\vickyii\rsrc\pixmap.s
+
 .include "rsrc/colors.s"
 .include "rsrc/pixmap.s"
 
