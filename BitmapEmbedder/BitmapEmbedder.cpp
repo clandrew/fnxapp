@@ -20,6 +20,27 @@ void PrintUsage()
 	std::cout << "--compile-offsets:    Optional parameter. Causes explicit compile offsets to be emitted for image data, adding additional ones where the data is longer than one bank.";
 }
 
+std::vector<unsigned char> MakeHalfsize(std::vector<unsigned char> indexedBuffer, int imageWidth, int imageHeight)
+{
+	// Assumption: this is a 1byte per pixel image.
+	std::vector<unsigned char> result;
+
+	for (int i = 0; i < indexedBuffer.size(); ++i)
+	{
+		int x = i % imageWidth;
+		int y = i / imageWidth;
+
+		if (x % 2 == 1)
+			continue;
+
+		if (y % 2 == 1)
+			continue;
+
+		result.push_back(indexedBuffer[i]);
+	}
+	return result;
+}
+
 int main(int argc, void** argv)
 {
 	if (argc < 4)
@@ -111,8 +132,8 @@ int main(int argc, void** argv)
 	VerifyHR(spPalette->GetColors(uiColorCount, colors.data(), &uiActualColorCount));
 
 	// Only 255 actual colors are allowed, because you need to make room for transparency
-	WICColor magenta = 0xFF00FF;
-	colors.insert(colors.begin(), magenta);
+	WICColor transparentPlaceholder = 0x563412;
+	colors.insert(colors.begin(), transparentPlaceholder);
 
 	std::vector<byte> result;
 	result.resize(srcImageWidth * srcImageHeight);
@@ -156,7 +177,13 @@ int main(int argc, void** argv)
 		out << "\n";
 		out << "LUT_END = *";
 	}
+
+	if (halfsize)
 	{
+		indexedBuffer = MakeHalfsize(indexedBuffer, srcImageWidth, srcImageHeight);
+	}
+	{
+		// Dump the image data
 		std::wstring outputFile = destImageFilename;
 		std::ofstream out(outputFile);
 
@@ -186,35 +213,24 @@ int main(int argc, void** argv)
 				out << "IMG_START = *\n";
 			}
 
-			int y = i / srcImageWidth;
-			if (halfsize && (y % 2 == 0))
 			{
 				out << ".byte ";
-
 				bool firstInLine = true;
 				for (int j = 0; j < lineLength; ++j)
 				{
-					int x = i % srcImageWidth + j;
-					if (halfsize && (x % 2 == 1))
+					int datum = (int)(indexedBuffer[i + j]);
+					datum++;
+					if (!firstInLine)
 					{
-						continue; // Skip 
+						out << ", ";
 					}
-
-					{
-						int datum = (int)(indexedBuffer[i + j]);
-						datum++;
-						if (!firstInLine)
-						{
-							out << ", ";
-						}
-						out << "$" << std::setfill('0') << std::setw(2) << std::hex << datum;
-						firstInLine = false;
-					}
+					out << "$" << std::setfill('0') << std::setw(2) << std::hex << datum;
+					firstInLine = false;
 				}
 				out << "\n";
-
-				lineCount++;
 			}
+
+			lineCount++;
 		}
 
 		out << "IMG_END = *";
