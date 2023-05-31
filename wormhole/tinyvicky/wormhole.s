@@ -244,6 +244,49 @@ F256_RESET
     CLI
     JMP MAIN
 
+Dummy
+
+    LDA #<VKY_GR_CLUT_0
+    STA dst_pointer
+    LDA #>VKY_GR_CLUT_0
+    STA dst_pointer+1
+
+    LDX #$00
+
+UpdateLutLoop
+    LDY #$0
+    
+    LDA (dst_pointer),Y
+    INA
+    STA (dst_pointer),Y
+    INY
+    
+    LDA (dst_pointer),Y
+    INA
+    STA (dst_pointer),Y
+    INY
+    
+    LDA (dst_pointer),Y
+    INA
+    STA (dst_pointer),Y
+
+    INX
+    BEQ UpdateLutDone     ; When X overflows, exit
+
+    CLC
+    LDA dst_pointer
+    ADC #$04
+    STA dst_pointer
+    LDA dst_pointer+1
+    ADC #$00 ; Add carry
+    STA dst_pointer+1
+
+    BRA UpdateLutLoop
+    
+UpdateLutDone
+
+    RTS
+
 IRQ_Handler
     PHP
     PHA
@@ -261,6 +304,19 @@ IRQ_Handler
     LDA #JR0_INT00_SOF
     BIT INT_PENDING_REG0
     BEQ IRQ_Handler_Done
+        
+    ; Switch to I/O page 1
+    LDA #1
+    STA MMU_IO_CTRL
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    JSR Dummy
+    
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    ; Restore to I/O page 1
+    STZ MMU_IO_CTRL
 
     ; Clear the flag for start-of-frame
     STA INT_PENDING_REG0
