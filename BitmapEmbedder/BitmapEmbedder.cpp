@@ -21,6 +21,45 @@ void PrintUsage()
 	std::cout << "--add-transparency:   Optional parameter. Inserts a color at palette index 0, and emits image data with no pixel of palette index 0.";
 }
 
+std::vector<unsigned char> MakeHalfsizeWithPadding(std::vector<unsigned char> indexedBuffer, int imageWidth, int imageHeight)
+{
+	// Assumption: this is a 1byte per pixel image.
+	std::vector<unsigned char> result;
+
+	int rowCount = 0;
+	for (int y = 0; y < imageHeight; ++y)
+	{
+		if (y % 2 == 1)
+			continue;
+
+		std::vector<unsigned char> row;
+		for (int x = 0; x < imageWidth; ++x)
+		{
+			if (x % 2 == 1)
+				continue;
+
+			int i = y * imageWidth + x;
+			row.push_back(indexedBuffer[i]);
+		}
+		while (row.size() < imageWidth)
+		{
+			row.push_back(0);
+		}
+
+		result.insert(result.end(), row.begin(), row.end());
+		rowCount++;
+	}
+
+	std::vector<unsigned char> emptyRow(imageWidth, 0);
+	while (rowCount < imageHeight)
+	{
+		result.insert(result.end(), emptyRow.begin(), emptyRow.end());
+		rowCount++;
+	}
+
+	return result;
+}
+
 std::vector<unsigned char> MakeHalfsize(std::vector<unsigned char> indexedBuffer, int imageWidth, int imageHeight)
 {
 	// Assumption: this is a 1byte per pixel image.
@@ -188,7 +227,7 @@ int main(int argc, void** argv)
 
 	if (halfsize)
 	{
-		indexedBuffer = MakeHalfsize(indexedBuffer, srcImageWidth, srcImageHeight);
+		indexedBuffer = MakeHalfsizeWithPadding(indexedBuffer, srcImageWidth, srcImageHeight);
 	}
 	{
 		// Dump the image data
