@@ -244,6 +244,64 @@ F256_RESET
     CLI
     JMP MAIN
 
+IRQ_Handler
+    PHP
+    PHA
+    PHX
+    PHY
+    
+    ; Save the I/O page
+    LDA MMU_IO_CTRL
+    PHA
+
+    ; Switch to I/O page 0
+    STZ MMU_IO_CTRL
+
+    ; Check for start-of-frame flag
+    LDA #JR0_INT00_SOF
+    BIT INT_PENDING_REG0
+    BEQ IRQ_Handler_Done
+
+    ; Clear the flag for start-of-frame
+    STA INT_PENDING_REG0
+
+IRQ_Handler_Done
+    ; Restore the I/O page
+    PLA
+    STA MMU_IO_CTRL
+    
+    PLY
+    PLX
+    PLA
+    PLP
+    RTI
+
+Init_IRQHandler
+    ; Back up I/O state
+    LDA MMU_IO_CTRL
+    PHA        
+
+    ; Disable IRQ handling
+    SEI
+
+    ; Load our interrupt handler. Should probably back up the old one oh well
+    LDA #<IRQ_Handler
+    STA $FFFE ; VECTOR_IRQ
+    LDA #>IRQ_Handler
+    STA $FFFF ; (VECTOR_IRQ)+1
+
+    ; Mask off all but start-of-frame
+    LDA #$FF
+    STA INT_MASK_REG1
+    AND #~(JR0_INT00_SOF)
+    STA INT_MASK_REG0
+
+    ; Re-enable interrupt handling    
+    CLI
+    PLA ; Restore I/O state
+    STA MMU_IO_CTRL ;<<<="PullMMUIO"
+    RTS
+
 .endlogical
 
 * = $00DF00
@@ -263,6 +321,8 @@ MAIN
     STA @w MASTER_CTRL_REG_L 
     LDA #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
     STA @w MASTER_CTRL_REG_H
+    
+    JSR Init_IRQHandler
 
     LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK
     STA CursorColor
