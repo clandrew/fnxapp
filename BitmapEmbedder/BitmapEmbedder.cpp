@@ -227,7 +227,7 @@ int main(int argc, void** argv)
 
 	if (halfsize)
 	{
-		indexedBuffer = MakeHalfsizeWithPadding(indexedBuffer, srcImageWidth, srcImageHeight);
+		indexedBuffer = MakeHalfsize(indexedBuffer, srcImageWidth, srcImageHeight);
 	}
 	{
 		// Dump the image data
