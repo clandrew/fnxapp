@@ -182,15 +182,6 @@ int main(int argc, void** argv)
 		colors.insert(colors.begin(), transparentPlaceholder);
 	}
 
-	std::vector<byte> result;
-	result.resize(srcImageWidth * srcImageHeight);
-
-	// Zero out
-	for (size_t i = 0; i < result.size(); ++i)
-	{
-		result[i] = 0;
-	}
-
 	{
 		// Dump the palette
 		std::wstring outputFile = destPaletteFilename;
@@ -237,10 +228,10 @@ int main(int argc, void** argv)
 		out << "\n";
 
 		int bank = 2;
-		int lineLength = 16;
+		int lineLength = 16; // Emit 16 bytes per line
 		int lineCount = 0;
-		assert(result.size() % lineLength == 0);
-		for (int i = 0; i < result.size(); i += lineLength)
+		assert(indexedBuffer.size() % lineLength == 0);
+		for (int i = 0; i < indexedBuffer.size(); i += lineLength)
 		{
 			if (emitCompileOffsets)
 			{
@@ -260,9 +251,12 @@ int main(int argc, void** argv)
 				out << "IMG_START = *\n";
 			}
 
+			int counter = 0;
+
 			{
 				out << ".byte ";
 				bool firstInLine = true;
+
 				for (int j = 0; j < lineLength; ++j)
 				{
 					int datum = (int)(indexedBuffer[i + j]);
@@ -276,6 +270,7 @@ int main(int argc, void** argv)
 					}
 					out << "$" << std::setfill('0') << std::setw(2) << std::hex << datum;
 					firstInLine = false;
+					counter++;
 				}
 				out << "\n";
 			}
