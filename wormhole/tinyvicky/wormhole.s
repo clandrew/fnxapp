@@ -617,8 +617,8 @@ MAIN
     LDA #MMU_EDIT_EN
     STA MMU_MEM_CTRL
     STZ MMU_IO_CTRL ;<<<="SetMMUIO"
-    STZ MMU_MEM_CTRL
-    LDA #(Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En)
+    STZ MMU_MEM_CTRL    
+    LDA #(Mstr_Ctrl_Text_Mode_En|Mstr_Ctrl_Text_Overlay|Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En)
     STA @w MASTER_CTRL_REG_L 
     LDA #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
     STA @w MASTER_CTRL_REG_H
@@ -626,7 +626,7 @@ MAIN
     LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK
     STA CursorColor
 
-    JSR ClearScreen
+    JSR ClearScreen ; For some reason this doesn't clear the screen
 
     LDA #$00
     STA $49 ; CursorColumn
