@@ -147,8 +147,6 @@ PrintAnsiString
     BRA Print20
 
 Print10
-    CMP #$1B
-    BCC CheckControlCodes
     JSR ChrOut
 
 NextByte
