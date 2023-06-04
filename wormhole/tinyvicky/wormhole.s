@@ -6,11 +6,15 @@
 .include "includes/macros.s"
 
 dst_pointer = $30
+TempSrc = $30
 src_pointer = $32
 column = $34
 bm_bank = $35
 line = $40
 CursorColor = $48
+CursorColumn = $49
+CursorLine = $4A
+CursorPointer = $4B
 
 ; Code
 * = $000000 
@@ -43,47 +47,51 @@ ChrOut
     PHA
     PHY
     TAY
-    LDA $01
+
+    LDA MMU_IO_CTRL ; Back up I/O page
     PHA
-    LDA #$02
-    STA $01
+    
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL
+
     TYA
-    LDY $49
-    STA ($4B),Y
-    INC $01
+    LDY CursorColumn
+    STA (CursorPointer),Y
+    INC MMU_IO_CTRL ; Goes to I/O page 3
     LDA $48
-    STA ($4B),Y
+    STA (CursorPointer),Y
     INY
     CPY #$28
     BNE ChrOut_Done
 
     CLC
-    LDA $4B
+    LDA CursorPointer
     ADC #$28
-    STA $4B
+    STA CursorPointer
     BCC LE025
     INC $4C
 
 LE025
-    LDA $4A
+    LDA CursorLine
     INA
     CMP #$1E
-    BNE LE034
+    BNE SetCursorLine
 
     LDA #$C0
     STA $4C
 
     LDA #$00
-    STA $4B
+    STA CursorPointer
 
-LE034
-    STA $4A
+SetCursorLine
+    STA CursorLine
     LDY #$00
 
 ChrOut_Done
-    STY $49
+    STY CursorColumn
+
     PLA
-    STA $01
+    STA MMU_IO_CTRL ; Restore I/O page
     PLY
     PLA
     RTS
@@ -95,7 +103,7 @@ ClearScreen
     PHA
 
     STZ $E073
-    STZ $4B
+    STZ CursorPointer
     LDA #$C0
     STA $E074
     STA $4C
@@ -146,69 +154,19 @@ PrintAnsiString
     LDY #$00
     BRA Print20
 
-Print10
+Print10 ; Prints up to 255 characters
     JSR ChrOut
 
 NextByte
     INY
     BNE Print20
-    INC $31 ; TempSrc+1
+    INC TempSrc+1
     
 Print20
-    LDA ($30),y ; (TempSrc),y
+    LDA (TempSrc),y
     BNE Print10
     RTS ; Exit if null term
 
-CheckControlCodes
-    CMP #$02            ; ctrl-f/set cursor foreground color
-    BNE CheckControlCodes_Cond0
-    LDA CursorColor
-    AND #$F0
-    STA CursorColor
-    JSR GetNextByte
-    ORA CursorColor
-    STA CursorColor
-    BRA NextByte
-
-CheckControlCodes_Cond0
-    CMP #$03
-    BNE CheckControlCodes_Cond1 
-    JSR $E0E1 ; GetNextByte
-    STA CursorColor
-    BRA NextByte
-    
-CheckControlCodes_Cond1
-    CMP #$06    ; ctrl-f/set cursor foreground color
-    BNE CheckControlCodes_Cond2
-    LDA CursorColor
-    AND #$0F
-    STA CursorColor
-    JSR GetNextByte
-    ASL
-    ASL
-    ASL
-    ASL
-    ORA CursorColor
-    STA CursorColor
-    BRA NextByte
-
-CheckControlCodes_Cond2
-    CMP #$0C
-
-    BNE CheckControlCodes_Cond3 
-    JSR ClearScreen
-    BRA NextByte
-CheckControlCodes_Cond3
-    RTS
-
-GetNextByte
-    INY
-    BNE CheckControlCodes_Cond4
-    INC $31 ; $e6, $31
-
-CheckControlCodes_Cond4
-    LDA ($30), y ; (TempSrc),y
-    RTS    
 .endlogical
 
 ; Entrypoint
@@ -629,7 +587,7 @@ MAIN
     JSR ClearScreen ; For some reason this doesn't clear the screen
 
     LDA #$00
-    STA $49 ; CursorColumn
+    STA CursorColumn
     
     LDA #$00
     STA $4A ; CursorLine
@@ -644,10 +602,10 @@ MAIN
     STA $48
 
     LDA #<TX_GAMETITLE
-    STA $30  ; STA TempSrc
+    STA TempSrc
 
     LDA #>TX_GAMETITLE
-    STA $31  ; STA TempSrc+1
+    STA TempSrc+1
     
     JSR PrintAnsiString
          
