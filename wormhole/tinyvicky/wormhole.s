@@ -9,7 +9,6 @@ dst_pointer = $30
 src_pointer = $32
 column = $34
 bm_bank = $35
-needToCopyLutToDevice = $36
 line = $40
 CursorColor = $48
 
@@ -483,9 +482,6 @@ INNER
     REP #$20 ; Need to do this
     SEC      ; Go back to emulation mode
     XCE
-
-    LDA #1
-    STA needToCopyLutToDevice
     
     CLI ; Enable interrupts again
     
@@ -803,8 +799,7 @@ LutLoop
     
 LutDone
     ; Go back to I/O page 0
-    LDA #0
-    STA MMU_IO_CTRL 
+    STZ MMU_IO_CTRL 
 
     RTS
 
