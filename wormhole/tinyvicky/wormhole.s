@@ -16,6 +16,11 @@ CursorColumn = $49
 CursorLine = $4A
 CursorPointer = $4B
 
+SadPrintf0 = $34
+SadPrintf1 = $35
+SadPrintf2 = $36
+SadPrintf3 = $37
+
 ; Code
 * = $000000 
         .byte 0
@@ -254,6 +259,8 @@ UpdateLut
     CLC ; Try entering native mode
     XCE
     
+    INC SadPrintf0
+    
     .al
     .xl
     REP #$30
@@ -417,6 +424,8 @@ INNER
     SEC      ; Go back to emulation mode
     XCE
     
+    INC SadPrintf1
+    
     CLI ; Enable interrupts again
     
 UpdateLutDone
@@ -432,6 +441,8 @@ IRQ_Handler
     PHA
     PHX
     PHY
+    
+    INC SadPrintf2
     
     ; Save the I/O page
     LDA MMU_IO_CTRL
@@ -506,6 +517,8 @@ IRQ_Handler_Done
     ; Restore the I/O page
     PLA
     STA MMU_IO_CTRL
+    
+    INC SadPrintf3
     
     PLY
     PLX
@@ -665,7 +678,15 @@ loop2_fillLine
     inc bm_bank ; Move to the next bank
     bra bank_loop ; And start filling it
 
-Done_Init    
+Done_Init
+
+    ; Init some sad printf debugging
+    LDA #$CC
+    STA SadPrintf0
+    STA SadPrintf1
+    STA SadPrintf2
+    STA SadPrintf3
+
     JSR Init_IRQHandler
 
 Lock
