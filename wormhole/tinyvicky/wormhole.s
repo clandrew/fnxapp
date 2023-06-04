@@ -3,6 +3,7 @@
 .include "includes/TinyVicky_Def.asm"
 .include "includes/interrupt_def.asm"
 .include "includes/f256jr_registers.asm"
+.include "includes/macros.s"
 
 dst_pointer = $30
 src_pointer = $32
@@ -466,7 +467,7 @@ INNER
     INC @w iter_i ; Check if i>15, for outer loop
     INC @w iter_i
     LDX @w iter_i
-    CPX #30
+    CPX @w #30
     BNE LOOP4
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
