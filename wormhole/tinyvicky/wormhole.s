@@ -315,7 +315,8 @@ UpdateLut
     ;     Back up pe[30..45], the previous palette entries.
 
     ; Need to disable interrupts. If there's an interrupt when we're in native mode there is trouble.
-    SEI      ; disable interrupts
+    CLC     ; disable interrupts
+    SEI
     
     CLC ; Try entering native mode
     XCE
@@ -375,13 +376,13 @@ LOOP2
     LDX #0
     LDY #240*4
 LOOP3
-    LDA #0
+    LDA regb,X
     STA LUT_START,Y
     INY
-    LDA #0
+    LDA regg,X
     STA LUT_START,Y
     INY
-    LDA #0
+    LDA regr,X
     STA LUT_START,Y
     INY
     INY ; Alpha ignored
@@ -389,6 +390,91 @@ LOOP3
     INX
     CPX #15
     BNE LOOP3
+
+    ; Now the last part. The reg buffers are not needed any more.
+    ; Keep shifting pallette entries, replacing the color at N with the color at N-1,
+    ; using modulus math at the boundaries.
+    ; Note that this rolls a loop that the original sample doesn't.
+    ;
+    ; Pseudo-code:
+    ; for(i=0;i<15;i++)
+    ; {
+    ;     int k = i + 2;
+    ;
+    ;     int cur = 15 * k + 14;
+    ;     int pre = cur - 1;
+    ;
+    ;     tmp = pe[cur];
+    ;     for(j=0; j<14; j++)
+    ;     {
+    ;         pe[cur] = pe[pre];
+    ;         cur--;
+    ;         pre--;
+    ;     }
+    ;     pe[pre] = tmp;
+    ; }
+    LDX #$0
+    LDY #$0
+    STX @w iter_i ; i=0
+
+LOOP4
+    setal
+    LDA @w indcache, X         ; cur=indcache[i] 
+    TAY
+    DEC A
+    DEC A
+    DEC A
+    DEC A
+    TAX                     ; pre stored in X
+    setas
+    ; pre and cur indices are stored in X and Y now.
+
+    ; tmp = pe[cur];
+    LDA LUT_START, Y
+    STA @w tmpr
+    INY
+    LDA LUT_START, Y
+    STA @w tmpg
+    INY
+    LDA LUT_START, Y
+    STA @w tmpb
+    ; Alpha ignored
+    DEY
+    DEY
+
+    ; Initialize the inner loop
+    LDA #14
+    STA @w iter_j; j=14
+INNER
+    ; Unfortunately, need a function here because otherwise the branch from 
+    ; the end of the loop back to LOOP4 is too long
+    JSR INNERIMPL
+
+    DEC @w iter_j   ; j--
+    BNE INNER
+
+    INX
+    INX
+    INX
+    INX
+
+    ; pe[pre] = tmp;
+    LDA @w tmpr
+    STA LUT_START, X
+    INX
+    LDA @w tmpg
+    STA LUT_START, X
+    INX
+    LDA @w tmpb
+    STA LUT_START, X
+
+    ; Variable iter_i is used as an offset into an array whose element size is
+    ; 2, so it gets incremented by 2.
+    INC @w iter_i ; Check if i>15, for outer loop
+    INC @w iter_i
+    LDX @w iter_i
+    CPX @w #30
+    BNE LOOP4
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
@@ -401,8 +487,9 @@ LOOP3
     LDA #1
     STA needToCopyLutToDevice
     
-    JSR Init_IRQHandler
+    CLI ; Enable interrupts again
     
+UpdateLutDone
     RTS
 
 ; Easier to simply not have to do this programmatically.
@@ -428,17 +515,64 @@ IRQ_Handler
     BIT INT_PENDING_REG0
     BEQ IRQ_Handler_Done
 
-    LDA needToCopyLutToDevice
-    BEQ IRQ_Handler_Done
-        
-    ; Switch to I/O page 1
+    PHA ; Back up pending value
+
     LDA #1
     STA MMU_IO_CTRL
 
-    JSR CopyLutToDevice
+;CopyLutToDevice2
 
-    ; Restore to I/O page 1
+; Store a dest pointer in $30-$31
+    LDA #<VKY_GR_CLUT_0
+    STA dst_pointer
+    LDA #>VKY_GR_CLUT_0
+    STA dst_pointer+1
+
+; Store a source pointer
+    LDA #<LUT_START
+    STA src_pointer
+    LDA #>LUT_START
+    STA src_pointer+1
+
+    LDX #$00
+
+LutLoop2
+    LDY #$0
+    
+    LDA (src_pointer),Y
+    STA (dst_pointer),Y
+    INY
+    LDA (src_pointer),Y
+    STA (dst_pointer),Y
+    INY
+    LDA (src_pointer),Y
+    STA (dst_pointer),Y
+
+    INX
+    BEQ LutDone2     ; When X overflows, exit
+
+    CLC
+    LDA dst_pointer
+    ADC #$04
+    STA dst_pointer
+    LDA dst_pointer+1
+    ADC #$00 ; Add carry
+    STA dst_pointer+1
+    
+    CLC
+    LDA src_pointer
+    ADC #$04
+    STA src_pointer
+    LDA src_pointer+1
+    ADC #$00 ; Add carry
+    STA src_pointer+1
+    BRA LutLoop2
+    
+LutDone2    
     STZ MMU_IO_CTRL
+
+    ; Restore pending value
+    PLA
 
     ; Clear the flag for start-of-frame
     STA INT_PENDING_REG0
@@ -611,8 +745,9 @@ Done_Init
 
 Lock
     JSR UpdateLut
+    WAI
     JMP Lock
-
+    
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 CopyLutToDevice
@@ -667,12 +802,9 @@ LutLoop
     BRA LutLoop
     
 LutDone
-
     ; Go back to I/O page 0
     LDA #0
     STA MMU_IO_CTRL 
-
-    STA needToCopyLutToDevice
 
     RTS
 
