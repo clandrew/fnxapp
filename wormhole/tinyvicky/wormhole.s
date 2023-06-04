@@ -152,20 +152,16 @@ LE07A
 ;	<CursorPointer>	=	word address of screen character/color memory
 PrintAnsiString
     LDY #$00
-    BRA Print20
 
-Print10 ; Prints up to 255 characters
-    JSR ChrOut
-
-NextByte
-    INY
-    BNE Print20
-    INC TempSrc+1
-    
-Print20
+PrintAnsiString_EachChar
     LDA (TempSrc),y
-    BNE Print10
-    RTS ; Exit if null term
+    BEQ PrintAnsiString_Done  ; Exit if null term
+    JSR ChrOut
+    INY
+    BRA PrintAnsiString_EachChar
+
+PrintAnsiString_Done
+    RTS    
 
 .endlogical
 
