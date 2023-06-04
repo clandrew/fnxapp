@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetExt>.bin</TargetExt>
+    <TargetExt>.hex</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -176,15 +176,13 @@
   <ItemGroup>
     <CustomBuild Include="img.s">
       <FileType>Document</FileType>
-
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)img.bin --list=$(TargetDir)img.lst --labels=img.lbl $(ProjectDir)img.s
-d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)img.bin --list=$(TargetDir)img.lst --labels=img.lbl $(ProjectDir)img.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)img.hex --list=$(TargetDir)img.lst --labels=img.lbl $(ProjectDir)img.s
+d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)img.hex --list=$(TargetDir)img.lst --labels=img.lbl $(ProjectDir)img.s
 echo ==============
 echo Copying result:
 echo copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
 copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
 </Command>
-
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)img.bin --list=$(TargetDir)img.lst --labels=img.lbl $(ProjectDir)img.s
 d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)img.bin --list=$(TargetDir)img.lst --labels=img.lbl $(ProjectDir)img.s
 echo ==============
@@ -192,7 +190,6 @@ echo Copying result:
 echo copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
 copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
 </Command>
-
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)img.bin --list=$(TargetDir)img.lst --labels=img.lbl $(ProjectDir)img.s
 d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)img.bin --list=$(TargetDir)img.lst --labels=img.lbl $(ProjectDir)img.s
 echo ==============
@@ -200,7 +197,6 @@ echo Copying result:
 echo copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
 copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
 </Command>
-
     </CustomBuild>
     <None Include="platform.s">
       <FileType>Document</FileType>
