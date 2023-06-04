@@ -63,11 +63,8 @@ ChrOut
     LDA CursorColor
     STA (CursorPointer),Y ; Color to print gets stored in (CursorPointer),Y
 
+    ; Increment and update CursorColumn
     INY
-    CPY #$28 ; Check if CursorColumn is going to reach 40. If so, handle line break
-    BRA ChrOut_Done
-
-ChrOut_Done
     STY CursorColumn
 
     PLA
@@ -87,17 +84,21 @@ ClearScreen
     LDA #$C0
     STA $E074
     STA $4C
+
     LDA #$02 ; Switch to page 2
     STA MMU_IO_CTRL
+
     LDX #$20
 
     JSR Fn_E071
     STZ $E073
     LDA #$C0
     STA $E074
+
     LDA #$03 ; Switch to page 3
     STA MMU_IO_CTRL
-    LDX $48
+
+    LDX CursorColor
 
     JSR Fn_E071
 
@@ -137,6 +138,7 @@ PrintAnsiString_EachChar
     LDA (TempSrc),y
     BEQ PrintAnsiString_Done  ; Exit if null term
     JSR ChrOut
+
     INY
     BRA PrintAnsiString_EachChar
 
