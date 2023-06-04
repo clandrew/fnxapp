@@ -15,7 +15,7 @@ CursorColor = $48
 * = $000000 
         .byte 0
 
-* = $00E000
+* = $00D800
 .logical $E000
 ChrOut
     PHA
@@ -192,7 +192,7 @@ CheckControlCodes_Cond4
 .endlogical
 
 ; Entrypoint
-* = $00E5D5
+* = $00DDD5 
 .logical $E5D5
 F256_RESET
     CLC     ; disable interrupts
@@ -246,12 +246,12 @@ F256_RESET
 
 .endlogical
 
-* = $00E700
+* = $00DF00
 .logical $E700
 .include "rsrc/colors.s"
 .endlogical
 
-* = $00EF07
+* = $00E707
 .logical $EF07
 ; Main
 MAIN
@@ -436,11 +436,14 @@ TX_GAMETITLE
 ; Emitted with 
 ;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\img\tinyvicky\rsrc\vcf.bmp D:\repos\fnxapp\img\tinyvicky\rsrc\colors.s D:\repos\fnxapp\img\tinyvicky\rsrc\pixmap.s
 
-* = $10000
+* = $10000-$800
+.logical $10000
 .include "rsrc/pixmap.s"
+.endlogical
 
 ; Write the system vectors
-* = $00FFF8
+* = $00F7F8
+.logical $FFF8
 .byte $00
 F256_DUMMYIRQ       ; Abort vector
     RTI
@@ -448,3 +451,4 @@ F256_DUMMYIRQ       ; Abort vector
 .word F256_DUMMYIRQ ; nmi
 .word F256_RESET    ; reset
 .word F256_DUMMYIRQ ; irq
+.endlogical
