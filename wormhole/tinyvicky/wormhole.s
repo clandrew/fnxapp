@@ -16,7 +16,7 @@ CursorColor = $48
 * = $000000 
         .byte 0
 
-* = $00D800
+* = $00E000
 .logical $E000
 
 ; Data buffers used during palette rotation. It'd be possible to reorganize the code to simply use
@@ -214,7 +214,7 @@ CheckControlCodes_Cond4
 .endlogical
 
 ; Entrypoint
-* = $00DDD5 
+* = $00E5D5 
 .logical $E5D5
 F256_RESET
     CLC     ; disable interrupts
@@ -555,12 +555,12 @@ Init_IRQHandler
 
 .endlogical
 
-* = $00E000
+* = $00E800
 .logical $E800
 .include "rsrc/colors.s"
 .endlogical
 
-* = $00E707
+* = $00EF07
 .logical $EF07
 ; Main
 MAIN
@@ -614,61 +614,7 @@ MAIN
     LDA #$01 
     STA TyVKY_BM0_CTRL_REG ; Make sure bitmap 0 is turned on. Setting no more bits leaves LUT selection to 0
 
-    ; Switch to page 1 because the lut lives there
-    LDA #1
-    STA MMU_IO_CTRL
-
-    ; Store a dest pointer in $30-$31
-    LDA #<VKY_GR_CLUT_0
-    STA dst_pointer
-    LDA #>VKY_GR_CLUT_0
-    STA dst_pointer+1
-
-    ; Store a source pointer
-    LDA #<LUT_START
-    STA src_pointer
-    LDA #>LUT_START
-    STA src_pointer+1
-
-    LDX #$00
-
-LutLoop
-    LDY #$0
-    
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-
-    INX
-    BEQ LutDone     ; When X overflows, exit
-
-    CLC
-    LDA dst_pointer
-    ADC #$04
-    STA dst_pointer
-    LDA dst_pointer+1
-    ADC #$00 ; Add carry
-    STA dst_pointer+1
-    
-    CLC
-    LDA src_pointer
-    ADC #$04
-    STA src_pointer
-    LDA src_pointer+1
-    ADC #$00 ; Add carry
-    STA src_pointer+1
-    BRA LutLoop
-    
-LutDone
-
-    ; Go back to I/O page 0
-    LDA #0
-    STA MMU_IO_CTRL 
+    JSR CopyLutToDevice
 
     ; Now copy graphics data
     lda #<IMG_START ; Set the low byte of the bitmap’s address
@@ -739,22 +685,82 @@ Done_Init
 Lock
     JMP Lock
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+CopyLutToDevice
+    ; Switch to page 1 because the lut lives there
+    LDA #1
+    STA MMU_IO_CTRL
+
+    ; Store a dest pointer in $30-$31
+    LDA #<VKY_GR_CLUT_0
+    STA dst_pointer
+    LDA #>VKY_GR_CLUT_0
+    STA dst_pointer+1
+
+    ; Store a source pointer
+    LDA #<LUT_START
+    STA src_pointer
+    LDA #>LUT_START
+    STA src_pointer+1
+
+    LDX #$00
+
+LutLoop
+    LDY #$0
+    
+    LDA (src_pointer),Y
+    STA (dst_pointer),Y
+    INY
+    LDA (src_pointer),Y
+    STA (dst_pointer),Y
+    INY
+    LDA (src_pointer),Y
+    STA (dst_pointer),Y
+
+    INX
+    BEQ LutDone     ; When X overflows, exit
+
+    CLC
+    LDA dst_pointer
+    ADC #$04
+    STA dst_pointer
+    LDA dst_pointer+1
+    ADC #$00 ; Add carry
+    STA dst_pointer+1
+    
+    CLC
+    LDA src_pointer
+    ADC #$04
+    STA src_pointer
+    LDA src_pointer+1
+    ADC #$00 ; Add carry
+    STA src_pointer+1
+    BRA LutLoop
+    
+LutDone
+
+    ; Go back to I/O page 0
+    LDA #0
+    STA MMU_IO_CTRL 
+    RTS
+
 ; String for stylized title
 TX_GAMETITLE
-.text "Wormhole"
+.text "Test text"
 .byte 0 ; null term
 .endlogical
 
 ; Emitted with 
 ;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\wormhole\tinyvicky\rsrc\wormhole.bmp D:\repos\fnxapp\wormhole\tinyvicky\rsrc\colors.s D:\repos\fnxapp\wormhole\tinyvicky\rsrc\pixmap.s --halfsize
 
-* = $10000-$800
+* = $10000
 .logical $10000
 .include "rsrc/pixmap.s"
 .endlogical
 
 ; Write the system vectors
-* = $00F7F8
+* = $00FFF8
 .logical $FFF8
 .byte $00
 F256_DUMMYIRQ       ; Abort vector
