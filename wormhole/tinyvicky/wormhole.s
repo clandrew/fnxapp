@@ -44,6 +44,7 @@ iter_j .byte ?
 * = CACHE_END
 
 ChrOut
+    ; Character to print is in A
     PHA
     PHY
     TAY
@@ -56,36 +57,15 @@ ChrOut
 
     TYA
     LDY CursorColumn
-    STA (CursorPointer),Y
+    STA (CursorPointer),Y ; Character to print gets stored in (CursorPointer),Y
+
     INC MMU_IO_CTRL ; Goes to I/O page 3
-    LDA $48
-    STA (CursorPointer),Y
+    LDA CursorColor
+    STA (CursorPointer),Y ; Color to print gets stored in (CursorPointer),Y
+
     INY
-    CPY #$28
-    BNE ChrOut_Done
-
-    CLC
-    LDA CursorPointer
-    ADC #$28
-    STA CursorPointer
-    BCC LE025
-    INC $4C
-
-LE025
-    LDA CursorLine
-    INA
-    CMP #$1E
-    BNE SetCursorLine
-
-    LDA #$C0
-    STA $4C
-
-    LDA #$00
-    STA CursorPointer
-
-SetCursorLine
-    STA CursorLine
-    LDY #$00
+    CPY #$28 ; Check if CursorColumn is going to reach 40. If so, handle line break
+    BRA ChrOut_Done
 
 ChrOut_Done
     STY CursorColumn
