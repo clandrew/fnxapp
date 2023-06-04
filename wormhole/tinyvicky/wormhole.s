@@ -510,8 +510,9 @@ IRQ_Handler
     LDA #JR0_INT00_SOF
     BIT INT_PENDING_REG0
     BEQ IRQ_Handler_Done
-
-    PHA ; Back up pending value
+    
+    ; Clear the flag for start-of-frame
+    STA INT_PENDING_REG0
 
     LDA #1
     STA MMU_IO_CTRL
@@ -566,12 +567,6 @@ LutLoop2
     
 LutDone2    
     STZ MMU_IO_CTRL
-
-    ; Restore pending value
-    PLA
-
-    ; Clear the flag for start-of-frame
-    STA INT_PENDING_REG0
 
 IRQ_Handler_Done
     ; Restore the I/O page
