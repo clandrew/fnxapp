@@ -377,8 +377,6 @@ MAIN
     STA @w MASTER_CTRL_REG_L 
     LDA #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
     STA @w MASTER_CTRL_REG_H
-    
-    JSR Init_IRQHandler
 
     LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK
     STA CursorColor
@@ -527,7 +525,7 @@ loop2
     inc a
     STA line
     cmp #240 ; If line = 240, we’re done
-    beq Lock
+    beq Done_Init
 
     stz column ; Set the column to 0
     stz column+1
@@ -539,6 +537,9 @@ loop2
     bne loop2
     inc bm_bank ; Move to the next bank
     bra bank_loop ; And start filling it
+
+Done_Init    
+    JSR Init_IRQHandler
 
 Lock
     JMP Lock
