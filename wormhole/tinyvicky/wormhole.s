@@ -16,7 +16,7 @@ CursorColor = $48
 * = $000000 
         .byte 0
 
-* = $00E000
+* = $00D800
 .logical $E000
 
 ; Data buffers used during palette rotation. It'd be possible to reorganize the code to simply use
@@ -214,7 +214,7 @@ CheckControlCodes_Cond4
 .endlogical
 
 ; Entrypoint
-* = $00E5D5 
+* = $00DDD5 
 .logical $E5D5
 F256_RESET
     CLC     ; disable interrupts
@@ -555,12 +555,12 @@ Init_IRQHandler
 
 .endlogical
 
-* = $00E800
+* = $00E000
 .logical $E800
 .include "rsrc/colors.s"
 .endlogical
 
-* = $00EF07
+* = $00E707
 .logical $EF07
 ; Main
 MAIN
@@ -741,20 +741,20 @@ Lock
 
 ; String for stylized title
 TX_GAMETITLE
-.text "Test text"
+.text "Wormhole"
 .byte 0 ; null term
 .endlogical
 
 ; Emitted with 
 ;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\wormhole\tinyvicky\rsrc\wormhole.bmp D:\repos\fnxapp\wormhole\tinyvicky\rsrc\colors.s D:\repos\fnxapp\wormhole\tinyvicky\rsrc\pixmap.s --halfsize
 
-* = $10000
+* = $10000-$800
 .logical $10000
 .include "rsrc/pixmap.s"
 .endlogical
 
 ; Write the system vectors
-* = $00FFF8
+* = $00F7F8
 .logical $FFF8
 .byte $00
 F256_DUMMYIRQ       ; Abort vector
