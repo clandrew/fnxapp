@@ -264,7 +264,7 @@ F256_RESET
     LDA INT_PENDING_REG1
     STA INT_PENDING_REG1
 
-    CLI
+    CLI ; Enable interrupts
     JMP MAIN
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -314,6 +314,9 @@ UpdateLut
     ; For each channel, 
     ;     Back up pe[30..45], the previous palette entries.
 
+    ; Need to disable interrupts. If there's an interrupt when we're in native mode there is trouble.
+    CLC     ; disable interrupts
+    SEI
     
     CLC ; Try entering native mode
     XCE
@@ -322,6 +325,8 @@ UpdateLut
     .xl
     REP #$30
     
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
     LDX #0
     LDY #30*4
 LOOP1
@@ -478,6 +483,8 @@ INNER
     REP #$20 ; Need to do this
     SEC      ; Go back to emulation mode
     XCE
+    
+    CLI ; Enable interrupts again
     
 UpdateLutDone
     RTS
@@ -692,7 +699,7 @@ Done_Init
 Lock
     ;CMP needToCopyLutToDevice
     ;BNE Lock
-    ;JSR UpdateLut
+    JSR UpdateLut
     ;LDA #1
     ;STA needToCopyLutToDevice
     JMP Lock
