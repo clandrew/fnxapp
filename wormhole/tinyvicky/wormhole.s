@@ -9,6 +9,7 @@ dst_pointer = $30
 src_pointer = $32
 column = $34
 bm_bank = $35
+needToCopyLutToDevice = $36
 line = $40
 CursorColor = $48
 
@@ -269,20 +270,20 @@ F256_RESET
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 INNERIMPL       .proc
-    LDA VKY_GR_CLUT_0, X        ; Load pe[pre]
-    STA VKY_GR_CLUT_0, Y        ; Store it in pe[cur]
+    LDA LUT_START, X        ; Load pe[pre]
+    STA LUT_START, Y        ; Store it in pe[cur]
     INX
     INY
-    LDA VKY_GR_CLUT_0, X
-    STA VKY_GR_CLUT_0, Y
+    LDA LUT_START, X
+    STA LUT_START, Y
     INX
     INY
-    LDA VKY_GR_CLUT_0, X
-    STA VKY_GR_CLUT_0, Y
+    LDA LUT_START, X
+    STA LUT_START, Y
     INX
     INY
-    LDA VKY_GR_CLUT_0, X
-    STA VKY_GR_CLUT_0, Y
+    LDA LUT_START, X
+    STA LUT_START, Y
 
     ; Now decrement pre and cur
     DEX
@@ -303,7 +304,7 @@ INNERIMPL       .proc
     RTS
     .pend
 
-OnStartOfFrame
+UpdateLut
 
     ; This handler completes palette rotation in four parts. The four parts can run
     ; separately from each other so it'd be possible to cleanly separate each one
@@ -324,13 +325,13 @@ OnStartOfFrame
     LDX #0
     LDY #30*4
 LOOP1
-    LDA VKY_GR_CLUT_0,Y 
+    LDA LUT_START,Y 
     STA @w regb,X 
     INY
-    LDA VKY_GR_CLUT_0,Y
+    LDA LUT_START,Y
     STA @w regg,X
     INY
-    LDA VKY_GR_CLUT_0,Y
+    LDA LUT_START,Y
     STA @w regr,X
     INY
     INY         ; Alpha ignored
@@ -345,16 +346,16 @@ LOOP1
     LDX #30*4
     LDY #45*4
 LOOP2
-    LDA VKY_GR_CLUT_0,Y
-    STA VKY_GR_CLUT_0,X
+    LDA LUT_START,Y
+    STA LUT_START,X
     INX
     INY
-    LDA VKY_GR_CLUT_0,Y
-    STA VKY_GR_CLUT_0,X
+    LDA LUT_START,Y
+    STA LUT_START,X
     INX
     INY
-    LDA VKY_GR_CLUT_0,Y
-    STA VKY_GR_CLUT_0,X
+    LDA LUT_START,Y
+    STA LUT_START,X
     INX
     INY
     INX        ; Alpha ignored     
@@ -371,13 +372,13 @@ LOOP2
     LDY #240*4
 LOOP3
     LDA regb,X
-    STA VKY_GR_CLUT_0,Y
+    STA LUT_START,Y
     INY
     LDA regg,X
-    STA VKY_GR_CLUT_0,Y
+    STA LUT_START,Y
     INY
     LDA regr,X
-    STA VKY_GR_CLUT_0,Y
+    STA LUT_START,Y
     INY
     INY ; Alpha ignored
 
@@ -424,13 +425,13 @@ LOOP4
     ; pre and cur indices are stored in X and Y now.
 
     ; tmp = pe[cur];
-    LDA VKY_GR_CLUT_0, Y
+    LDA LUT_START, Y
     STA @w tmpr
     INY
-    LDA VKY_GR_CLUT_0, Y
+    LDA LUT_START, Y
     STA @w tmpg
     INY
-    LDA VKY_GR_CLUT_0, Y
+    LDA LUT_START, Y
     STA @w tmpb
     ; Alpha ignored
     DEY
@@ -454,13 +455,13 @@ INNER
 
     ; pe[pre] = tmp;
     LDA @w tmpr
-    STA VKY_GR_CLUT_0, X
+    STA LUT_START, X
     INX
     LDA @w tmpg
-    STA VKY_GR_CLUT_0, X
+    STA LUT_START, X
     INX
     LDA @w tmpb
-    STA VKY_GR_CLUT_0, X
+    STA LUT_START, X
 
     ; Variable iter_i is used as an offset into an array whose element size is
     ; 2, so it gets incremented by 2.
@@ -503,12 +504,15 @@ IRQ_Handler
     LDA #JR0_INT00_SOF
     BIT INT_PENDING_REG0
     BEQ IRQ_Handler_Done
+
+    ;LDA needToCopyLutToDevice
+    ;BEQ IRQ_Handler_Done
         
     ; Switch to I/O page 1
     LDA #1
     STA MMU_IO_CTRL
 
-    JSR OnStartOfFrame    
+    ;JSR CopyLutToDevice
 
     ; Restore to I/O page 1
     STZ MMU_IO_CTRL
@@ -682,7 +686,15 @@ loop2_fillLine
 Done_Init    
     JSR Init_IRQHandler
 
+    LDA #1
+    STA needToCopyLutToDevice
+
 Lock
+    ;CMP needToCopyLutToDevice
+    ;BNE Lock
+    ;JSR UpdateLut
+    ;LDA #1
+    ;STA needToCopyLutToDevice
     JMP Lock
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
