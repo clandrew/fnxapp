@@ -483,6 +483,9 @@ INNER
     REP #$20 ; Need to do this
     SEC      ; Go back to emulation mode
     XCE
+
+    LDA #1
+    STA needToCopyLutToDevice
     
     CLI ; Enable interrupts again
     
@@ -512,14 +515,14 @@ IRQ_Handler
     BIT INT_PENDING_REG0
     BEQ IRQ_Handler_Done
 
-    ;LDA needToCopyLutToDevice
-    ;BEQ IRQ_Handler_Done
+    LDA needToCopyLutToDevice
+    BEQ IRQ_Handler_Done
         
     ; Switch to I/O page 1
     LDA #1
     STA MMU_IO_CTRL
 
-    ;JSR CopyLutToDevice
+    JSR CopyLutToDevice
 
     ; Restore to I/O page 1
     STZ MMU_IO_CTRL
@@ -693,15 +696,8 @@ loop2_fillLine
 Done_Init    
     JSR Init_IRQHandler
 
-    LDA #1
-    STA needToCopyLutToDevice
-
 Lock
-    ;CMP needToCopyLutToDevice
-    ;BNE Lock
     JSR UpdateLut
-    ;LDA #1
-    ;STA needToCopyLutToDevice
     JMP Lock
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
