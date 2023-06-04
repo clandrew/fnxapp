@@ -15,7 +15,7 @@ CursorColor = $48
 * = $000000 
         .byte 0
 
-* = $00D800
+* = $00E000
 .logical $E000
 
 ; Data buffers used during palette rotation. It'd be possible to reorganize the code to simply use
@@ -213,7 +213,7 @@ CheckControlCodes_Cond4
 .endlogical
 
 ; Entrypoint
-* = $00DDD5 
+* = $00E5D5 
 .logical $E5D5
 F256_RESET
     CLC     ; disable interrupts
@@ -265,48 +265,225 @@ F256_RESET
     CLI
     JMP MAIN
 
-Dummy
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    LDA #<VKY_GR_CLUT_0
-    STA dst_pointer
-    LDA #>VKY_GR_CLUT_0
-    STA dst_pointer+1
-
-    LDX #$00
-
-UpdateLutLoop
-    LDY #$0
-    
-    LDA (dst_pointer),Y
-    INA
-    STA (dst_pointer),Y
+INNERIMPL       .proc
+    LDA VKY_GR_CLUT_0, X        ; Load pe[pre]
+    STA VKY_GR_CLUT_0, Y        ; Store it in pe[cur]
+    INX
     INY
-    
-    LDA (dst_pointer),Y
-    INA
-    STA (dst_pointer),Y
+    LDA VKY_GR_CLUT_0, X
+    STA VKY_GR_CLUT_0, Y
+    INX
     INY
+    LDA VKY_GR_CLUT_0, X
+    STA VKY_GR_CLUT_0, Y
+    INX
+    INY
+    LDA VKY_GR_CLUT_0, X
+    STA VKY_GR_CLUT_0, Y
+
+    ; Now decrement pre and cur
+    DEX
+    DEX
+    DEX
+    DEX
+    DEX
+    DEX
+    DEX
+
+    DEY
+    DEY
+    DEY
+    DEY
+    DEY
+    DEY
+    DEY
+    RTS
+    .pend
+
+OnStartOfFrame
+
+    ; This handler completes palette rotation in four parts. The four parts can run
+    ; separately from each other so it'd be possible to cleanly separate each one
+    ; out along functional lines. But since each function would be called once
+    ; I inline them.
     
-    LDA (dst_pointer),Y
-    INA
-    STA (dst_pointer),Y
+    ; For each channel, 
+    ;     Back up pe[30..45], the previous palette entries.
+
+    
+    CLC ; Try entering native mode
+    XCE
+    
+    .al
+    .xl
+    REP #$30
+    
+    LDX #0
+    LDY #30*4
+LOOP1
+    LDA VKY_GR_CLUT_0,Y 
+    STA @w regb,X 
+    INY
+    LDA VKY_GR_CLUT_0,Y
+    STA @w regg,X
+    INY
+    LDA VKY_GR_CLUT_0,Y
+    STA @w regr,X
+    INY
+    INY         ; Alpha ignored
+                
+    INX
+    CPX #15
+    BNE LOOP1  
+
+    ; For each channel,
+    ;     Overwrite pe[30..230] with pe[45..255].
+    ;    
+    LDX #30*4
+    LDY #45*4
+LOOP2
+    LDA VKY_GR_CLUT_0,Y
+    STA VKY_GR_CLUT_0,X
+    INX
+    INY
+    LDA VKY_GR_CLUT_0,Y
+    STA VKY_GR_CLUT_0,X
+    INX
+    INY
+    LDA VKY_GR_CLUT_0,Y
+    STA VKY_GR_CLUT_0,X
+    INX
+    INY
+    INX        ; Alpha ignored     
+    INY             
+    CPX #$3C0 ; 240 * 4
+    BNE LOOP2
+
+    ; For each channel,
+    ;     Take the old pe[30..45] that we backed up and store it at the end.
+    ;     In other words, 
+    ;     pe[k+240] = reg[k];
+    ;
+    LDX #0
+    LDY #240*4
+LOOP3
+    LDA regb,X
+    STA VKY_GR_CLUT_0,Y
+    INY
+    LDA regg,X
+    STA VKY_GR_CLUT_0,Y
+    INY
+    LDA regr,X
+    STA VKY_GR_CLUT_0,Y
+    INY
+    INY ; Alpha ignored
 
     INX
-    BEQ UpdateLutDone     ; When X overflows, exit
+    CPX #15
+    BNE LOOP3
 
-    CLC
-    LDA dst_pointer
-    ADC #$04
-    STA dst_pointer
-    LDA dst_pointer+1
-    ADC #$00 ; Add carry
-    STA dst_pointer+1
+    ; Now the last part. The reg buffers are not needed any more.
+    ; Keep shifting pallette entries, replacing the color at N with the color at N-1,
+    ; using modulus math at the boundaries.
+    ; Note that this rolls a loop that the original sample doesn't.
+    ;
+    ; Pseudo-code:
+    ; for(i=0;i<15;i++)
+    ; {
+    ;     int k = i + 2;
+    ;
+    ;     int cur = 15 * k + 14;
+    ;     int pre = cur - 1;
+    ;
+    ;     tmp = pe[cur];
+    ;     for(j=0; j<14; j++)
+    ;     {
+    ;         pe[cur] = pe[pre];
+    ;         cur--;
+    ;         pre--;
+    ;     }
+    ;     pe[pre] = tmp;
+    ; }
+    LDX #$0
+    LDY #$0
+    STX @w iter_i ; i=0
 
-    BRA UpdateLutLoop
+LOOP4
+    setal
+    LDA @w indcache, X         ; cur=indcache[i] 
+    TAY
+    DEC A
+    DEC A
+    DEC A
+    DEC A
+    TAX                     ; pre stored in X
+    setas
+    ; pre and cur indices are stored in X and Y now.
+
+    ; tmp = pe[cur];
+    LDA VKY_GR_CLUT_0, Y
+    STA @w tmpr
+    INY
+    LDA VKY_GR_CLUT_0, Y
+    STA @w tmpg
+    INY
+    LDA VKY_GR_CLUT_0, Y
+    STA @w tmpb
+    ; Alpha ignored
+    DEY
+    DEY
+
+    ; Initialize the inner loop
+    LDA #14
+    STA @w iter_j; j=14
+INNER
+    ; Unfortunately, need a function here because otherwise the branch from 
+    ; the end of the loop back to LOOP4 is too long
+    JSR INNERIMPL
+
+    DEC @w iter_j   ; j--
+    BNE INNER
+
+    INX
+    INX
+    INX
+    INX
+
+    ; pe[pre] = tmp;
+    LDA @w tmpr
+    STA VKY_GR_CLUT_0, X
+    INX
+    LDA @w tmpg
+    STA VKY_GR_CLUT_0, X
+    INX
+    LDA @w tmpb
+    STA VKY_GR_CLUT_0, X
+
+    ; Variable iter_i is used as an offset into an array whose element size is
+    ; 2, so it gets incremented by 2.
+    INC @w iter_i ; Check if i>15, for outer loop
+    INC @w iter_i
+    LDX @w iter_i
+    CPX #30
+    BNE LOOP4
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    
+    .as
+    .xs
+    REP #$20 ; Need to do this
+    SEC      ; Go back to emulation mode
+    XCE
     
 UpdateLutDone
-
     RTS
+
+; Easier to simply not have to do this programmatically.
+indcache .word 176, 236, 296, 356, 416, 476, 536, 596, 656, 716, 776, 836, 896, 956, 1016
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 IRQ_Handler
     PHP
@@ -330,11 +507,7 @@ IRQ_Handler
     LDA #1
     STA MMU_IO_CTRL
 
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-    JSR Dummy
-    
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    JSR OnStartOfFrame    
 
     ; Restore to I/O page 1
     STZ MMU_IO_CTRL
@@ -381,12 +554,12 @@ Init_IRQHandler
 
 .endlogical
 
-* = $00DF00
-.logical $E700
+* = $00E800
+.logical $E800
 .include "rsrc/colors.s"
 .endlogical
 
-* = $00E707
+* = $00EF07
 .logical $EF07
 ; Main
 MAIN
@@ -528,7 +701,7 @@ LutDone
     stz MMU_MEM_CTRL ; Turn off editing of MMU LUT #0
 
     ; Fill the line with the color..
-loop2
+loop2_fillLine
     lda line ; The line number is the color of the line
 
     sta (dst_pointer)
@@ -551,11 +724,11 @@ loop2
     stz column ; Set the column to 0
     stz column+1
     inc_point: inc dst_pointer ; Increment pointer
-    bne loop2 ; If < $4000, keep looping
+    bne loop2_fillLine ; If < $4000, keep looping
     inc dst_pointer+1
     lda dst_pointer+1
     cmp #$40
-    bne loop2
+    bne loop2_fillLine
     inc bm_bank ; Move to the next bank
     bra bank_loop ; And start filling it
 
@@ -574,13 +747,13 @@ TX_GAMETITLE
 ; Emitted with 
 ;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\wormhole\tinyvicky\rsrc\wormhole.bmp D:\repos\fnxapp\wormhole\tinyvicky\rsrc\colors.s D:\repos\fnxapp\wormhole\tinyvicky\rsrc\pixmap.s --halfsize
 
-* = $10000-$800
+* = $10000
 .logical $10000
 .include "rsrc/pixmap.s"
 .endlogical
 
 ; Write the system vectors
-* = $00F7F8
+* = $00FFF8
 .logical $FFF8
 .byte $00
 F256_DUMMYIRQ       ; Abort vector
