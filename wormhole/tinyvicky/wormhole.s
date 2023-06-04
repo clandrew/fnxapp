@@ -48,6 +48,36 @@ iter_i .byte ?          ; Couple counters used for the 4th loop.
 iter_j .byte ?
 * = CACHE_END
 
+ClearScreenExperiment
+    LDA MMU_IO_CTRL ; Back up I/O page
+    PHA
+    
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL
+    
+    STZ dst_pointer ; dst_pointer=$C000
+    LDA #$C0
+    STA dst_pointer+1
+
+ClearExperiment_ForEach
+    LDA #65 ; Character 0
+    STA (dst_pointer) ; Character to print gets stored in (CursorPointer),Y
+        
+    CLC
+    LDA dst_pointer
+    ADC #$01
+    STA dst_pointer
+    LDA dst_pointer+1
+    ADC #$00 ; Add carry
+    STA dst_pointer+1
+
+    CMP #$C4
+    BNE ClearExperiment_ForEach
+    
+    PLA
+    STA MMU_IO_CTRL ; Restore I/O page
+    RTS
+
 ChrOut
     ; Character to print is in A
     PHA
@@ -88,7 +118,7 @@ ClearScreen
     STZ CursorPointer
     LDA #$C0
     STA $E074
-    STA $4C
+    STA CursorPointer+1
 
     LDA #$02 ; Switch to page 2
     STA MMU_IO_CTRL
@@ -576,6 +606,8 @@ MAIN
     STA CursorColor
 
     JSR ClearScreen ; For some reason this doesn't clear the screen
+    
+    JSR ClearScreenExperiment
 
     LDA #$00
     STA CursorColumn
@@ -597,7 +629,7 @@ MAIN
 
     LDA #>TX_GAMETITLE
     STA TempSrc+1
-    
+
     JSR PrintAnsiString
          
     ; Clear to black
