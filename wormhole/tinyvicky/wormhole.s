@@ -25,7 +25,12 @@ SadPrintf3 = $37
 * = $000000 
         .byte 0
 
-* = $00D800
+.if TARGETFMT = "hex"
+* = $00E000
+.endif
+.if TARGETFMT = "bin"
+* = $00E000-$800
+.endif
 .logical $E000
 
 ; Data buffers used during palette rotation. It'd be possible to reorganize the code to simply use
@@ -182,8 +187,12 @@ PrintAnsiString_Done
 
 .endlogical
 
-; Entrypoint
-* = $00DDD5 
+.if TARGETFMT = "hex"
+* = $00E5D5
+.endif
+.if TARGETFMT = "bin"
+* = $00E5D5-$800
+.endif
 .logical $E5D5
 F256_RESET
     CLC     ; disable interrupts
@@ -584,12 +593,22 @@ Init_IRQHandler
 
 .endlogical
 
-* = $00E000
+.if TARGETFMT = "hex"
+* = $00E800
+.endif
+.if TARGETFMT = "bin"
+* = $00E800-$800
+.endif
 .logical $E800
 .include "rsrc/colors.s"
 .endlogical
 
-* = $00E707
+.if TARGETFMT = "hex"
+* = $00EF07
+.endif
+.if TARGETFMT = "bin"
+* = $00EF07-$800
+.endif
 .logical $EF07
 ; Main
 MAIN
@@ -794,13 +813,23 @@ TX_GAMETITLE
 ; Emitted with 
 ;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\wormhole\tinyvicky\rsrc\wormhole.bmp D:\repos\fnxapp\wormhole\tinyvicky\rsrc\colors.s D:\repos\fnxapp\wormhole\tinyvicky\rsrc\pixmap.s --halfsize
 
-* = $10000-$800
+.if TARGETFMT = "hex"
+* = $010000
+.endif
+.if TARGETFMT = "bin"
+* = $010000-$800
+.endif
 .logical $10000
 .include "rsrc/pixmap.s"
 .endlogical
 
 ; Write the system vectors
-* = $00F7F8
+.if TARGETFMT = "hex"
+* = $00FFF8
+.endif
+.if TARGETFMT = "bin"
+* = $00FFF8-$800
+.endif
 .logical $FFF8
 .byte $00
 F256_DUMMYIRQ       ; Abort vector
