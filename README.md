@@ -67,6 +67,8 @@ Segments are allowed to straddle bank boundaries. You can have one segment take 
 
 ![alt text](https://raw.githubusercontent.com/clandrew/fnxapp/main/Images/execpgz.PNG?raw=true)
 
+-----
+
 ### spaceoddity
 A sample oiginally written by [noyen1973](https://github.com/noyen1973), adapted and reorganized with permission. It displays a title graphic and plays sound on the F256K system.
 
@@ -86,6 +88,8 @@ If you do want to expand this sample to call kernel functions, heads up that it 
 
 ![alt text](https://raw.githubusercontent.com/clandrew/fnxapp/main/Images/spaceoddity.jpg?raw=true)
 
+-----
+
 ### img
 A sample that uses Vicky II to display a single, 256-color image. The image is baked into the binary. 
 
@@ -94,6 +98,8 @@ Here you'll find there's two versions of this sample:
 * One that runs on F256-based systems, using TinyVicky, tested on emulator and on hardware
 
 ![alt text](https://raw.githubusercontent.com/clandrew/fnxapp/main/Images/img.PNG?raw=true)
+
+-----
 
 ### wormhole
 
@@ -104,6 +110,8 @@ This is a port of that sample. Some details are described more [in this blog pos
 Like the 'img' sample, you'll find there are two versions: a C256-based Vicky II one and an F256-based TinyVicky one.
 
 ![alt text](https://raw.githubusercontent.com/clandrew/fnxapp/main/Images/wormhole.PNG?raw=true)
+
+-----
 
 ## Build
 
