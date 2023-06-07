@@ -65,7 +65,7 @@ ClearScreenExperiment
     STA dst_pointer+1
 
 ClearExperiment_ForEach
-    LDA #65 ; Character 0
+    LDA #32 ; Character 0
     STA (dst_pointer) ; Character to print gets stored in (CursorPointer),Y
         
     CLC
@@ -76,7 +76,7 @@ ClearExperiment_ForEach
     ADC #$00 ; Add carry
     STA dst_pointer+1
 
-    CMP #$C4
+    CMP #$C5
     BNE ClearExperiment_ForEach
     
     PLA
@@ -627,8 +627,6 @@ MAIN
 
     LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK
     STA CursorColor
-
-    JSR ClearScreen ; For some reason this doesn't clear the screen
     
     JSR ClearScreenExperiment
 
@@ -809,9 +807,8 @@ LutDone
 
     RTS
 
-; String for stylized title
 TX_GAMETITLE
-.text "Wormhole"
+.text "Wormhole demo by haydenkale"
 .byte 0 ; null term
 .endlogical
 
