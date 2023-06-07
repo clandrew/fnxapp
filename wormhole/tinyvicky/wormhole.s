@@ -636,10 +636,10 @@ MAIN
     LDA #$00
     STA $4A ; CursorLine
     
-    LDA #$00 ; #<(VKY_TEXT_MEMORY+val(copy('#0',2))*40)
+    LDA #<VKY_TEXT_MEMORY
     STA $4B ; CursorPointer
 
-    LDA #$C0
+    LDA #>VKY_TEXT_MEMORY
     STA $4C
     
     LDA #$70

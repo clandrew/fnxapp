@@ -26,6 +26,8 @@ MMU_MEM_BANK_7 = $000F          ; MMU Edit Register for bank 7 ($E000 - $FFFF)
 ;; Vicky Registers
 ;;
 
+VKY_TEXT_MEMORY = $C000
+
 VKY_MSTR_CTRL_0 = $D000         ; Vicky Master Control Register 0
 VKY_MSTR_CTRL_1 = $D001         ; Vicky Master Control Register 1
 
