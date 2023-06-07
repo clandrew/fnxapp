@@ -116,13 +116,17 @@ ChrOut
 ClearScreen
     PHA
     PHX
-    LDA MMU_IO_CTRL ; Back up MMU page state
+
+.byte $A5 ; LDA imm
+LE073
+.byte $01 ; This gets replaced
+LE074    
     PHA
 
-    STZ $E073
+    STZ LE073
     STZ CursorPointer
     LDA #$C0
-    STA $E074
+    STA LE074
     STA CursorPointer+1
 
     LDA #$02 ; Switch to page 2
@@ -131,9 +135,9 @@ ClearScreen
     LDX #$20
 
     JSR Fn_E071
-    STZ $E073
+    STZ LE073
     LDA #$C0
-    STA $E074
+    STA LE074
 
     LDA #$03 ; Switch to page 3
     STA MMU_IO_CTRL
@@ -151,17 +155,17 @@ ClearScreen
 Fn_E071
     TXA
     STA $1234
-    INC $E073 ; This causes corruption of the code.
+    INC LE073
     BNE LE07A
-    INC $E074
+    INC LE074
 
 LE07A
-    LDA $E073
+    LDA LE073
     CMP #$C0
 
     BNE Fn_E071
 
-    LDA $E074
+    LDA LE074
     CMP #$D2
 
     BNE Fn_E071
