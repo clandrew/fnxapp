@@ -683,7 +683,8 @@ MAIN
     ; Calculate the bank number for the bitmap
     lda #(IMG_START >> 13)
     sta bm_bank
-    bank_loop: stz dst_pointer ; Set the pointer to start of the current bank
+bank_loop: 
+    stz dst_pointer ; Set the pointer to start of the current bank
     lda #$20
     sta dst_pointer+1
     ; Set the column to 0
