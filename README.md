@@ -31,7 +31,7 @@ The main difference between PGX and PGZ is that PGZ can consist of multiple *seg
 
 If you're comparing the build process, you'll notice that PGX and PGZ are concepts set up in the source code, they're not for the assembler. They don't really affect how you invoke the assembler. 
 
-Both executable formats are output the same way from 64tass, using the -o directive. The logistics of setting up the programs as executables is all done in code, not really in how the assembler is invoked. Each format has a header with a signature, and these are set up in the source code.
+Both executable formats are output the same way from 64tass, using the -o directive. Each format has a header with a signature, and these are set up in the source code.
 
 The C256 kernel understands PGX and PGZ format, and its BASIC can load them. To be more specific, the C256 kernel exposes the functions "F_LOAD" and "F_RUN", and the Foenix's BASIC implementation calls these functions when you use BASIC "BRUN".
 
@@ -89,7 +89,9 @@ If you do want to expand this sample to call kernel functions, heads up that it 
 ### img
 A sample that uses Vicky II to display a single, 256-color image. The image is baked into the binary. 
 
-Like many of the other samples here it runs on emulator.
+Here you'll find there's two versions of this sample: 
+* One that runs on C256-based systems, using Vicky II, tested on emulator
+* One that runs on F256-based systems, using TinyVicky, tested on emulator and on hardware
 
 ![alt text](https://raw.githubusercontent.com/clandrew/fnxapp/main/Images/img.PNG?raw=true)
 
@@ -98,6 +100,8 @@ Like many of the other samples here it runs on emulator.
 Do you remember DirectDraw? The DirectX 5 SDK disc came with a bunch of samples, including one called "Wormhole". 
 
 This is a port of that sample. Some details are described more [in this blog post](http://cml-a.com/content/). It's similar to 'img', except the palette is updated every frame.
+
+Like the 'img' sample, you'll find there are two versions: a C256-based Vicky II one and an F256-based TinyVicky one.
 
 ![alt text](https://raw.githubusercontent.com/clandrew/fnxapp/main/Images/wormhole.PNG?raw=true)
 
