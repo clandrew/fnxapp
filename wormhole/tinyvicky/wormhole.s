@@ -146,12 +146,12 @@ ClearScreen
     STA MMU_IO_CTRL ; Restore MMU page state
     PLX
     PLA
-    RTS
+    RTS ; Return from ClearScreen
 
 Fn_E071
     TXA
     STA $1234
-    INC $E073
+    INC $E073 ; This causes corruption of the code.
     BNE LE07A
     INC $E074
 
