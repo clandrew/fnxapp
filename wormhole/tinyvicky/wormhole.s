@@ -80,7 +80,7 @@ ClearExperiment_ForEach
 
 ChrOut
     ; Character to print is in A
-    PHA
+    ; A is scrambled after
     PHY
     TAY
 
@@ -105,7 +105,6 @@ ChrOut
     PLA
     STA MMU_IO_CTRL ; Restore I/O page
     PLY
-    PLA
     RTS
 
 ; Procedure: PrintAnsiString
