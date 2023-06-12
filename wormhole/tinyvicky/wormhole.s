@@ -108,64 +108,6 @@ ChrOut
     PLA
     RTS
 
-ClearScreen
-    PHA
-    PHX
-
-.byte $A5 ; LDA imm
-LE073
-.byte $01 ; This gets replaced
-LE074    
-    PHA
-
-    STZ LE073
-    STZ CursorPointer
-    LDA #$C0
-    STA LE074
-    STA CursorPointer+1
-
-    LDA #$02 ; Switch to page 2
-    STA MMU_IO_CTRL
-
-    LDX #$20
-
-    JSR Fn_E071
-    STZ LE073
-    LDA #$C0
-    STA LE074
-
-    LDA #$03 ; Switch to page 3
-    STA MMU_IO_CTRL
-
-    LDX CursorColor
-
-    JSR Fn_E071
-
-    PLA
-    STA MMU_IO_CTRL ; Restore MMU page state
-    PLX
-    PLA
-    RTS ; Return from ClearScreen
-
-Fn_E071
-    TXA
-    STA $1234
-    INC LE073
-    BNE LE07A
-    INC LE074
-
-LE07A
-    LDA LE073
-    CMP #$C0
-
-    BNE Fn_E071
-
-    LDA LE074
-    CMP #$D2
-
-    BNE Fn_E071
-    RTS
-
 ; Procedure: PrintAnsiString
 ; parameters:
 ;	<TempSrc>	=	word address of string to print
