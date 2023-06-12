@@ -84,43 +84,37 @@ ClearExperiment_ForEach
 ;	<TempSrc>	=	word address of string to print
 ;	<CursorPointer>	=	word address of screen character/color memory
 PrintAnsiString
+    LDX #$00
     LDY #$00
-
-PrintAnsiString_EachChar
-    LDA (TempSrc),y
-    BEQ PrintAnsiString_Done  ; Exit if null term
-    ;JSR ChrOut
-
-
-    PHY
-    TAY
-
+    
     LDA MMU_IO_CTRL ; Back up I/O page
     PHA
     
     LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL
+    STA MMU_IO_CTRL    
 
-    TYA
-    LDY CursorColumn
-    STA (CursorPointer),Y ; Character to print gets stored in (CursorPointer),Y
-
-    INC MMU_IO_CTRL ; Goes to I/O page 3
-    LDA CursorColor
-    STA (CursorPointer),Y ; Color to print gets stored in (CursorPointer),Y
-
-    ; Increment and update CursorColumn
+PrintAnsiString_EachCharToTextMemory
+    LDA (TempSrc),y                              ; Load the character to print
+    BEQ PrintAnsiString_DoneStoringToTextMemory  ; Exit if null term        
+    STA (CursorPointer),Y                        ; Store character to text memory
     INY
-    STY CursorColumn
+    BRA PrintAnsiString_EachCharToTextMemory
+
+PrintAnsiString_DoneStoringToTextMemory
+
+    LDA #$03 ; Set I/O page to 3
+    STA MMU_IO_CTRL
+    
+    LDA CursorColor
+
+PrintAnsiString_EachCharToColorMemory
+    DEY
+    STA (CursorPointer),Y ; Color to print gets stored in (CursorPointer),Y
+    BNE PrintAnsiString_EachCharToColorMemory
 
     PLA
     STA MMU_IO_CTRL ; Restore I/O page
-    PLY
 
-    INY
-    BRA PrintAnsiString_EachChar
-
-PrintAnsiString_Done
     RTS    
 
 .endlogical
@@ -561,13 +555,13 @@ MAIN
     STA $4A ; CursorLine
     
     LDA #<VKY_TEXT_MEMORY
-    STA $4B ; CursorPointer
+    STA CursorPointer
 
     LDA #>VKY_TEXT_MEMORY
-    STA $4C
+    STA CursorPointer+1
     
     LDA #$70
-    STA $48
+    STA CursorColor
 
     LDA #<TX_GAMETITLE
     STA TempSrc
