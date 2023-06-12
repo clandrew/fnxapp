@@ -78,9 +78,20 @@ ClearExperiment_ForEach
     STA MMU_IO_CTRL ; Restore I/O page
     RTS
 
-ChrOut
-    ; Character to print is in A
-    ; A is scrambled after
+
+; Procedure: PrintAnsiString
+; parameters:
+;	<TempSrc>	=	word address of string to print
+;	<CursorPointer>	=	word address of screen character/color memory
+PrintAnsiString
+    LDY #$00
+
+PrintAnsiString_EachChar
+    LDA (TempSrc),y
+    BEQ PrintAnsiString_Done  ; Exit if null term
+    ;JSR ChrOut
+
+
     PHY
     TAY
 
@@ -105,19 +116,6 @@ ChrOut
     PLA
     STA MMU_IO_CTRL ; Restore I/O page
     PLY
-    RTS
-
-; Procedure: PrintAnsiString
-; parameters:
-;	<TempSrc>	=	word address of string to print
-;	<CursorPointer>	=	word address of screen character/color memory
-PrintAnsiString
-    LDY #$00
-
-PrintAnsiString_EachChar
-    LDA (TempSrc),y
-    BEQ PrintAnsiString_Done  ; Exit if null term
-    JSR ChrOut
 
     INY
     BRA PrintAnsiString_EachChar
