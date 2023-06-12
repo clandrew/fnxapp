@@ -48,7 +48,7 @@ iter_i .byte ?          ; Couple counters used for the 4th loop.
 iter_j .byte ?
 * = CACHE_END
 
-ClearScreenExperiment
+ClearScreen
     LDA MMU_IO_CTRL ; Back up I/O page
     PHA
     
@@ -436,9 +436,7 @@ IRQ_Handler
     LDA #1
     STA MMU_IO_CTRL
 
-;CopyLutToDevice2
-
-; Store a dest pointer in $30-$31
+    ; Store a dest pointer in $30-$31
     LDA #<VKY_GR_CLUT_0
     STA dst_pointer
     LDA #>VKY_GR_CLUT_0
@@ -557,7 +555,7 @@ MAIN
     LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK
     STA CursorColor
     
-    JSR ClearScreenExperiment
+    JSR ClearScreen
 
     LDA #$00
     STA CursorColumn
