@@ -39,3 +39,7 @@
 /spaceoddity/reference
 /example/*
 /wormhole/tinyvicky/reference
+/rainbowtext/.vs/*
+/rainbowtext/Debug
+/rainbowtext/Release
+/rainbowtext/reference/*
