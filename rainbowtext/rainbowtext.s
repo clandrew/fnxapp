@@ -245,58 +245,6 @@ IRQ_Handler
 AfterUpdateTextColors
     DEC AnimationCounter
 
-    LDA #1
-    STA MMU_IO_CTRL
-
-    ; Store a dest pointer in $30-$31
-    LDA #<VKY_GR_CLUT_0
-    STA dst_pointer
-    LDA #>VKY_GR_CLUT_0
-    STA dst_pointer+1
-
-; Store a source pointer
-    LDA #<LUT_START
-    STA src_pointer
-    LDA #>LUT_START
-    STA src_pointer+1
-
-    LDX #$00
-
-LutLoop2
-    LDY #$0
-    
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-
-    INX
-    BEQ LutDone2     ; When X overflows, exit
-
-    CLC
-    LDA dst_pointer
-    ADC #$04
-    STA dst_pointer
-    LDA dst_pointer+1
-    ADC #$00 ; Add carry
-    STA dst_pointer+1
-    
-    CLC
-    LDA src_pointer
-    ADC #$04
-    STA src_pointer
-    LDA src_pointer+1
-    ADC #$00 ; Add carry
-    STA src_pointer+1
-    BRA LutLoop2
-    
-LutDone2    
-    STZ MMU_IO_CTRL
-
 IRQ_Handler_Done
     ; Restore the I/O page
     PLA
