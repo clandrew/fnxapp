@@ -181,22 +181,22 @@
 d:\64tass\64tass --long-address --flat -b --m65816 -D TARGETFMT=\"hex\" --intel-hex -o $(TargetDir)rainbowtext.hex --list=$(TargetDir)rainbowtext.lst --labels=rainbowtext.lbl $(ProjectDir)rainbowtext.s
 echo ==============
 echo Copying result:
-echo copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
-copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
+echo copy /Y $(TargetPath) "$(ProjectDir)..\sd"
+copy /Y $(TargetPath) "$(ProjectDir)..\sd"
 </Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)rainbowtext.bin --list=$(TargetDir)rainbowtext.lst --labels=rainbowtext.lbl $(ProjectDir)rainbowtext.s
 d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)rainbowtext.bin --list=$(TargetDir)rainbowtext.lst --labels=rainbowtext.lbl $(ProjectDir)rainbowtext.s
 echo ==============
 echo Copying result:
-echo copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
-copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
+echo copy /Y $(TargetPath) "$(ProjectDir)..\sd"
+copy /Y $(TargetPath) "$(ProjectDir)..\sd"
 </Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)rainbowtext.bin --list=$(TargetDir)rainbowtext.lst --labels=rainbowtext.lbl $(ProjectDir)rainbowtext.s
 d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)rainbowtext.bin --list=$(TargetDir)rainbowtext.lst --labels=rainbowtext.lbl $(ProjectDir)rainbowtext.s
 echo ==============
 echo Copying result:
-echo copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
-copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
+echo copy /Y $(TargetPath) "$(ProjectDir)..\sd"
+copy /Y $(TargetPath) "$(ProjectDir)..\sd"
 </Command>
     </CustomBuild>
     <None Include="platform.s">
