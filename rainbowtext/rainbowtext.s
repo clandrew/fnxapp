@@ -128,6 +128,8 @@ UpdateTextColors
     LDA MMU_IO_CTRL ; Back up I/O page
     PHA
 
+    LDY #$00
+
     LDA #$03 ; Set I/O page to 3
     STA MMU_IO_CTRL
     
@@ -142,7 +144,7 @@ UpdateTextColors_ForEachCharacter
     ADC #$10
     STA (dst_pointer),Y 
     INY
-    CMP TextLength
+    CPY TextLength
     BNE UpdateTextColors_ForEachCharacter
     
     PLA
@@ -457,6 +459,17 @@ IRQ_Handler
     ; Clear the flag for start-of-frame
     STA INT_PENDING_REG0
 
+    ; Dec animation counter
+    LDA AnimationCounter
+    BNE AfterUpdateTextColors
+
+    LDA #8
+    STA AnimationCounter
+    JSR UpdateTextColors
+
+AfterUpdateTextColors
+    DEC AnimationCounter
+
     LDA #1
     STA MMU_IO_CTRL
 
@@ -690,22 +703,12 @@ Done_Init
 
     JSR Init_IRQHandler
 
-    LDA #$5
+    LDA #$01
     STA AnimationCounter
 
-Lock
-    
-    DEC AnimationCounter
-    BNE AfterUpdateTextColors
-
-    ; Animation counter is 0
-    JSR UpdateTextColors
-    JSR UpdateLut
-    LDA #$5
-    STA AnimationCounter
-AfterUpdateTextColors
-
+Lock    
     WAI
+
     JMP Lock
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
