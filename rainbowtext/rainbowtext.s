@@ -530,7 +530,7 @@ TX_GAMETITLE
 .endlogical
 
 ; Emitted with 
-;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\rainbowtext\tinyvicky\rsrc\rainbowtext.bmp D:\repos\fnxapp\rainbowtext\tinyvicky\rsrc\colors.s D:\repos\fnxapp\rainbowtext\tinyvicky\rsrc\pixmap.s --halfsize
+;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\rainbowtext\rsrc\rainbow.bmp D:\repos\fnxapp\rainbowtext\rsrc\colors.s D:\repos\fnxapp\rainbowtext\rsrc\pixmap.s
 
 .if TARGETFMT = "hex"
 * = $010000
