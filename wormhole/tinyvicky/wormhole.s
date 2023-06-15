@@ -10,11 +10,10 @@ src_pointer = $32
 column = $34
 bm_bank = $35
 line = $40
-TextMemoryPointer = $4B
-
 ; Code
 * = $000000 
         .byte 0
+text_memory_pointer = $4B
 
 .if TARGETFMT = "hex"
 * = $00E000
@@ -51,7 +50,7 @@ ClearScreen
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
     
-    STZ dst_pointer ; dst_pointer=$C000
+    STZ dst_pointer
     LDA #$C0
     STA dst_pointer+1
 
@@ -93,7 +92,7 @@ PrintAnsiString
 PrintAnsiString_EachCharToTextMemory
     LDA (src_pointer),y                          ; Load the character to print
     BEQ PrintAnsiString_DoneStoringToTextMemory  ; Exit if null term        
-    STA (TextMemoryPointer),Y                    ; Store character to text memory
+    STA (text_memory_pointer),Y                  ; Store character to text memory
     INY
     BRA PrintAnsiString_EachCharToTextMemory
 
@@ -106,7 +105,7 @@ PrintAnsiString_DoneStoringToTextMemory
 
 PrintAnsiString_EachCharToColorMemory
     DEY
-    STA (TextMemoryPointer),Y
+    STA (text_memory_pointer),Y
     BNE PrintAnsiString_EachCharToColorMemory
 
     PLA
@@ -521,10 +520,10 @@ MAIN
     JSR ClearScreen    
     
     LDA #<VKY_TEXT_MEMORY
-    STA TextMemoryPointer
+    STA text_memory_pointer
 
     LDA #>VKY_TEXT_MEMORY
-    STA TextMemoryPointer+1
+    STA text_memory_pointer+1
 
     JSR PrintAnsiString
          
