@@ -501,30 +501,12 @@ Init_IRQHandler
     STA MMU_IO_CTRL 
     RTS
 
-.endlogical
-
-.if TARGETFMT = "hex"
-* = $00E800
-.endif
-.if TARGETFMT = "bin"
-* = $00E800-$800
-.endif
-.logical $E800
 .include "rsrc/colors.s"
-.endlogical
 
-.if TARGETFMT = "hex"
-* = $00EF07
-.endif
-.if TARGETFMT = "bin"
-* = $00EF07-$800
-.endif
-.logical $EF07
-; Main
 MAIN
     LDA #MMU_EDIT_EN
     STA MMU_MEM_CTRL
-    STZ MMU_IO_CTRL ;<<<="SetMMUIO"
+    STZ MMU_IO_CTRL 
     STZ MMU_MEM_CTRL    
     LDA #(Mstr_Ctrl_Text_Mode_En|Mstr_Ctrl_Text_Overlay|Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En)
     STA @w MASTER_CTRL_REG_L 
