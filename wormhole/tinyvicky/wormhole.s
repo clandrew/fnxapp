@@ -545,6 +545,11 @@ MAIN
 
     LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK
     STA CursorColor
+
+    ; Disable the cursor
+    LDA VKY_TXT_CURSOR_CTRL_REG
+    AND #$FE
+    STA VKY_TXT_CURSOR_CTRL_REG
     
     JSR ClearScreen
 
