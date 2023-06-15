@@ -519,10 +519,10 @@ MAIN
     
     JSR ClearScreen    
     
-    LDA #<VKY_TEXT_MEMORY
+    ; Put text at the bottom of the screen, allowing for border
+    LDA #(<VKY_TEXT_MEMORY + $E8)
     STA text_memory_pointer
-
-    LDA #>VKY_TEXT_MEMORY
+    LDA #((>VKY_TEXT_MEMORY) + $03)
     STA text_memory_pointer+1
 
     JSR PrintAnsiString
