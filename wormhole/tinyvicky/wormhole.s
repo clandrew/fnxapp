@@ -125,7 +125,7 @@ F256_RESET
     LDA MMU_MEM_CTRL
     ORA #MMU_EDIT_EN
 
-    ; enable mmu edit, edit mmu lut 0, activate mmu lut 0 ;<<<="UnlockMMU	; enable mmu edit, edit mmu lut 0, activate mmu lut 0"
+    ; enable mmu edit, edit mmu lut 0, activate mmu lut 0
     STA MMU_MEM_CTRL
     STZ MMU_IO_CTRL
 
@@ -147,7 +147,7 @@ F256_RESET
     STA MMU_MEM_BANK_7 ; map $00e000 to bank 7
     LDA MMU_MEM_CTRL
     AND #~(MMU_EDIT_EN)
-    STA MMU_MEM_CTRL  ; disable mmu edit, use mmu lut 0 ;<<<="LockMMU	; disable mmu edit, use mmu lut 0"
+    STA MMU_MEM_CTRL  ; disable mmu edit, use mmu lut 0
 
                         ; initialize interrupts
     LDA #$FF            ; mask off all interrupts
