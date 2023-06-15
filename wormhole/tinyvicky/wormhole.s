@@ -6,14 +6,11 @@
 .include "includes/macros.s"
 
 dst_pointer = $30
-TempSrc = $30
 src_pointer = $32
 column = $34
 bm_bank = $35
 line = $40
-CursorColumn = $49
-CursorLine = $4A
-CursorPointer = $4B
+TextMemoryPointer = $4B
 
 ; Code
 * = $000000 
@@ -60,7 +57,7 @@ ClearScreen
 
 ClearExperiment_ForEach
     LDA #32 ; Character 0
-    STA (dst_pointer) ; Character to print gets stored in (CursorPointer),Y
+    STA (dst_pointer)
         
     CLC
     LDA dst_pointer
@@ -77,11 +74,6 @@ ClearExperiment_ForEach
     STA MMU_IO_CTRL ; Restore I/O page
     RTS
 
-
-; Procedure: PrintAnsiString
-; parameters:
-;	<TempSrc>	=	word address of string to print
-;	<CursorPointer>	=	word address of screen character/color memory
 PrintAnsiString
     LDX #$00
     LDY #$00
@@ -90,12 +82,18 @@ PrintAnsiString
     PHA
     
     LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL    
+    STA MMU_IO_CTRL
+
+    LDA #<TX_DEMOTEXT
+    STA src_pointer
+
+    LDA #>TX_DEMOTEXT
+    STA src_pointer+1
 
 PrintAnsiString_EachCharToTextMemory
-    LDA (TempSrc),y                              ; Load the character to print
+    LDA (src_pointer),y                          ; Load the character to print
     BEQ PrintAnsiString_DoneStoringToTextMemory  ; Exit if null term        
-    STA (CursorPointer),Y                        ; Store character to text memory
+    STA (TextMemoryPointer),Y                    ; Store character to text memory
     INY
     BRA PrintAnsiString_EachCharToTextMemory
 
@@ -108,7 +106,7 @@ PrintAnsiString_DoneStoringToTextMemory
 
 PrintAnsiString_EachCharToColorMemory
     DEY
-    STA (CursorPointer),Y ; Color to print gets stored in (CursorPointer),Y
+    STA (TextMemoryPointer),Y
     BNE PrintAnsiString_EachCharToColorMemory
 
     PLA
@@ -547,25 +545,13 @@ MAIN
     AND #$FE
     STA VKY_TXT_CURSOR_CTRL_REG
     
-    JSR ClearScreen
-
-    LDA #$00
-    STA CursorColumn
-    
-    LDA #$00
-    STA $4A ; CursorLine
+    JSR ClearScreen    
     
     LDA #<VKY_TEXT_MEMORY
-    STA CursorPointer
+    STA TextMemoryPointer
 
     LDA #>VKY_TEXT_MEMORY
-    STA CursorPointer+1
-    
-    LDA #<TX_GAMETITLE
-    STA TempSrc
-
-    LDA #>TX_GAMETITLE
-    STA TempSrc+1
+    STA TextMemoryPointer+1
 
     JSR PrintAnsiString
          
@@ -716,7 +702,7 @@ LutDone
 
     RTS
 
-TX_GAMETITLE
+TX_DEMOTEXT
 .text "Wormhole demo by haydenkale"
 .byte 0 ; null term
 .endlogical
