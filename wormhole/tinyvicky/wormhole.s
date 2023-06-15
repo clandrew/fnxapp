@@ -9,11 +9,14 @@ dst_pointer = $30
 src_pointer = $32
 column = $34
 bm_bank = $35
+TextLength = $36
+text_memory_pointer = $38
+AnimationCounter = $37
 line = $40
+
 ; Code
 * = $000000 
         .byte 0
-text_memory_pointer = $4B
 
 .if TARGETFMT = "hex"
 * = $00E000
@@ -98,12 +101,15 @@ PrintAnsiString_EachCharToTextMemory
 
 PrintAnsiString_DoneStoringToTextMemory
 
+    STY TextLength
+
     LDA #$03 ; Set I/O page to 3
     STA MMU_IO_CTRL
-    
-    LDA #$70 ; Text color
+
+    LDA #$F0 ; Text color
 
 PrintAnsiString_EachCharToColorMemory
+    ADC #$10
     DEY
     STA (text_memory_pointer),Y
     BNE PrintAnsiString_EachCharToColorMemory
@@ -112,6 +118,38 @@ PrintAnsiString_EachCharToColorMemory
     STA MMU_IO_CTRL ; Restore I/O page
 
     RTS    
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+UpdateTextColors 
+    LDA MMU_IO_CTRL ; Back up I/O page
+    PHA ; xxx
+
+    LDY #$00
+
+    LDA #$03 ; Set I/O page to 3
+    STA MMU_IO_CTRL
+    
+    LDA text_memory_pointer
+    STA dst_pointer
+
+    LDA text_memory_pointer+1
+    STA dst_pointer+1
+
+UpdateTextColors_ForEachCharacter
+    LDA (text_memory_pointer),Y 
+    ADC #$10
+    STA (text_memory_pointer),Y 
+    INY
+    CPY TextLength
+    BNE UpdateTextColors_ForEachCharacter
+    
+    PLA
+    STA MMU_IO_CTRL ; Restore I/O page
+
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 F256_RESET
     CLC     ; disable interrupts
@@ -411,6 +449,17 @@ IRQ_Handler
     ; Clear the flag for start-of-frame
     STA INT_PENDING_REG0
 
+    ; Dec animation counter
+    LDA AnimationCounter
+    BNE AfterUpdateTextColors
+
+    LDA #8
+    STA AnimationCounter
+    JSR UpdateTextColors
+
+AfterUpdateTextColors
+    DEC AnimationCounter
+
     LDA #1
     STA MMU_IO_CTRL
 
@@ -501,6 +550,7 @@ Init_IRQHandler
     RTS
 
 .include "rsrc/colors.s"
+.include "rsrc/textcolors.s"
 
 MAIN
     LDA #MMU_EDIT_EN
@@ -539,8 +589,10 @@ MAIN
     STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off    
     LDA #$01 
     STA TyVKY_BM0_CTRL_REG ; Make sure bitmap 0 is turned on. Setting no more bits leaves LUT selection to 0
+    
+    JSR CopyTextLutToDevice
 
-    JSR CopyLutToDevice
+    JSR CopyBitmapLutToDevice
 
     ; Now copy graphics data
     lda #<IMG_START ; Set the low byte of the bitmap’s address
@@ -609,6 +661,9 @@ loop2_fillLine
 Done_Init
 
     JSR Init_IRQHandler
+    
+    LDA #$01
+    STA AnimationCounter
 
 Lock
     JSR UpdateLut
@@ -617,7 +672,7 @@ Lock
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-CopyLutToDevice
+CopyBitmapLutToDevice
     ; Switch to page 1 because the lut lives there
     LDA #1
     STA MMU_IO_CTRL
@@ -673,6 +728,40 @@ LutDone
     STZ MMU_IO_CTRL 
 
     RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+CopyTextLutToDevice
+    ; Switch to page 0 because the lut lives there
+    LDA #0
+    STA MMU_IO_CTRL
+    
+    LDA $EC00 ; test thingy
+
+    ; Store a dest pointer in $30-$31
+    LDA #<VKY_TXT_FGLUT
+    STA dst_pointer
+    LDA #>VKY_TXT_FGLUT
+    STA dst_pointer+1
+    
+    ; Store a source pointer
+    LDA #<TEXT_LUT_START
+    STA src_pointer
+    LDA #>TEXT_LUT_START
+    STA src_pointer+1
+    
+    LDY #65
+
+TextLutLoop
+    DEY
+    LDA (src_pointer),Y
+    STA (dst_pointer),Y
+    CPY #$00
+    BNE TextLutLoop
+
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 TX_DEMOTEXT
 .text "Wormhole demo by haydenkale"
