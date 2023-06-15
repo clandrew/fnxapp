@@ -11,7 +11,6 @@ src_pointer = $32
 column = $34
 bm_bank = $35
 line = $40
-CursorColor = $48
 CursorColumn = $49
 CursorLine = $4A
 CursorPointer = $4B
@@ -105,7 +104,7 @@ PrintAnsiString_DoneStoringToTextMemory
     LDA #$03 ; Set I/O page to 3
     STA MMU_IO_CTRL
     
-    LDA CursorColor
+    LDA #$70 ; Text color
 
 PrintAnsiString_EachCharToColorMemory
     DEY
@@ -543,9 +542,6 @@ MAIN
     LDA #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
     STA @w MASTER_CTRL_REG_H
 
-    LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK
-    STA CursorColor
-
     ; Disable the cursor
     LDA VKY_TXT_CURSOR_CTRL_REG
     AND #$FE
@@ -565,9 +561,6 @@ MAIN
     LDA #>VKY_TEXT_MEMORY
     STA CursorPointer+1
     
-    LDA #$70
-    STA CursorColor
-
     LDA #<TX_GAMETITLE
     STA TempSrc
 
