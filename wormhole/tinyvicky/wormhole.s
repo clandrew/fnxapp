@@ -55,7 +55,7 @@ ClearScreen
     LDA #$C0
     STA dst_pointer+1
 
-ClearExperiment_ForEach
+ClearScreen_ForEach
     LDA #32 ; Character 0
     STA (dst_pointer)
         
@@ -68,7 +68,7 @@ ClearExperiment_ForEach
     STA dst_pointer+1
 
     CMP #$C5
-    BNE ClearExperiment_ForEach
+    BNE ClearScreen_ForEach
     
     PLA
     STA MMU_IO_CTRL ; Restore I/O page
@@ -114,15 +114,6 @@ PrintAnsiString_EachCharToColorMemory
 
     RTS    
 
-.endlogical
-
-.if TARGETFMT = "hex"
-* = $00E5D5
-.endif
-.if TARGETFMT = "bin"
-* = $00E5D5-$800
-.endif
-.logical $E5D5
 F256_RESET
     CLC     ; disable interrupts
     SEI
@@ -507,7 +498,7 @@ Init_IRQHandler
     ; Re-enable interrupt handling    
     CLI
     PLA ; Restore I/O state
-    STA MMU_IO_CTRL ;<<<="PullMMUIO"
+    STA MMU_IO_CTRL 
     RTS
 
 .endlogical
