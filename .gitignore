@@ -14,13 +14,6 @@
 /ball/.vs/*
 /ball/Debug
 /ball/Release
-/wormhole/tinyvicky/.vs
-/wormhole/tinyvicky/Debug
-/wormhole/tinyvicky/Release
-/wormhole/vickyii/.vs
-/wormhole/vickyii/Debug
-/wormhole/vickyii/Release
-/wormhole/vickyii/Demo
 /img/vickyii/.vs/*
 /img/vickyii/Debug
 /img/vickyii/Release
@@ -38,7 +31,6 @@
 /spaceoddity/Release
 /spaceoddity/reference
 /example/*
-/wormhole/tinyvicky/reference
 /rainbowtext/.vs/*
 /rainbowtext/Debug
 /rainbowtext/Release
