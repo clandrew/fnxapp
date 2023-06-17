@@ -103,7 +103,8 @@ Here you'll find there's two versions of this sample:
 
 ## Moved projects
 
-The project [Wormhole](https://github.com/clandrew/wormhole) used to live here. I pulled it into its own separate repo because it outgrew being shared alongside other demo code. For example, I got asked to share a binary release, and it's awkward to post a binary release for one demo in a repo shared with many demos. So if you want to see the history of commits for Wormhole, you'll find them in this repo. If you want to access the demo going forward, you'll find it in its new separate repo [here](https://github.com/clandrew/wormhole),
+The project [Wormhole](https://github.com/clandrew/wormhole) used to live here. I pulled it into its own separate repo because it outgrew being shared alongside other demo code. For example, I got asked to share a binary release, and it's awkward to post a binary release for one demo in a repo shared with many demos. So if you want to see the history of commits for Wormhole, you'll find them in this repo. If you want to access the demo going forward, you'll find it in its new separate repo [here](https://github.com/clandrew/wormhole).
+
 -----
 
 ## Build
