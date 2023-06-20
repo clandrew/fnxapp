@@ -7,27 +7,14 @@
 
 dst_pointer = $30
 src_pointer = $32
-column = $34
-lineNumber = $40
 
 ; Code
 * = $000000 
         .byte 0
 
-; This program uses bank 1 (2000-4000) to be a memory window into image data -
-; see "bank_loop" for info on that. Therefore, don't put program code in
-; bank 1. And bank 0 (0000-2000) has a bunch of reserved stuff in it. Therefore,
-; put the program in bank 2 starting at 4000. Besides bank_loop's partying,
-; this program sets its MLUT to point to sequential system memory.
 * = $4000
 .logical $4000
 
-tmpr .byte ?            ; A backed-up-and-restored color
-tmpg .byte ?            
-tmpb .byte ?
-iter_i .byte ?          ; Couple counters
-iter_j .byte ?
-    
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 F256_RESET
@@ -99,37 +86,22 @@ MAIN
     
     JSR ClearScreen        
              
-    ; Clear to black
-    LDA #$00
+    ; Clear to magenta
+    LDA #$FF
     STA $D00D ; Background red channel
     LDA #$00
     STA $D00E ; Background green channel
-    LDA #$00
+    LDA #$FF
     STA $D00F ; Background blue channel
 
     ; Turn off the border
     STZ VKY_BRDR_CTRL
     
+    STZ TyVKY_BM0_CTRL_REG ; Make sure bitmap 0 is turned off
     STZ TyVKY_BM1_CTRL_REG ; Make sure bitmap 1 is turned off
     STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off    
-    LDA #$01 
-    STA TyVKY_BM0_CTRL_REG ; Make sure bitmap 0 is turned on. Setting no more bits leaves LUT selection to 0
     
-    JSR CopyBitmapLutToDevice
-
-    ; Now copy graphics data
-    lda #<IMG_START13 ; Set the low byte of the bitmap’s address
-    sta TyVKY_BM0_START_ADDY_L
-    lda #>IMG_START13 ; Set the middle byte of the bitmap’s address
-    sta TyVKY_BM0_START_ADDY_M
-    lda #`IMG_START13 ; Set the upper two bits of the address
-    and #$03
-    sta TyVKY_BM0_START_ADDY_H
-
-    JSR Init_IRQHandler    
-
 Lock
-    JSR UpdateLut
     WAI
     WAI
     WAI
@@ -137,70 +109,6 @@ Lock
     WAI
     WAI
     JMP Lock
-
-;;;;;;;;;;;;
-
-Init_IRQHandler
-    ; Back up I/O state
-    LDA MMU_IO_CTRL
-    PHA        
-
-    ; Disable IRQ handling
-    SEI
-
-    ; Load our interrupt handler. Should probably back up the old one oh well
-    LDA #<IRQ_Handler
-    STA $FFFE ; VECTOR_IRQ
-    LDA #>IRQ_Handler
-    STA $FFFF ; (VECTOR_IRQ)+1
-
-    ; Mask off all but start-of-frame
-    LDA #$FF
-    STA INT_MASK_REG1
-    AND #~(JR0_INT00_SOF)
-    STA INT_MASK_REG0
-
-    ; Re-enable interrupt handling    
-    CLI
-    PLA ; Restore I/O state
-    STA MMU_IO_CTRL 
-    RTS
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-IRQ_Handler
-    PHP
-    PHA
-    PHX
-    PHY
-    
-    ; Save the I/O page
-    LDA MMU_IO_CTRL
-    PHA
-
-    ; Switch to I/O page 0
-    STZ MMU_IO_CTRL
-
-    ; Check for start-of-frame flag
-    LDA #JR0_INT00_SOF
-    BIT INT_PENDING_REG0
-    BEQ IRQ_Handler_Done
-    
-    ; Clear the flag for start-of-frame
-    STA INT_PENDING_REG0        
-
-    JSR CopyBitmapLutToDevice
-
-IRQ_Handler_Done
-    ; Restore the I/O page
-    PLA
-    STA MMU_IO_CTRL
-    
-    PLY
-    PLX
-    PLA
-    PLP
-    RTI
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -236,148 +144,6 @@ ClearScreen_ForEach
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-CopyBitmapLutToDevice
-    ; Called on startup and every frame during VBLANK.
-
-    ; Switch to page 1 because the lut lives there
-    LDA #1
-    STA MMU_IO_CTRL
-
-    ; Store a dest pointer in $30-$31
-    LDA #<VKY_GR_CLUT_0
-    STA dst_pointer
-    LDA #>VKY_GR_CLUT_0
-    STA dst_pointer+1
-
-    ; Store a source pointer
-    LDA #<LUT_START13
-    STA src_pointer
-    LDA #>LUT_START13
-    STA src_pointer+1
-
-    LDX #$00
-
-LutLoop
-    LDY #$0
-    
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-
-    INX
-    BEQ LutDone     ; When X overflows, exit
-
-    CLC
-    LDA dst_pointer
-    ADC #$04
-    STA dst_pointer
-    LDA dst_pointer+1
-    ADC #$00 ; Add carry
-    STA dst_pointer+1
-    
-    CLC
-    LDA src_pointer
-    ADC #$04
-    STA src_pointer
-    LDA src_pointer+1
-    ADC #$00 ; Add carry
-    STA src_pointer+1
-    BRA LutLoop
-    
-LutDone
-    ; Go back to I/O page 0
-    STZ MMU_IO_CTRL 
-
-    RTS
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-CycleColors
-    ; Precondition: Cycle length in A
-    ;               src_pointer initialized to the beginning of changed palette
-    STA iter_i
-
-    ASL; Bake y based on length of cycle
-    ASL
-    DEC A
-    DEC A    
-    TAY    
-
-    ; Set dst_pointer = src_pointer + 4    
-    CLC
-    LDA src_pointer
-    ADC #$04
-    STA dst_pointer
-    LDA src_pointer+1
-    ADC #$00 ; Add carry
-    STA dst_pointer+1
-
-    ; Back up edge of cycle
-    PHY
-    LDA (dst_pointer),Y
-    STA tmpb
-    DEY
-    LDA (dst_pointer),Y
-    STA tmpg
-    DEY
-    LDA (dst_pointer),Y
-    STA tmpr    
-    PLY
-
-CycleColors_Loop
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    DEY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    DEY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    DEY
-    DEY
-    DEC iter_i
-    BNE CycleColors_Loop
-
-    LDY #2
-
-    ; Complete edge from backup
-    LDA tmpb
-    STA (src_pointer),Y
-    DEY
-    LDA tmpg
-    STA (src_pointer),Y
-    DEY
-    LDA tmpr
-    STA (src_pointer),Y
-
-    RTS
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-UpdateLut
-.include "cycle.13.s"
-    RTS
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-.align 4, $EA ; Align, padding with nops
-.include "rsrc/colors.13.s"
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-.endlogical
-
-; Emitted with 
-;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\keytest\tinyvicky\rsrc\keytest.bmp D:\repos\fnxapp\keytest\tinyvicky\rsrc\colors.s D:\repos\fnxapp\keytest\tinyvicky\rsrc\pixmap.s --halfsize
-
-* = $010000
-.logical $10000
-.include "rsrc/pixmap.8.s"
-.include "rsrc/pixmap.13.s"
 .endlogical
 
 ; Write the system vectors
