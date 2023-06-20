@@ -1,0 +1,9 @@
+
+Offset range		Size		Comment
+------------		----		-------	
+0000-0400 		1KB
+0000-1000 		4KB
+0000-2000 		8KB 		F256 style bank
+00000-10000 		64KB 		SNES style bank
+
+A 1bpp 320x240 image: 12C00
