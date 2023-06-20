@@ -35,3 +35,8 @@
 /rainbowtext/Debug
 /rainbowtext/Release
 /rainbowtext/reference/*
+/keytest/reference/
+/keytest/Debug
+/keytest/Release
+/keytest/.vs
+/keytest/x64
