@@ -7,6 +7,7 @@
 
 dst_pointer = $30
 src_pointer = $32
+text_memory_pointer = $38
 
 ; Code
 * = $000000 
@@ -99,7 +100,20 @@ MAIN
     
     STZ TyVKY_BM0_CTRL_REG ; Make sure bitmap 0 is turned off
     STZ TyVKY_BM1_CTRL_REG ; Make sure bitmap 1 is turned off
-    STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off    
+    STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off
+    
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL
+    
+    ; Put text at the top left of the screen
+    LDA #<VKY_TEXT_MEMORY
+    STA text_memory_pointer
+    LDA #>VKY_TEXT_MEMORY
+    STA text_memory_pointer+1
+
+    LDA #65
+    STA (text_memory_pointer)
+    INC text_memory_pointer
     
 Lock
     WAI
