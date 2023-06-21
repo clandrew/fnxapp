@@ -3,6 +3,7 @@
 .include "includes/TinyVicky_Def.asm"
 .include "includes/interrupt_def.asm"
 .include "includes/f256jr_registers.asm"
+.include "includes/f256k_registers.asm"
 .include "includes/macros.s"
 
 dst_pointer = $30
@@ -102,6 +103,14 @@ MAIN
     STZ TyVKY_BM1_CTRL_REG ; Make sure bitmap 1 is turned off
     STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off
     
+    ; Initialize VIA
+    LDA   #$FF
+    STA   $DB02
+    LDA   #$00
+    STA   $DB03
+    STZ   VIA_PRB
+    STZ   VIA_PRA
+    
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
     
@@ -114,14 +123,33 @@ MAIN
     LDA #65
     STA (text_memory_pointer)
     INC text_memory_pointer
-    
+        
 Lock
-    WAI
-    WAI
-    WAI
-    WAI
-    WAI
-    WAI
+    ; Check for space bar
+    
+    LDA #$00 ; Need to be on I/O page 0
+    STA MMU_IO_CTRL
+    
+    LDA   #$EF 
+    STA   VIA_PRB
+    LDY   VIA_PRA
+    STY   $29C2
+
+CheckForSpaceKey
+
+    LDX   $29C2
+    CPX   #$7F
+    BNE   DoneCheckInput
+    
+    ; On key press
+    LDA #$02
+    STA MMU_IO_CTRL
+    LDA #65
+    STA (text_memory_pointer)
+    INC text_memory_pointer
+
+DoneCheckInput   
+
     JMP Lock
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
