@@ -125,16 +125,16 @@ MAIN
     INC text_memory_pointer
         
 Lock
-    ; Check for space bar
+    ; Check for 'A' key
     
     LDA #$00 ; Need to be on I/O page 0
     STA MMU_IO_CTRL
     
-    ; Space is PA7, PB4
-    LDA #(1 << 4 ^ $FF)
+    ; A is PA1, PB2
+    LDA #(1 << 2 ^ $FF)
     STA VIA_PRB
     LDA VIA_PRA
-    CMP #(1 << 7 ^ $FF)
+    CMP #(1 << 1 ^ $FF)
     BNE DoneCheckInput
     
     ; On key press
@@ -145,7 +145,6 @@ Lock
     INC text_memory_pointer
 
 DoneCheckInput   
-
     JMP Lock
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
