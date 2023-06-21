@@ -105,9 +105,9 @@ MAIN
     
     ; Initialize VIA
     LDA   #$FF
-    STA   $DB02
+    STA   VIA_DDRB
     LDA   #$00
-    STA   $DB03
+    STA   VIA_DDRA
     STZ   VIA_PRB
     STZ   VIA_PRA
     
@@ -130,7 +130,7 @@ Lock
     LDA #$00 ; Need to be on I/O page 0
     STA MMU_IO_CTRL
     
-    ; A is PA1, PB2
+    ; A is PB2, PA1 
     LDA #(1 << 2 ^ $FF)
     STA VIA_PRB
     LDA VIA_PRA
