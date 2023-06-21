@@ -103,7 +103,7 @@ MAIN
     STZ TyVKY_BM1_CTRL_REG ; Make sure bitmap 1 is turned off
     STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off
     
-    ; Initialize VIA
+    ; Initialize matrix keyboard
     LDA   #$FF
     STA   VIA_DDRB
     LDA   #$00
@@ -120,32 +120,50 @@ MAIN
     LDA #>VKY_TEXT_MEMORY
     STA text_memory_pointer+1
 
-    LDA #65
-    STA (text_memory_pointer)
-    INC text_memory_pointer
-        
-Lock
-    ; Check for 'A' key
+    LDA #<TX_PROMPT
+    STA src_pointer
+
+    LDA #>TX_PROMPT
+    STA src_pointer+1
     
+    JSR PrintAnsiString
+        
+Poll
+    ; Check for key    
     LDA #$00 ; Need to be on I/O page 0
     STA MMU_IO_CTRL
     
-    ; A is PB2, PA1 
-    LDA #(1 << 2 ^ $FF)
+    ; Space is PB4, PA7
+    LDA #(1 << 4 ^ $FF)
     STA VIA_PRB
     LDA VIA_PRA
-    CMP #(1 << 1 ^ $FF)
+    CMP #(1 << 7 ^ $FF)
     BNE DoneCheckInput
     
     ; On key press
-    LDA #$02
+
+    LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
-    LDA #65
-    STA (text_memory_pointer)
-    INC text_memory_pointer
+    
+    ; Put text lower down
+    LDA #(<VKY_TEXT_MEMORY + $80)
+    STA text_memory_pointer
+    LDA #((>VKY_TEXT_MEMORY) + $00)
+    STA text_memory_pointer+1
+
+    LDA #<TX_RESPONSE
+    STA src_pointer
+
+    LDA #>TX_RESPONSE
+    STA src_pointer+1
+    
+    JSR PrintAnsiString
+
+Lock
+    JMP Lock
 
 DoneCheckInput   
-    JMP Lock
+    JMP Poll
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -178,6 +196,55 @@ ClearScreen_ForEach
     PLA
     STA MMU_IO_CTRL ; Restore I/O page
     RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Pre-condition: 
+;     text_memory_pointer is set as desired dest address
+;     src_pointer is set as source address
+PrintAnsiString
+    LDX #$00
+    LDY #$00
+    
+    LDA MMU_IO_CTRL ; Back up I/O page
+    PHA
+    
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL
+
+PrintAnsiString_EachCharToTextMemory
+    LDA (src_pointer),y                          ; Load the character to print
+    BEQ PrintAnsiString_DoneStoringToTextMemory  ; Exit if null term        
+    STA (text_memory_pointer),Y                  ; Store character to text memory
+    INY
+    BRA PrintAnsiString_EachCharToTextMemory
+
+PrintAnsiString_DoneStoringToTextMemory
+
+    LDA #$03 ; Set I/O page to 3
+    STA MMU_IO_CTRL
+
+    LDA #$F0 ; Text color
+
+PrintAnsiString_EachCharToColorMemory
+    DEY
+    STA (text_memory_pointer),Y
+    BNE PrintAnsiString_EachCharToColorMemory
+
+    PLA
+    STA MMU_IO_CTRL ; Restore I/O page
+
+    RTS    
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+TX_PROMPT
+.text "Please press the 'space' key."
+.byte 0 ; null term
+
+TX_RESPONSE
+.text "Space key pressed!"
+.byte 0 ; null term
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
