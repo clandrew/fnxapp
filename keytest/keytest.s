@@ -133,8 +133,8 @@ Lock
     ; Space is PA7, PB4
     LDA #(1 << 4 ^ $FF)
     STA VIA_PRB
-    LDY VIA_PRA
-    CPY #(1 << 7 ^ $FF)
+    LDA VIA_PRA
+    CMP #(1 << 7 ^ $FF)
     BNE DoneCheckInput
     
     ; On key press
