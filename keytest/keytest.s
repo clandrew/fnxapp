@@ -133,12 +133,9 @@ Lock
     LDA   #$EF 
     STA   VIA_PRB
     LDY   VIA_PRA
-    STY   $29C2
 
 CheckForSpaceKey
-
-    LDX   $29C2
-    CPX   #$7F
+    CPY   #$7F
     BNE   DoneCheckInput
     
     ; On key press
