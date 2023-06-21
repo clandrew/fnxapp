@@ -130,13 +130,12 @@ Lock
     LDA #$00 ; Need to be on I/O page 0
     STA MMU_IO_CTRL
     
-    LDA   #$EF 
-    STA   VIA_PRB
-    LDY   VIA_PRA
-
-CheckForSpaceKey
-    CPY   #$7F
-    BNE   DoneCheckInput
+    ; Space is PA7, PB4
+    LDA #(1 << 4 ^ $FF)
+    STA VIA_PRB
+    LDY VIA_PRA
+    CPY #(1 << 7 ^ $FF)
+    BNE DoneCheckInput
     
     ; On key press
     LDA #$02
