@@ -11,7 +11,6 @@ src_pointer = $32
 string_table = $34
 mask_table_pointer = $36
 text_memory_pointer = $38
-debug_junk = $3A
 
 ; Code
 * = $000000 
@@ -115,11 +114,10 @@ MAIN
     STZ VIA1_PRB
     STZ VIA1_PRA
     
-    ;LDA #$7F
-    ;STA VIA0_DDRB
-    ;STZ VIA0_DDRA
-    ;STZ VIA0_PRB
-    ;STZ VIA0_PRA
+    LDA #$7F
+    STA VIA0_DDRA
+    STA VIA0_PRA
+    STZ VIA0_PRB
     
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
@@ -196,24 +194,29 @@ NextTable
 
 DoneCheckVIA1
 
-    ; Port B on VIA0 is input
-    ;LDA VIA0_PRB
-    ;CMP #$00
+CheckDownArrow
+    LDA #(1 << 0 ^ $FF)
+    STA VIA1_PRA
+    LDA VIA0_PRB
+    CMP #(1 << 7 ^ $FF)
+    BNE CheckRightArrow
+    LDA #<TX_DOWNARROW
+    STA src_pointer
+    LDA #>TX_DOWNARROW
+    STA src_pointer+1    
+    JSR PrintAnsiString
 
-
-    ; Space is PB7, PA6
-    ;LDA #(1 << 7 ^ $FF)
-    ;STA VIA0_PRB
-    ;CMP #(1 << 6 ^ $FF)
-    ;LDA VIA0_PRA
-    ;STA debug_junk
-    ;CMP #$FF
-    ;BEQ DoneCheckVIA0
-    ;LDA #<TX_RIGHTARROW
-    ;STA src_pointer
-    ;LDA #>TX_RIGHTARROW
-    ;STA src_pointer+1    
-    ;JSR PrintAnsiString
+CheckRightArrow
+    LDA #(1 << 6 ^ $FF)
+    STA VIA1_PRA
+    LDA VIA0_PRB
+    CMP #(1 << 7 ^ $FF)
+    BNE DoneCheckVIA0
+    LDA #<TX_RIGHTARROW
+    STA src_pointer
+    LDA #>TX_RIGHTARROW
+    STA src_pointer+1    
+    JSR PrintAnsiString
 
 DoneCheckVIA0
     JMP Poll
