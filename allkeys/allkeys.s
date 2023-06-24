@@ -108,17 +108,18 @@ MAIN
     
     ; Initialize matrix keyboard
     LDA #$FF
-    STA VIA1_DDRB
-    LDA #$00
     STA VIA1_DDRA
+    LDA #$00
+    STA VIA1_DDRB
+
     STZ VIA1_PRB
     STZ VIA1_PRA
     
-    LDA #$7F
-    STA VIA0_DDRB
-    STZ VIA0_DDRA
-    STZ VIA0_PRB
-    STZ VIA0_PRA
+    ;LDA #$7F
+    ;STA VIA0_DDRB
+    ;STZ VIA0_DDRA
+    ;STZ VIA0_PRB
+    ;STZ VIA0_PRA
     
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
@@ -152,19 +153,18 @@ Poll
     LDA #$00 ; Need to be on I/O page 0
     STA MMU_IO_CTRL
     
-    LDA #<STRINGTABLE_PB0
+    LDA #<STRINGTABLE_PA0
     STA string_table
-    LDA #>STRINGTABLE_PB0
+    LDA #>STRINGTABLE_PA0
     STA string_table+1
 
     LDX #$0
 
 CheckVIA1Table
-    ; Check input port
     TXY
     LDA (mask_table_pointer), Y
-    STA VIA1_PRB
-    LDA VIA1_PRA
+    STA VIA1_PRA
+    LDA VIA1_PRB
     JSR GetStringTableOffsetForSingleBitCleared
     
     ; Not this table
@@ -195,6 +195,25 @@ NextTable
     JMP CheckVIA1Table
 
 DoneCheckVIA1
+
+    ; Port B on VIA0 is input
+    ;LDA VIA0_PRB
+    ;CMP #$00
+
+
+    ; Space is PB7, PA6
+    ;LDA #(1 << 7 ^ $FF)
+    ;STA VIA0_PRB
+    ;CMP #(1 << 6 ^ $FF)
+    ;LDA VIA0_PRA
+    ;STA debug_junk
+    ;CMP #$FF
+    ;BEQ DoneCheckVIA0
+    ;LDA #<TX_RIGHTARROW
+    ;STA src_pointer
+    ;LDA #>TX_RIGHTARROW
+    ;STA src_pointer+1    
+    ;JSR PrintAnsiString
 
 DoneCheckVIA0
     JMP Poll
@@ -373,84 +392,84 @@ TX_UPARROW              .null "UpArrow   "
 TX_RIGHTARROW           .null "RightArrow"
 TX_DOWNARROW            .null "DownArrow "
 
-STRINGTABLE_PB0
+STRINGTABLE_PA0
 .word TX_DEL
-.word TX_3
-.word TX_5
-.word TX_7
-.word TX_9
-.word TX_MINUS  ; This is different from the reference!
-.word TX_PLUS   ; This is different from the reference!
-.word TX_1
-
-STRINGTABLE_PB1
 .word TX_RETURN
-.word TX_W
-.word TX_R
-.word TX_Y
-.word TX_I
-.word TX_P
-.word TX_ASTERISK
-.word TX_BACKSPACE
-
-STRINGTABLE_PB2
 .word TX_LEFTARROW
-.word TX_A
-.word TX_D
-.word TX_G
-.word TX_J
-.word TX_L
-.word TX_SEMICOLON
-.word TX_CTRL
-
-STRINGTABLE_PB3 ; This is different from the reference!
 .word TX_F7
-.word TX_4
-.word TX_6
-.word TX_8
-.word TX_0
-.word TX_CAPS
-.word TX_HOME
-.word TX_2
-
-STRINGTABLE_PB4
 .word TX_F1
-.word TX_Z
-.word TX_C
-.word TX_B
-.word TX_M
-.word TX_PERIOD
-.word TX_RIGHTSHIFT
-.word TX_SPACE
-
-STRINGTABLE_PB5
 .word TX_F3
-.word TX_S
-.word TX_F
-.word TX_H
-.word TX_K
-.word TX_COLON
-.word TX_ALT
-.word TX_FOENIX
-
-STRINGTABLE_PB6
 .word TX_F5
-.word TX_E
-.word TX_T
-.word TX_U
-.word TX_O
-.word TX_AT
-.word TX_TAB
-.word TX_Q
-
-STRINGTABLE_PB7 
 .word TX_UPARROW
+
+STRINGTABLE_PA1
+.word TX_3
+.word TX_W
+.word TX_A
+.word TX_4
+.word TX_Z
+.word TX_S
+.word TX_E
 .word TX_LEFTSHIFT
+
+STRINGTABLE_PA2
+.word TX_5
+.word TX_R
+.word TX_D
+.word TX_6
+.word TX_C
+.word TX_F
+.word TX_T
 .word TX_X
+
+STRINGTABLE_PA3
+.word TX_7
+.word TX_Y
+.word TX_G
+.word TX_8
+.word TX_B
+.word TX_H
+.word TX_U
 .word TX_V
+
+STRINGTABLE_PA4
+.word TX_9
+.word TX_I
+.word TX_J
+.word TX_0
+.word TX_M
+.word TX_K
+.word TX_O
 .word TX_N
+
+STRINGTABLE_PA5
+.word TX_MINUS
+.word TX_P
+.word TX_L
+.word TX_CAPS
+.word TX_PERIOD
+.word TX_COLON
+.word TX_AT
 .word TX_COMMA
+
+STRINGTABLE_PA6
+.word TX_PLUS
+.word TX_ASTERISK
+.word TX_SEMICOLON
+.word TX_HOME
+.word TX_RIGHTSHIFT
+.word TX_ALT
+.word TX_TAB
 .word TX_FORWARDSLASH
+
+STRINGTABLE_PA7 
+.word TX_1
+.word TX_BACKSPACE
+.word TX_CTRL
+.word TX_2
+.word TX_SPACE
+.word TX_FOENIX
+.word TX_Q
 .word TX_RUNSTOP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
