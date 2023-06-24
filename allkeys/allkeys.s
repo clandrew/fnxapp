@@ -9,7 +9,9 @@
 dst_pointer = $30
 src_pointer = $32
 string_table = $34
+mask_table_pointer = $36
 text_memory_pointer = $38
+debug_junk = $3A
 
 ; Code
 * = $000000 
@@ -105,14 +107,18 @@ MAIN
     STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off
     
     ; Initialize matrix keyboard
-    ; Do we need to set DDR to FF,00?
-
-    LDA   #$FF
-    STA   VIA_DDRB
-    LDA   #$00
-    STA   VIA_DDRA
-    STZ   VIA_PRB
-    STZ   VIA_PRA
+    LDA #$FF
+    STA VIA1_DDRB
+    LDA #$00
+    STA VIA1_DDRA
+    STZ VIA1_PRB
+    STZ VIA1_PRA
+    
+    LDA #$7F
+    STA VIA0_DDRB
+    STZ VIA0_DDRA
+    STZ VIA0_PRB
+    STZ VIA0_PRA
     
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
@@ -135,26 +141,37 @@ MAIN
     STA text_memory_pointer
     LDA #((>VKY_TEXT_MEMORY) + $00)
     STA text_memory_pointer+1
-    
-    LDA #<STRINGTABLE_PB4
-    STA string_table
-    LDA #>STRINGTABLE_PB4
-    STA string_table+1
+        
+    LDA #<mask_table
+    STA mask_table_pointer
+    LDA #>mask_table
+    STA mask_table_pointer+1
         
 Poll
     ; Check for key    
     LDA #$00 ; Need to be on I/O page 0
     STA MMU_IO_CTRL
+    
+    LDA #<STRINGTABLE_PB0
+    STA string_table
+    LDA #>STRINGTABLE_PB0
+    STA string_table+1
 
-    ; Check all PB4s 
-    LDA #(1 << 4 ^ $FF)
-    STA VIA_PRB
-    LDA VIA_PRA
+    LDX #$0
+
+CheckVIA1Table
+    ; Check input port
+    TXY
+    LDA (mask_table_pointer), Y
+    STA VIA1_PRB
+    LDA VIA1_PRA
     JSR GetStringTableOffsetForSingleBitCleared
     
+    ; Not this table
     CMP #$FF
-    BEQ Poll
+    BEQ NextTable
 
+    ; Yes, look up string within this table
     TAY
     LDA (string_table),Y
     STA src_pointer
@@ -163,64 +180,52 @@ Poll
     STA src_pointer+1
     JSR PrintAnsiString
 
-DoneCheckInput   
+NextTable
+    INX
+    CPX #8
+    BEQ DoneCheckVIA1
+    ; Increment string_table pointer
+    CLC
+    LDA string_table
+    ADC #$10
+    STA string_table
+    LDA string_table+1
+    ADC #$00
+    STA string_table+1 
+    JMP CheckVIA1Table
+
+DoneCheckVIA1
+
+DoneCheckVIA0
     JMP Poll
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+mask_table
+    .byte  $FE, $FD, $FB, $F7, $EF, $DF, $BF, $7F
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 GetStringTableOffsetForSingleBitCleared
     ; Arg in A
     ; return value in A
-GetStringTableOffsetForSingleBitCleared_Check0
-    CMP #(1 << 0 ^ $FF)
-    BNE GetStringTableOffsetForSingleBitCleared_Check1
-    LDA #0
+    LDY #$FF
+GetStringTableOffsetForSingleBitCleared_Loop
+    INY
+    CMP (mask_table_pointer), Y
+    BEQ GetStringTableOffsetForSingleBitCleared_Result
+    CPY #8
+    BEQ GetStringTableOffsetForSingleBitCleared_Limit
+    BRA GetStringTableOffsetForSingleBitCleared_Loop
+
+GetStringTableOffsetForSingleBitCleared_Result
+    TYA
+    ASL
     RTS
 
-GetStringTableOffsetForSingleBitCleared_Check1
-    CMP #(1 << 1 ^ $FF)
-    BNE GetStringTableOffsetForSingleBitCleared_Check2
-    LDA #2
-    RTS
-
-GetStringTableOffsetForSingleBitCleared_Check2
-    CMP #(1 << 2 ^ $FF)
-    BNE GetStringTableOffsetForSingleBitCleared_Check3
-    LDA #4
-    RTS
-
-GetStringTableOffsetForSingleBitCleared_Check3
-    CMP #(1 << 3 ^ $FF)
-    BNE GetStringTableOffsetForSingleBitCleared_Check4
-    LDA #6
-    RTS
-
-GetStringTableOffsetForSingleBitCleared_Check4
-    CMP #(1 << 4 ^ $FF)
-    BNE GetStringTableOffsetForSingleBitCleared_Check5
-    LDA #8
-    RTS
-
-GetStringTableOffsetForSingleBitCleared_Check5
-    CMP #(1 << 5 ^ $FF)
-    BNE GetStringTableOffsetForSingleBitCleared_Check6
-    LDA #10
-    RTS
-
-GetStringTableOffsetForSingleBitCleared_Check6
-    CMP #(1 << 6 ^ $FF)
-    BNE GetStringTableOffsetForSingleBitCleared_Check7
-    LDA #12
-    RTS
-
-GetStringTableOffsetForSingleBitCleared_Check7
-    CMP #(1 << 7 ^ $FF)
-    BNE GetStringTableOffsetForSingleBitCleared_None
-    LDA #14
-    RTS
-
-GetStringTableOffsetForSingleBitCleared_None
+GetStringTableOffsetForSingleBitCleared_Limit
     LDA #$FF
     RTS
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ClearScreen
@@ -259,6 +264,8 @@ ClearScreen_ForEach
 ;     text_memory_pointer is set as desired dest address
 ;     src_pointer is set as source address
 PrintAnsiString
+    PHX
+    PHY
     LDX #$00
     LDY #$00
     
@@ -290,6 +297,8 @@ PrintAnsiString_EachCharToColorMemory
     PLA
     STA MMU_IO_CTRL ; Restore I/O page
 
+    PLY
+    PLX
     RTS    
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -325,14 +334,84 @@ TX_X                    .null "X         "
 TX_Y                    .null "Y         "
 TX_Z                    .null "Z         "
 TX_PERIOD               .null ".         "
+TX_COMMA                .null ",         "
+TX_FORWARDSLASH         .null "/         "
+TX_COLON                .null ":         "
+TX_SEMICOLON            .null ",         "
+TX_BACKSPACE            .null "Backspace "
+TX_RETURN               .null "Return    "
+TX_ALT                  .null "Alt       "
+TX_LEFTSHIFT            .null "LeftShift "
 TX_RIGHTSHIFT           .null "RightShift"
+TX_CTRL                 .null "Ctrl      "
+TX_DEL                  .null "Delete    "
+TX_TAB                  .null "Tab       "
+TX_CAPS                 .null "Caps      "
+TX_1                    .null "1         "
+TX_2                    .null "2         "
+TX_3                    .null "3         "
+TX_4                    .null "4         "
+TX_5                    .null "5         "
+TX_6                    .null "6         "
+TX_7                    .null "7         "
+TX_8                    .null "8         "
+TX_9                    .null "9         "
+TX_0                    .null "0         "
+TX_ASTERISK             .null "*         "
+TX_AT                   .null "@         "
+TX_PLUS                 .null "+         "
+TX_MINUS                .null "-         "
 TX_F1                   .null "F1        "
 TX_F3                   .null "F3        "
 TX_F5                   .null "F5        "
 TX_F7                   .null "F7        "
+TX_RUNSTOP              .null "Run/Stop  "
+TX_HOME                 .null "Home      "
 TX_FOENIX               .null "Foenix    "
-TX_COLON                .null ":         "
-TX_ALT                  .null "Alt       "
+TX_LEFTARROW            .null "LeftArrow "
+TX_UPARROW              .null "UpArrow   "
+TX_RIGHTARROW           .null "RightArrow"
+TX_DOWNARROW            .null "DownArrow "
+
+STRINGTABLE_PB0
+.word TX_DEL
+.word TX_3
+.word TX_5
+.word TX_7
+.word TX_9
+.word TX_MINUS  ; This is different from the reference!
+.word TX_PLUS   ; This is different from the reference!
+.word TX_1
+
+STRINGTABLE_PB1
+.word TX_RETURN
+.word TX_W
+.word TX_R
+.word TX_Y
+.word TX_I
+.word TX_P
+.word TX_ASTERISK
+.word TX_BACKSPACE
+
+STRINGTABLE_PB2
+.word TX_LEFTARROW
+.word TX_A
+.word TX_D
+.word TX_G
+.word TX_J
+.word TX_L
+.word TX_SEMICOLON
+.word TX_CTRL
+
+STRINGTABLE_PB3 ; This is different from the reference!
+.word TX_F7
+.word TX_4
+.word TX_6
+.word TX_8
+.word TX_0
+.word TX_CAPS
+.word TX_HOME
+.word TX_2
 
 STRINGTABLE_PB4
 .word TX_F1
@@ -345,24 +424,34 @@ STRINGTABLE_PB4
 .word TX_SPACE
 
 STRINGTABLE_PB5
-.word TX_FOENIX
+.word TX_F3
 .word TX_S
 .word TX_F
 .word TX_H
 .word TX_K
 .word TX_COLON
 .word TX_ALT
-.word TX_F3
+.word TX_FOENIX
 
-STRINGTABLE_ALL
-.word STRINGTABLE_PB4
-.word STRINGTABLE_PB4
-.word STRINGTABLE_PB4
-.word STRINGTABLE_PB4
-.word STRINGTABLE_PB4
-.word STRINGTABLE_PB5
-.word STRINGTABLE_PB5
-.word STRINGTABLE_PB5
+STRINGTABLE_PB6
+.word TX_F5
+.word TX_E
+.word TX_T
+.word TX_U
+.word TX_O
+.word TX_AT
+.word TX_TAB
+.word TX_Q
+
+STRINGTABLE_PB7 
+.word TX_UPARROW
+.word TX_LEFTSHIFT
+.word TX_X
+.word TX_V
+.word TX_N
+.word TX_COMMA
+.word TX_FORWARDSLASH
+.word TX_RUNSTOP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
