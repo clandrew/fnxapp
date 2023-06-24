@@ -295,50 +295,74 @@ PrintAnsiString_EachCharToColorMemory
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 TX_PROMPT
-.text "Last key pressed:"
-.byte 0 ; null term
+.null "Last key pressed:"
 
-TX_SPACE
-.text "Space     "
-.byte 0 ; null term
-
-TX_Z
-.text "Z         "
-.byte 0 ; null term
-
-TX_C
-.text "C         "
-.byte 0 ; null term
-
-TX_B
-.text "B         "
-.byte 0 ; null term
-
-TX_M
-.text "M         "
-.byte 0 ; null term
-
-TX_PERIOD
-.text ".         "
-.byte 0 ; null term
-
-TX_RIGHTSHIFT
-.text "RightShift"
-.byte 0 ; null term
-
-TX_F1
-.text "F1        "
-.byte 0 ; null term
+TX_SPACE                .null "Space     "
+TX_A                    .null "A         "
+TX_B                    .null "B         "
+TX_C                    .null "C         "
+TX_D                    .null "D         "
+TX_E                    .null "E         "
+TX_F                    .null "F         "
+TX_G                    .null "G         "
+TX_H                    .null "H         "
+TX_I                    .null "I         "
+TX_J                    .null "J         "
+TX_K                    .null "K         "
+TX_L                    .null "L         "
+TX_M                    .null "M         "
+TX_N                    .null "N         "
+TX_O                    .null "O         "
+TX_P                    .null "P         "
+TX_Q                    .null "Q         "
+TX_R                    .null "R         "
+TX_S                    .null "S         "
+TX_T                    .null "T         "
+TX_U                    .null "U         "
+TX_V                    .null "V         "
+TX_W                    .null "W         "
+TX_X                    .null "X         "
+TX_Y                    .null "Y         "
+TX_Z                    .null "Z         "
+TX_PERIOD               .null ".         "
+TX_RIGHTSHIFT           .null "RightShift"
+TX_F1                   .null "F1        "
+TX_F3                   .null "F3        "
+TX_F5                   .null "F5        "
+TX_F7                   .null "F7        "
+TX_FOENIX               .null "Foenix    "
+TX_COLON                .null ":         "
+TX_ALT                  .null "Alt       "
 
 STRINGTABLE_PB4
-.word TX_SPACE
+.word TX_F1
 .word TX_Z
 .word TX_C
 .word TX_B
 .word TX_M
 .word TX_PERIOD
 .word TX_RIGHTSHIFT
-.word TX_F1
+.word TX_SPACE
+
+STRINGTABLE_PB5
+.word TX_FOENIX
+.word TX_S
+.word TX_F
+.word TX_H
+.word TX_K
+.word TX_COLON
+.word TX_ALT
+.word TX_F3
+
+STRINGTABLE_ALL
+.word STRINGTABLE_PB4
+.word STRINGTABLE_PB4
+.word STRINGTABLE_PB4
+.word STRINGTABLE_PB4
+.word STRINGTABLE_PB4
+.word STRINGTABLE_PB5
+.word STRINGTABLE_PB5
+.word STRINGTABLE_PB5
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
