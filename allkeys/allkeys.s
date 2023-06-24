@@ -175,13 +175,88 @@ CheckCKey ; PB4, PA2
     STA VIA_PRB
     LDA VIA_PRA
     CMP #(1 << 2 ^ $FF)
-    BNE DoneCheckInput 
+    BNE CheckBKey 
     ; On key press
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL  
     LDA #<TX_C
     STA src_pointer
     LDA #>TX_C
+    STA src_pointer+1    
+    JSR PrintAnsiString
+
+CheckBKey ; PB4, PA3
+    LDA #(1 << 4 ^ $FF)
+    STA VIA_PRB
+    LDA VIA_PRA
+    CMP #(1 << 3 ^ $FF)
+    BNE CheckMKey 
+    ; On key press
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL  
+    LDA #<TX_B
+    STA src_pointer
+    LDA #>TX_B
+    STA src_pointer+1    
+    JSR PrintAnsiString
+
+CheckMKey ; PB4, PA4
+    LDA #(1 << 4 ^ $FF)
+    STA VIA_PRB
+    LDA VIA_PRA
+    CMP #(1 << 4 ^ $FF)
+    BNE CheckPeriodKey 
+    ; On key press
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL  
+    LDA #<TX_M
+    STA src_pointer
+    LDA #>TX_M
+    STA src_pointer+1    
+    JSR PrintAnsiString
+
+CheckPeriodKey ; PB4, PA5
+    LDA #(1 << 4 ^ $FF)
+    STA VIA_PRB
+    LDA VIA_PRA
+    CMP #(1 << 5 ^ $FF)
+    BNE CheckRightShiftKey 
+    ; On key press
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL  
+    LDA #<TX_PERIOD
+    STA src_pointer
+    LDA #>TX_PERIOD
+    STA src_pointer+1    
+    JSR PrintAnsiString
+
+CheckRightShiftKey ; PB4, PA6
+    LDA #(1 << 4 ^ $FF)
+    STA VIA_PRB
+    LDA VIA_PRA
+    CMP #(1 << 6 ^ $FF)
+    BNE CheckF1Key 
+    ; On key press
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL  
+    LDA #<TX_RIGHTSHIFT
+    STA src_pointer
+    LDA #>TX_RIGHTSHIFT
+    STA src_pointer+1    
+    JSR PrintAnsiString
+
+CheckF1Key ; PB4, PA0
+    LDA #(1 << 4 ^ $FF)
+    STA VIA_PRB
+    LDA VIA_PRA
+    CMP #(1 << 0 ^ $FF)
+    BNE DoneCheckInput 
+    ; On key press
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL  
+    LDA #<TX_F1
+    STA src_pointer
+    LDA #>TX_F1
     STA src_pointer+1    
     JSR PrintAnsiString
 
@@ -266,15 +341,35 @@ TX_PROMPT
 .byte 0 ; null term
 
 TX_SPACE
-.text "Space"
+.text "Space     "
 .byte 0 ; null term
 
 TX_Z
-.text "Z    "
+.text "Z         "
 .byte 0 ; null term
 
 TX_C
-.text "C    "
+.text "C         "
+.byte 0 ; null term
+
+TX_B
+.text "B         "
+.byte 0 ; null term
+
+TX_M
+.text "M         "
+.byte 0 ; null term
+
+TX_PERIOD
+.text ".         "
+.byte 0 ; null term
+
+TX_RIGHTSHIFT
+.text "RightShift"
+.byte 0 ; null term
+
+TX_F1
+.text "F1        "
 .byte 0 ; null term
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
