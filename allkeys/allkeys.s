@@ -106,8 +106,7 @@ MAIN
     ; Initialize matrix keyboard
     ; Do we need to set DDR to FF,00?
 
-    LDA   #(1 << 4)
-    ;LDA   #$FF
+    LDA   #$FF
     STA   VIA_DDRB
     LDA   #$00
     STA   VIA_DDRA
@@ -125,45 +124,52 @@ MAIN
 
     LDA #<TX_PROMPT
     STA src_pointer
-
     LDA #>TX_PROMPT
     STA src_pointer+1
     
     JSR PrintAnsiString
+    
+    ; Put next text lower down
+    LDA #(<VKY_TEXT_MEMORY + $80)
+    STA text_memory_pointer
+    LDA #((>VKY_TEXT_MEMORY) + $00)
+    STA text_memory_pointer+1
         
 Poll
     ; Check for key    
     LDA #$00 ; Need to be on I/O page 0
     STA MMU_IO_CTRL
     
+CheckSpaceBar
     ; Space is PB4, PA7
     LDA #(1 << 4 ^ $FF)
     STA VIA_PRB
     LDA VIA_PRA
     CMP #(1 << 7 ^ $FF)
-    BNE DoneCheckInput
-    
+    BNE CheckZKey    
     ; On key press
-
     LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL
-    
-    ; Put text lower down
-    LDA #(<VKY_TEXT_MEMORY + $80)
-    STA text_memory_pointer
-    LDA #((>VKY_TEXT_MEMORY) + $00)
-    STA text_memory_pointer+1
-
-    LDA #<TX_RESPONSE
+    STA MMU_IO_CTRL  
+    LDA #<TX_SPACE
     STA src_pointer
-
-    LDA #>TX_RESPONSE
-    STA src_pointer+1
-    
+    LDA #>TX_SPACE
+    STA src_pointer+1    
     JSR PrintAnsiString
 
-Lock
-    JMP Lock
+CheckZKey ; PB4, PA1
+    LDA #(1 << 4 ^ $FF)
+    STA VIA_PRB
+    LDA VIA_PRA
+    CMP #(1 << 1 ^ $FF)
+    BNE DoneCheckInput 
+    ; On key press
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL  
+    LDA #<TX_Z
+    STA src_pointer
+    LDA #>TX_Z
+    STA src_pointer+1    
+    JSR PrintAnsiString
 
 DoneCheckInput   
     JMP Poll
@@ -242,11 +248,15 @@ PrintAnsiString_EachCharToColorMemory
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 TX_PROMPT
-.text "Please press the 'space' key."
+.text "Last key pressed:"
 .byte 0 ; null term
 
-TX_RESPONSE
-.text "Space key pressed!"
+TX_SPACE
+.text "Space"
+.byte 0 ; null term
+
+TX_Z
+.text "Z    "
 .byte 0 ; null term
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
