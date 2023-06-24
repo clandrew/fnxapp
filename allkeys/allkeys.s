@@ -140,8 +140,7 @@ Poll
     LDA #$00 ; Need to be on I/O page 0
     STA MMU_IO_CTRL
     
-CheckSpaceBar
-    ; Space is PB4, PA7
+CheckSpaceBar ; Space is PB4, PA7    
     LDA #(1 << 4 ^ $FF)
     STA VIA_PRB
     LDA VIA_PRA
@@ -161,13 +160,28 @@ CheckZKey ; PB4, PA1
     STA VIA_PRB
     LDA VIA_PRA
     CMP #(1 << 1 ^ $FF)
-    BNE DoneCheckInput 
+    BNE CheckCKey 
     ; On key press
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL  
     LDA #<TX_Z
     STA src_pointer
     LDA #>TX_Z
+    STA src_pointer+1    
+    JSR PrintAnsiString
+
+CheckCKey ; PB4, PA2
+    LDA #(1 << 4 ^ $FF)
+    STA VIA_PRB
+    LDA VIA_PRA
+    CMP #(1 << 2 ^ $FF)
+    BNE DoneCheckInput 
+    ; On key press
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL  
+    LDA #<TX_C
+    STA src_pointer
+    LDA #>TX_C
     STA src_pointer+1    
     JSR PrintAnsiString
 
@@ -257,6 +271,10 @@ TX_SPACE
 
 TX_Z
 .text "Z    "
+.byte 0 ; null term
+
+TX_C
+.text "C    "
 .byte 0 ; null term
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
