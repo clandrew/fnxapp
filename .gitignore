@@ -40,3 +40,7 @@
 /keytest/Release
 /keytest/.vs
 /keytest/x64
+/allkeys/.vs/
+/allkeys/Debug/
+/allkeys/Release/
+/allkeys/x64/
