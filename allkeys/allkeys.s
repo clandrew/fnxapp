@@ -8,6 +8,7 @@
 
 dst_pointer = $30
 src_pointer = $32
+string_table = $34
 text_memory_pointer = $38
 
 ; Code
@@ -134,137 +135,94 @@ MAIN
     STA text_memory_pointer
     LDA #((>VKY_TEXT_MEMORY) + $00)
     STA text_memory_pointer+1
+    
+    LDA #<STRINGTABLE_PB4
+    STA string_table
+    LDA #>STRINGTABLE_PB4
+    STA string_table+1
         
 Poll
     ; Check for key    
     LDA #$00 ; Need to be on I/O page 0
     STA MMU_IO_CTRL
+
+    ; Check all PB4s 
+    LDA #(1 << 4 ^ $FF)
+    STA VIA_PRB
+    LDA VIA_PRA
+    JSR GetStringTableOffsetForSingleBitCleared
     
-CheckSpaceBar ; Space is PB4, PA7    
-    LDA #(1 << 4 ^ $FF)
-    STA VIA_PRB
-    LDA VIA_PRA
-    CMP #(1 << 7 ^ $FF)
-    BNE CheckZKey    
-    ; On key press
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL  
-    LDA #<TX_SPACE
-    STA src_pointer
-    LDA #>TX_SPACE
-    STA src_pointer+1    
-    JSR PrintAnsiString
+    CMP #$FF
+    BEQ Poll
 
-CheckZKey ; PB4, PA1
-    LDA #(1 << 4 ^ $FF)
-    STA VIA_PRB
-    LDA VIA_PRA
-    CMP #(1 << 1 ^ $FF)
-    BNE CheckCKey 
-    ; On key press
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL  
-    LDA #<TX_Z
+    TAY
+    LDA (string_table),Y
     STA src_pointer
-    LDA #>TX_Z
-    STA src_pointer+1    
-    JSR PrintAnsiString
-
-CheckCKey ; PB4, PA2
-    LDA #(1 << 4 ^ $FF)
-    STA VIA_PRB
-    LDA VIA_PRA
-    CMP #(1 << 2 ^ $FF)
-    BNE CheckBKey 
-    ; On key press
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL  
-    LDA #<TX_C
-    STA src_pointer
-    LDA #>TX_C
-    STA src_pointer+1    
-    JSR PrintAnsiString
-
-CheckBKey ; PB4, PA3
-    LDA #(1 << 4 ^ $FF)
-    STA VIA_PRB
-    LDA VIA_PRA
-    CMP #(1 << 3 ^ $FF)
-    BNE CheckMKey 
-    ; On key press
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL  
-    LDA #<TX_B
-    STA src_pointer
-    LDA #>TX_B
-    STA src_pointer+1    
-    JSR PrintAnsiString
-
-CheckMKey ; PB4, PA4
-    LDA #(1 << 4 ^ $FF)
-    STA VIA_PRB
-    LDA VIA_PRA
-    CMP #(1 << 4 ^ $FF)
-    BNE CheckPeriodKey 
-    ; On key press
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL  
-    LDA #<TX_M
-    STA src_pointer
-    LDA #>TX_M
-    STA src_pointer+1    
-    JSR PrintAnsiString
-
-CheckPeriodKey ; PB4, PA5
-    LDA #(1 << 4 ^ $FF)
-    STA VIA_PRB
-    LDA VIA_PRA
-    CMP #(1 << 5 ^ $FF)
-    BNE CheckRightShiftKey 
-    ; On key press
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL  
-    LDA #<TX_PERIOD
-    STA src_pointer
-    LDA #>TX_PERIOD
-    STA src_pointer+1    
-    JSR PrintAnsiString
-
-CheckRightShiftKey ; PB4, PA6
-    LDA #(1 << 4 ^ $FF)
-    STA VIA_PRB
-    LDA VIA_PRA
-    CMP #(1 << 6 ^ $FF)
-    BNE CheckF1Key 
-    ; On key press
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL  
-    LDA #<TX_RIGHTSHIFT
-    STA src_pointer
-    LDA #>TX_RIGHTSHIFT
-    STA src_pointer+1    
-    JSR PrintAnsiString
-
-CheckF1Key ; PB4, PA0
-    LDA #(1 << 4 ^ $FF)
-    STA VIA_PRB
-    LDA VIA_PRA
-    CMP #(1 << 0 ^ $FF)
-    BNE DoneCheckInput 
-    ; On key press
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL  
-    LDA #<TX_F1
-    STA src_pointer
-    LDA #>TX_F1
-    STA src_pointer+1    
+    INY
+    LDA (string_table),Y
+    STA src_pointer+1
     JSR PrintAnsiString
 
 DoneCheckInput   
     JMP Poll
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+GetStringTableOffsetForSingleBitCleared
+    ; Arg in A
+    ; return value in A
+GetStringTableOffsetForSingleBitCleared_Check0
+    CMP #(1 << 0 ^ $FF)
+    BNE GetStringTableOffsetForSingleBitCleared_Check1
+    LDA #0
+    RTS
+
+GetStringTableOffsetForSingleBitCleared_Check1
+    CMP #(1 << 1 ^ $FF)
+    BNE GetStringTableOffsetForSingleBitCleared_Check2
+    LDA #2
+    RTS
+
+GetStringTableOffsetForSingleBitCleared_Check2
+    CMP #(1 << 2 ^ $FF)
+    BNE GetStringTableOffsetForSingleBitCleared_Check3
+    LDA #4
+    RTS
+
+GetStringTableOffsetForSingleBitCleared_Check3
+    CMP #(1 << 3 ^ $FF)
+    BNE GetStringTableOffsetForSingleBitCleared_Check4
+    LDA #6
+    RTS
+
+GetStringTableOffsetForSingleBitCleared_Check4
+    CMP #(1 << 4 ^ $FF)
+    BNE GetStringTableOffsetForSingleBitCleared_Check5
+    LDA #8
+    RTS
+
+GetStringTableOffsetForSingleBitCleared_Check5
+    CMP #(1 << 5 ^ $FF)
+    BNE GetStringTableOffsetForSingleBitCleared_Check6
+    LDA #10
+    RTS
+
+GetStringTableOffsetForSingleBitCleared_Check6
+    CMP #(1 << 6 ^ $FF)
+    BNE GetStringTableOffsetForSingleBitCleared_Check7
+    LDA #12
+    RTS
+
+GetStringTableOffsetForSingleBitCleared_Check7
+    CMP #(1 << 7 ^ $FF)
+    BNE GetStringTableOffsetForSingleBitCleared_None
+    LDA #14
+    RTS
+
+GetStringTableOffsetForSingleBitCleared_None
+    LDA #$FF
+    RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ClearScreen
     LDA MMU_IO_CTRL ; Back up I/O page
     PHA
@@ -371,6 +329,16 @@ TX_RIGHTSHIFT
 TX_F1
 .text "F1        "
 .byte 0 ; null term
+
+STRINGTABLE_PB4
+.word TX_SPACE
+.word TX_Z
+.word TX_C
+.word TX_B
+.word TX_M
+.word TX_PERIOD
+.word TX_RIGHTSHIFT
+.word TX_F1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
