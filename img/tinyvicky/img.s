@@ -366,8 +366,7 @@ LutDone
     sta $D101
     lda #>IMG_START ; Set the middle byte of the bitmap’s address
     sta $D102
-    lda #`IMG_START ; Set the upper two bits of the address
-    and #$03
+    lda #`IMG_START
     sta $D103
 
 Lock
