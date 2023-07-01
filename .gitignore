@@ -44,3 +44,6 @@
 /allkeys/Debug/
 /allkeys/Release/
 /allkeys/x64/
+/invalidopcodes/.vs/*
+/invalidopcodes/Debug/
+/invalidopcodes/Release/
