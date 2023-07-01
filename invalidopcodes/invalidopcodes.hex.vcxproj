@@ -196,9 +196,6 @@ echo %vcmd%"
 %vcmd%
 </Command>
     </CustomBuild>
-    <None Include="platform.s">
-      <FileType>Document</FileType>
-    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
