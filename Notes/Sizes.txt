@@ -8,7 +8,7 @@ Offset range		Size		Comment
 00:00000-01:0000 	64KB 		SNES style bank. 16bit address space
 00:00000-02:0000        128KB		SNES RAM size
 00:00000-04:0000        256KB           First 4 SNES style banks
-00:00000-08:0000        512KB           Size of F256K base system memory. 4 megabits. Size of Zoop cartridge
+00:00000-08:0000        512KB           F256K RAM size. 4 megabits. Size of Zoop cartridge
 00:00000-0C:0000        768KB           Total memory available for F256K with expansion
 00:00000-10:0000        1024KB  /  1MB	First 16 SNES style banks. 8 megabits. Size of Lagoon cartridge
 00:00000-60:0000	6144KB  /  6MB	Largest SNES cartridge, 48 megabits, Star Ocean
