@@ -127,9 +127,12 @@ MAIN
     STA src_pointer+1
     
     JSR PrintAnsiString
+
+    NOP ; Used for reference in debugger window consistency
     
     ; Try invalid opcodes here
     ; Reference: https://www.westerndesigncenter.com/wdc/documentation/w65c02s.pdf page 30
+
     .byte $02, $00
     .byte $22, $00
     .byte $42, $00
