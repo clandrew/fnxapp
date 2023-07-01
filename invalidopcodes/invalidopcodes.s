@@ -88,13 +88,13 @@ MAIN
     
     JSR ClearScreen        
              
-    ; Clear to magenta
+    ; Clear to white
     LDA #$FF
-    STA $D00D ; Background red channel
-    LDA #$00
+    STA $D00D ; Background blue channel
+    LDA #$FF
     STA $D00E ; Background green channel
     LDA #$FF
-    STA $D00F ; Background blue channel
+    STA $D00F ; Background red channel
 
     ; Turn off the border
     STZ VKY_BRDR_CTRL
