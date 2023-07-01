@@ -178,21 +178,21 @@
   <ItemGroup>
     <CustomBuild Include="execpgz.s">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)execpgz.pgz --list=$(TargetDir)execpgz.lst --labels=execpgz.lbl $(ProjectDir)execpgz.s
-d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)execpgz.pgz --list=$(TargetDir)execpgz.lst --labels=execpgz.lbl $(ProjectDir)execpgz.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)execpgz.pgz --list=$(TargetDir)execpgz.lst --labels=$(TargetDir)execpgz.lbl $(ProjectDir)execpgz.s
+d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)execpgz.pgz --list=$(TargetDir)execpgz.lst --labels=$(TargetDir)execpgz.lbl $(ProjectDir)execpgz.s
 echo ==============
 echo Copying result:
 echo copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
 copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)execpgz.hex --list=$(TargetDir)execpgz.lst --labels=execpgz.lbl $(ProjectDir)execpgz.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)execpgz.hex --list=$(TargetDir)execpgz.lst --labels=$(TargetDir)execpgz.lbl $(ProjectDir)execpgz.s
 echo ==============
 echo Copying result:
 echo copy /Y $(TargetPath) "D:\Program Files\C256 Foenix Project\FoenixIDE Setup"
 copy /Y $(TargetPath) "D:\Program Files\C256 Foenix Project\FoenixIDE Setup"
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)execpgz.pgz --list=$(TargetDir)execpgz.lst --labels=execpgz.lbl $(ProjectDir)execpgz.s
-d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)execpgz.pgz --list=$(TargetDir)execpgz.lst --labels=execpgz.lbl $(ProjectDir)execpgz.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)execpgz.pgz --list=$(TargetDir)execpgz.lst --labels=$(TargetDir)execpgz.lbl $(ProjectDir)execpgz.s
+d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)execpgz.pgz --list=$(TargetDir)execpgz.lst --labels=$(TargetDir)execpgz.lbl $(ProjectDir)execpgz.s
 echo ==============
 echo Copying result:
 echo copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"

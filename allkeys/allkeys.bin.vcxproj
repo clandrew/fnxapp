@@ -177,22 +177,22 @@
   <ItemGroup>
     <CustomBuild Include="allkeys.s">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -D TARGETFMT=\"bin\" -o $(TargetDir)allkeys.bin --list=$(TargetDir)allkeys.lst --labels=allkeys.lbl $(ProjectDir)allkeys.s
-d:\64tass\64tass --long-address --flat -b --m65816 -D TARGETFMT=\"bin\" -o $(TargetDir)allkeys.bin --list=$(TargetDir)allkeys.lst --labels=allkeys.lbl $(ProjectDir)allkeys.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -D TARGETFMT=\"bin\" -o $(TargetDir)allkeys.bin --list=$(TargetDir)allkeys.lst --labels=$(TargetDir)allkeys.lbl $(ProjectDir)allkeys.s
+d:\64tass\64tass --long-address --flat -b --m65816 -D TARGETFMT=\"bin\" -o $(TargetDir)allkeys.bin --list=$(TargetDir)allkeys.lst --labels=$(TargetDir)allkeys.lbl $(ProjectDir)allkeys.s
 echo ==============
 echo Copying result:
 echo copy /Y $(TargetPath) "$(ProjectDir)..\..\fnxapp\sd"
 copy /Y $(TargetPath) "$(ProjectDir)..\..\fnxapp\sd"
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)allkeys.bin --list=$(TargetDir)allkeys.lst --labels=allkeys.lbl $(ProjectDir)allkeys.s
-d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)allkeys.bin --list=$(TargetDir)allkeys.lst --labels=allkeys.lbl $(ProjectDir)allkeys.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)allkeys.bin --list=$(TargetDir)allkeys.lst --labels=$(TargetDir)allkeys.lbl $(ProjectDir)allkeys.s
+d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)allkeys.bin --list=$(TargetDir)allkeys.lst --labels=$(TargetDir)allkeys.lbl $(ProjectDir)allkeys.s
 echo ==============
 echo Copying result:
 echo copy /Y $(TargetPath) "$(ProjectDir)..\..\fnxapp\sd"
 copy /Y $(TargetPath) "$(ProjectDir)..\..\fnxapp\sd"
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)allkeys.bin --list=$(TargetDir)allkeys.lst --labels=allkeys.lbl $(ProjectDir)allkeys.s
-d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)allkeys.bin --list=$(TargetDir)allkeys.lst --labels=allkeys.lbl $(ProjectDir)allkeys.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)allkeys.bin --list=$(TargetDir)allkeys.lst --labels=$(TargetDir)allkeys.lbl $(ProjectDir)allkeys.s
+d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)allkeys.bin --list=$(TargetDir)allkeys.lst --labels=$(TargetDir)allkeys.lbl $(ProjectDir)allkeys.s
 echo ==============
 echo Copying result:
 echo copy /Y $(TargetPath) "$(ProjectDir)..\..\fnxapp\sd"
