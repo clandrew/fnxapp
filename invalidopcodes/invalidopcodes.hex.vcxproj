@@ -177,26 +177,23 @@
   <ItemGroup>
     <CustomBuild Include="invalidopcodes.s">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -D TARGETFMT=\"hex\" --intel-hex -o $(TargetDir)invalidopcodes.hex --list=$(TargetDir)invalidopcodes.lst --labels=$(TargetDir)invalidopcodes.lbl $(ProjectDir)invalidopcodes.s
-d:\64tass\64tass --long-address --flat -b --m65816 -D TARGETFMT=\"hex\" --intel-hex -o $(TargetDir)invalidopcodes.hex --list=$(TargetDir)invalidopcodes.lst --labels=$(TargetDir)invalidopcodes.lbl $(ProjectDir)invalidopcodes.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">set vcmd=d:\64tass\64tass --long-address --flat -b --m65816 -D TARGETFMT=\"hex\" --intel-hex -o $(TargetDir)invalidopcodes.hex --list=$(TargetDir)invalidopcodes.lst --labels=$(TargetDir)invalidopcodes.lbl $(ProjectDir)invalidopcodes.s
+echo %vcmd%"
+%vcmd%
 echo ==============
 echo Copying result:
-echo copy /Y $(TargetPath) "$(ProjectDir)..\..\fnxapp\sd"
-copy /Y $(TargetPath) "$(ProjectDir)..\..\fnxapp\sd"
+set vcmd=copy /Y $(TargetPath) "$(ProjectDir)..\sd"
+echo %vcmd%"
+%vcmd%
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)invalidopcodes.bin --list=$(TargetDir)invalidopcodes.lst --labels=$(TargetDir)invalidopcodes.lbl $(ProjectDir)invalidopcodes.s
-d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)invalidopcodes.bin --list=$(TargetDir)invalidopcodes.lst --labels=$(TargetDir)invalidopcodes.lbl $(ProjectDir)invalidopcodes.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">set vcmd=d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)invalidopcodes.bin --list=$(TargetDir)invalidopcodes.lst --labels=$(TargetDir)invalidopcodes.lbl $(ProjectDir)invalidopcodes.s
+echo %vcmd%"
+%vcmd%
 echo ==============
 echo Copying result:
-echo copy /Y $(TargetPath) "$(ProjectDir)..\..\fnxapp\sd"
-copy /Y $(TargetPath) "$(ProjectDir)..\..\fnxapp\sd"
-</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)invalidopcodes.bin --list=$(TargetDir)invalidopcodes.lst --labels=$(TargetDir)invalidopcodes.lbl $(ProjectDir)invalidopcodes.s
-d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)invalidopcodes.bin --list=$(TargetDir)invalidopcodes.lst --labels=$(TargetDir)invalidopcodes.lbl $(ProjectDir)invalidopcodes.s
-echo ==============
-echo Copying result:
-echo copy /Y $(TargetPath) "$(ProjectDir)..\..\fnxapp\sd"
-copy /Y $(TargetPath) "$(ProjectDir)..\..\fnxapp\sd"
+set vcmd=copy /Y $(TargetPath) "$(ProjectDir)..\sd"
+echo %vcmd%"
+%vcmd%
 </Command>
     </CustomBuild>
     <None Include="platform.s">

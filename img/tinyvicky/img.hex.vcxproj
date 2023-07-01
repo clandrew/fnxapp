@@ -177,26 +177,23 @@
   <ItemGroup>
     <CustomBuild Include="img.s">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -D TARGETFMT=\"hex\" --intel-hex -o $(TargetDir)img.hex --list=$(TargetDir)img.lst --labels=$(TargetDir)img.lbl $(ProjectDir)img.s
-d:\64tass\64tass --long-address --flat -b --m65816 -D TARGETFMT=\"hex\" --intel-hex -o $(TargetDir)img.hex --list=$(TargetDir)img.lst --labels=$(TargetDir)img.lbl $(ProjectDir)img.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">set vcmd=d:\64tass\64tass --long-address --flat -b --m65816 -D TARGETFMT=\"hex\" --intel-hex -o $(TargetDir)img.hex --list=$(TargetDir)img.lst --labels=$(TargetDir)img.lbl $(ProjectDir)img.s
+echo %vcmd%"
+%vcmd%
 echo ==============
 echo Copying result:
-echo copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
-copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
+set vcmd=copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
+echo %vcmd%"
+%vcmd%
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)img.bin --list=$(TargetDir)img.lst --labels=$(TargetDir)img.lbl $(ProjectDir)img.s
-d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)img.bin --list=$(TargetDir)img.lst --labels=$(TargetDir)img.lbl $(ProjectDir)img.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">set vcmd=d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)img.bin --list=$(TargetDir)img.lst --labels=$(TargetDir)img.lbl $(ProjectDir)img.s
+echo %vcmd%"
+%vcmd%
 echo ==============
 echo Copying result:
-echo copy /Y $(TargetPath) "$(ProjectDir)..\sd"
-copy /Y $(TargetPath) "$(ProjectDir)..\sd"
-</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)img.bin --list=$(TargetDir)img.lst --labels=$(TargetDir)img.lbl $(ProjectDir)img.s
-d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)img.bin --list=$(TargetDir)img.lst --labels=$(TargetDir)img.lbl $(ProjectDir)img.s
-echo ==============
-echo Copying result:
-echo copy /Y $(TargetPath) "$(ProjectDir)..\sd"
-copy /Y $(TargetPath) "$(ProjectDir)..\sd"
+set vcmd=copy /Y $(TargetPath) "$(ProjectDir)..\..\sd"
+echo %vcmd%"
+%vcmd%
 </Command>
     </CustomBuild>
     <None Include="platform.s">

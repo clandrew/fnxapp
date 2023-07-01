@@ -176,25 +176,23 @@
   <ItemGroup>
     <CustomBuild Include="spaceoddity.s">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)spaceoddity.bin --list=$(TargetDir)spaceoddity.lst --labels=$(TargetDir)spaceoddity.lbl $(ProjectDir)spaceoddity.s
-d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)spaceoddity.bin --list=$(TargetDir)spaceoddity.lst --labels=$(TargetDir)spaceoddity.lbl $(ProjectDir)spaceoddity.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">set vcmd=d:\64tass\64tass --long-address --flat -b --m65816 -o $(TargetDir)spaceoddity.bin --list=$(TargetDir)spaceoddity.lst --labels=$(TargetDir)spaceoddity.lbl $(ProjectDir)spaceoddity.s
+echo %vcmd%"
+%vcmd%
 echo ==============
 echo Copying result:
-echo copy /Y $(TargetPath) "$(ProjectDir)..\sd"
-copy /Y $(TargetPath) "$(ProjectDir)..\sd"
+set vcmd=copy /Y $(TargetPath) "$(ProjectDir)..\sd"
+echo %vcmd%"
+%vcmd%
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)spaceoddity.hex --list=$(TargetDir)spaceoddity.lst --labels=$(TargetDir)spaceoddity.lbl $(ProjectDir)spaceoddity.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">set vcmd=d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)spaceoddity.hex --list=$(TargetDir)spaceoddity.lst --labels=$(TargetDir)spaceoddity.lbl $(ProjectDir)spaceoddity.s
+echo %vcmd%"
+%vcmd%
 echo ==============
 echo Copying result:
-echo copy /Y $(TargetPath) "D:\Program Files\C256 Foenix Project\FoenixIDE Setup"
-copy /Y $(TargetPath) "D:\Program Files\C256 Foenix Project\FoenixIDE Setup"
-</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)spaceoddity.hex --list=$(TargetDir)spaceoddity.lst --labels=$(TargetDir)spaceoddity.lbl $(ProjectDir)spaceoddity.s
-d:\64tass\64tass --long-address --flat -b --m65816 --intel-hex -o $(TargetDir)spaceoddity.hex --list=$(TargetDir)spaceoddity.lst --labels=$(TargetDir)spaceoddity.lbl $(ProjectDir)spaceoddity.s
-echo ==============
-echo Copying result:
-echo copy /Y $(TargetPath) "$(ProjectDir)..\sd"
-copy /Y $(TargetPath) "$(ProjectDir)..\sd"
+set vcmd=copy /Y $(TargetPath) "$(ProjectDir)..\sd"
+echo %vcmd%"
+%vcmd%
 </Command>
     </CustomBuild>
     <None Include="platform.s">
