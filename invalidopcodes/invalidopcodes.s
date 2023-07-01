@@ -127,29 +127,63 @@ MAIN
     STA src_pointer+1
     
     JSR PrintAnsiString
-        
-Poll
-    ; Check for key    
-    LDA #$00 ; Need to be on I/O page 0
-    STA MMU_IO_CTRL
     
-    ; Space is PB4, PA7
-    LDA #(1 << 4 ^ $FF)
-    STA VIA_PRB
-    LDA VIA_PRA
-    CMP #(1 << 7 ^ $FF)
-    BNE DoneCheckInput
+    ; Try invalid opcodes here
+    ; Reference: https://www.westerndesigncenter.com/wdc/documentation/w65c02s.pdf page 30
+    .byte $02, $00
+    .byte $22, $00
+    .byte $42, $00
+    .byte $62, $00
+    .byte $82, $00
+    .byte $C2, $00
+    .byte $E2, $00
     
-    ; On key press
+    .byte $03
+    .byte $13
+    .byte $23
+    .byte $33
+    .byte $43
+    .byte $53
+    .byte $63
+    .byte $73
+    .byte $83
+    .byte $93
+    .byte $A3
+    .byte $B3
+    .byte $C3
+    .byte $D3
+    .byte $E3
+    .byte $F3
+    
+    .byte $0B
+    .byte $1B
+    .byte $2B
+    .byte $3B
+    .byte $4B
+    .byte $5B
+    .byte $6B
+    .byte $7B
+    .byte $8B
+    .byte $9B
+    .byte $AB
+    .byte $BB
+    .byte $EB
+    .byte $FB
+    
+    .byte $44, $00
+    .byte $54, $00
+    .byte $D4, $00
+    .byte $F4, $00
 
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL
+    .byte $5C, $00, $00
+    .byte $DC, $00, $00
+    .byte $FC, $00, $00
     
     ; Put text lower down
     LDA #(<VKY_TEXT_MEMORY + $80)
     STA text_memory_pointer
     LDA #((>VKY_TEXT_MEMORY) + $00)
-    STA text_memory_pointer+1
+    STA text_memory_pointer+1    
 
     LDA #<TX_RESPONSE
     STA src_pointer
@@ -158,12 +192,9 @@ Poll
     STA src_pointer+1
     
     JSR PrintAnsiString
-
+        
 Lock
     JMP Lock
-
-DoneCheckInput   
-    JMP Poll
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -239,11 +270,11 @@ PrintAnsiString_EachCharToColorMemory
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 TX_PROMPT
-.text "Please press the 'space' key."
+.text "Trying invalid opcodes."
 .byte 0 ; null term
 
 TX_RESPONSE
-.text "Space key pressed!"
+.text "Success!"
 .byte 0 ; null term
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
