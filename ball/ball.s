@@ -8,8 +8,10 @@
 
 dst_pointer = $30
 src_pointer = $32
-frame_counter = $34
+sprite_x = $34
+sprite_y = $36
 text_memory_pointer = $38
+frame_counter = $3A
 
 ; Code
 * = $000000 
@@ -166,12 +168,24 @@ done_lut:
     lda #>balls_img_start
     sta SP0_Addy_M
     stz SP0_Addy_H
-    lda #32
-    sta SP0_X_L ; (x, y) = (32, 32)... should be
-    stz SP0_X_H ; upper-left corner of the screen
-    lda #32
-    sta SP0_Y_L
-    stz SP0_Y_H
+
+    LDA #32
+    STA sprite_x
+    STZ sprite_x+1
+    LDA #32
+    STA sprite_y
+    STZ sprite_y+1
+
+    ; Set sprite positioning
+    LDA sprite_x
+    STA SP0_X_L 
+    LDA sprite_x+1
+    STA SP0_X_H ; upper-left corner of the screen
+    LDA sprite_y
+    STA SP0_Y_L
+    LDA sprite_y+1
+    STA SP0_Y_H
+
     lda #$41 ; Size=16x16, Layer=0, LUT=0, Enabled
     sta SP0_Ctrl
     
@@ -200,14 +214,52 @@ done_lut:
     LDA #>TX_PROMPT
     STA src_pointer+1
     
-    JSR PrintAnsiString
-    
-    STZ frame_counter
+    JSR PrintAnsiString    
     
     ; Switch to I/O page 0
     STZ MMU_IO_CTRL
+
+    STZ frame_counter
         
 Lock
+    LDA frame_counter
+    BNE Lock
+
+
+    ; Move sprite to the right
+    stz MMU_IO_CTRL ; Go back to I/O Page 0
+
+    ; Nudge sprite to the right
+    CLC
+    LDA sprite_x
+    ADC #$03
+    STA sprite_x
+    LDA sprite_x+1
+    ADC #$00
+    STA sprite_x+1
+
+    ; Nudge sprite down
+    CLC
+    LDA sprite_y
+    ADC #$03
+    STA sprite_y
+    LDA sprite_y+1
+    ADC #$00
+    STA sprite_y+1
+
+    ; Commit sprite positions
+    LDA sprite_x
+    STA SP0_X_L 
+    LDA sprite_x+1
+    STA SP0_X_H ;
+    LDA sprite_y
+    STA SP0_Y_L
+    LDA sprite_y+1
+    STA SP0_Y_H
+
+    ; Reset frame counter
+    LDA #3
+    STA frame_counter
 
 DoneUpdate
 
@@ -263,11 +315,12 @@ IRQ_Handler
     BEQ IRQ_Handler_Done
     
     ; Clear the flag for start-of-frame
-    STA INT_PENDING_REG0
+    STA INT_PENDING_REG0    
 
     LDA frame_counter
-    INC A
-    STA frame_counter
+    BEQ AfterDecFrameCounter
+    DEC frame_counter
+AfterDecFrameCounter    
 
 IRQ_Handler_Done
     ; Restore the I/O page
