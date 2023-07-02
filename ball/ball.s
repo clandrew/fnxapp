@@ -225,6 +225,11 @@ Lock
     LDA frame_counter
     BNE Lock
 
+    ; Use 816 mode
+    CLC
+    XCE
+    
+    setaxs
 
     ; Move sprite to the right
     stz MMU_IO_CTRL ; Go back to I/O Page 0
@@ -247,6 +252,9 @@ Lock
     ADC #$00
     STA sprite_y+1
 
+    ; Check for bounce off the bottom
+
+
     ; Commit sprite positions
     LDA sprite_x
     STA SP0_X_L 
@@ -260,6 +268,12 @@ Lock
     ; Reset frame counter
     LDA #3
     STA frame_counter
+
+    .as
+    .xs
+    REP #$20
+    SEC
+    XCE
 
 DoneUpdate
 
