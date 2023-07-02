@@ -77,7 +77,7 @@ MAIN
     STA MMU_MEM_CTRL
     STZ MMU_IO_CTRL 
     STZ MMU_MEM_CTRL    
-    LDA #(Mstr_Ctrl_Text_Mode_En|Mstr_Ctrl_Text_Overlay|Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En)
+    LDA #$24 ;#(Mstr_Ctrl_Text_Mode_En|Mstr_Ctrl_Text_Overlay|Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En|Mstr_Ctrl_Sprite_En)
     STA @w MASTER_CTRL_REG_L 
     LDA #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
     STA @w MASTER_CTRL_REG_H
@@ -89,12 +89,12 @@ MAIN
     
     JSR ClearScreen        
              
-    ; Clear to white
-    LDA #$FF
+    ; Clear to lavender
+    LDA #$B6
     STA $D00D ; Background blue channel
-    LDA #$FF
+    LDA #$7B
     STA $D00E ; Background green channel
-    LDA #$FF
+    LDA #$96
     STA $D00F ; Background red channel
 
     ; Turn off the border
@@ -103,6 +103,71 @@ MAIN
     STZ TyVKY_BM0_CTRL_REG ; Make sure bitmap 0 is turned off
     STZ TyVKY_BM1_CTRL_REG ; Make sure bitmap 1 is turned off
     STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off
+
+    ; Load sprite colors into CLUT
+    LDA #$01 ; Switch to I/O Page #1
+    sta MMU_IO_CTRL
+
+    lda #<balls_clut_start ; Set the source pointer to the palette
+    sta src_pointer
+    lda #>balls_clut_start
+    sta src_pointer+1
+
+    lda #<VKY_GR_CLUT_0 ; Set the destination to Graphics CLUT
+    sta dst_pointer
+    lda #>VKY_GR_CLUT_0
+    sta dst_pointer+1
+
+    ldx #0 ; X is the number of colors copied
+
+color_loop: 
+    ldy #0 ; Y points to the color component
+
+comp_loop: 
+    lda (src_pointer),y ; Read a byte from the code
+    sta (dst_pointer),y ; And write it to the CLUT
+    iny ; Move to the next byte
+    cpy #4
+    bne comp_loop ; Continue until 4 bytes copied
+
+    inx ; Move to the next color
+    cmp #16
+    beq done_lut ; Until we have copied all 16
+
+    clc ; Move ptr_src to the next source color
+    lda src_pointer
+    adc #4
+    sta src_pointer
+    lda src_pointer+1
+    adc #0
+    sta src_pointer+1
+    clc ; Move ptr_dst to the next destination
+
+    lda dst_pointer
+    adc #4
+    sta dst_pointer
+    lda dst_pointer+1
+    adc #0
+    sta dst_pointer+1
+    bra color_loop ; And start copying that new color
+done_lut: 
+    stz MMU_IO_CTRL ; Go back to I/O Page 0
+
+    ; Point sprite 0 to the pixel data, set its location in screen, and enable the sprite
+    init_sp0: 
+    lda #<balls_img_start ; Address = balls_img_start
+    sta SP0_Addy_L
+    lda #>balls_img_start
+    sta SP0_Addy_M
+    stz SP0_Addy_H
+    lda #32
+    sta SP0_X_L ; (x, y) = (32, 32)... should be
+    stz SP0_X_H ; upper-left corner of the screen
+    lda #32
+    sta SP0_Y_L
+    stz SP0_Y_H
+    lda #$41 ; Size=16x16, Layer=0, LUT=0, Enabled
+    sta SP0_Ctrl
     
     JSR Init_IRQHandler
     
@@ -137,12 +202,6 @@ MAIN
     STZ MMU_IO_CTRL
         
 Lock
-
-    LDA frame_counter
-    
-    STA $D00D ; Background blue channel
-    STA $D00E ; Background green channel
-    STZ $D00F ; Background red channel    
 
 DoneUpdate
 
@@ -291,6 +350,45 @@ PrintAnsiString_EachCharToColorMemory
 TX_PROMPT
 .text "Testing SOF updates"
 .byte 0 ; null term
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+balls_clut_start:
+.byte $00, $00, $00, $00
+.byte $88, $00, $00, $00
+.byte $7C, $18, $00, $00
+.byte $9C, $20, $1C, $00
+.byte $90, $38, $1C, $00
+.byte $B0, $40, $38, $00
+.byte $A8, $54, $38, $00
+.byte $C0, $5C, $50, $00
+.byte $BC, $70, $50, $00
+.byte $D0, $74, $68, $00
+.byte $CC, $88, $68, $00
+.byte $E0, $8C, $7C, $00
+.byte $DC, $9C, $7C, $00
+.byte $EC, $A4, $90, $00
+.byte $EC, $B4, $90, $00
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+balls_img_start:
+.byte $0, $0, $0, $0, $0, $0, $3, $2, $2, $1, $0, $0, $0, $0, $0, $0
+.byte $0, $0, $0, $0, $5, $5, $4, $3, $3, $3, $3, $2, $0, $0, $0, $0
+.byte $0, $0, $0, $7, $7, $7, $6, $5, $4, $4, $3, $3, $1, $0, $0, $0
+.byte $0, $0, $7, $9, $A, $B, $A, $8, $6, $5, $4, $3, $2, $1, $0, $0
+.byte $0, $5, $7, $A, $D, $E, $D, $A, $7, $5, $5, $4, $3, $1, $1, $0
+.byte $0, $5, $7, $B, $E, $E, $E, $C, $7, $5, $5, $4, $3, $1, $1, $0
+.byte $3, $4, $6, $A, $D, $E, $D, $A, $7, $5, $5, $4, $3, $2, $1, $1
+.byte $2, $3, $5, $8, $A, $C, $A, $8, $6, $5, $5, $4, $3, $2, $1, $1
+.byte $2, $3, $4, $6, $7, $7, $7, $6, $5, $5, $5, $4, $3, $1, $1, $1
+.byte $1, $3, $4, $5, $5, $5, $5, $5, $5, $5, $5, $3, $3, $1, $1, $1
+.byte $0, $3, $3, $4, $5, $5, $5, $5, $5, $5, $4, $3, $2, $1, $1, $0
+.byte $0, $2, $3, $3, $4, $4, $4, $4, $4, $3, $3, $2, $1, $1, $1, $0
+.byte $0, $0, $1, $2, $3, $3, $3, $3, $3, $3, $2, $1, $1, $1, $0, $0
+.byte $0, $0, $0, $1, $1, $1, $2, $2, $1, $1, $1, $1, $1, $0, $0, $0
+.byte $0, $0, $0, $0, $1, $1, $1, $1, $1, $1, $1, $1, $0, $0, $0, $0
+.byte $0, $0, $0, $0, $0, $0, $1, $1, $1, $1, $0, $0, $0, $0, $0, $0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
