@@ -103,6 +103,8 @@ MAIN
     STZ TyVKY_BM0_CTRL_REG ; Make sure bitmap 0 is turned off
     STZ TyVKY_BM1_CTRL_REG ; Make sure bitmap 1 is turned off
     STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off
+    
+    JSR Init_IRQHandler
 
     ; Load sprite colors into CLUT
     LDA #$01 ; Switch to I/O Page #1
@@ -123,15 +125,19 @@ MAIN
 color_loop: 
     ldy #0 ; Y points to the color component
 
-comp_loop: 
     lda (src_pointer),y ; Read a byte from the code
     sta (dst_pointer),y ; And write it to the CLUT
     iny ; Move to the next byte
-    cpy #4
-    bne comp_loop ; Continue until 4 bytes copied
+    lda (src_pointer),y
+    sta (dst_pointer),y 
+    iny 
+    lda (src_pointer),y
+    sta (dst_pointer),y 
+    iny 
+    iny 
 
     inx ; Move to the next color
-    cmp #16
+    CPX #16
     beq done_lut ; Until we have copied all 16
 
     clc ; Move ptr_src to the next source color
@@ -141,8 +147,8 @@ comp_loop:
     lda src_pointer+1
     adc #0
     sta src_pointer+1
-    clc ; Move ptr_dst to the next destination
 
+    clc ; Move ptr_dst to the next destination
     lda dst_pointer
     adc #4
     sta dst_pointer
@@ -152,7 +158,7 @@ comp_loop:
     bra color_loop ; And start copying that new color
 done_lut: 
     stz MMU_IO_CTRL ; Go back to I/O Page 0
-
+    
     ; Point sprite 0 to the pixel data, set its location in screen, and enable the sprite
     init_sp0: 
     lda #<balls_img_start ; Address = balls_img_start
