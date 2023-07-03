@@ -260,7 +260,7 @@ Lock
 
     ; Check for bounce off the bottom
     LDA sprite_y
-    CMP #$00FB
+    CMP #$00FE
     BMI DoneBottomCheck
     LDA #$FFFC
     STA vel_y
