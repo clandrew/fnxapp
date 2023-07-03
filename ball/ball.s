@@ -13,6 +13,9 @@ sprite_y = $36
 text_memory_pointer = $38
 frame_counter = $3A
 
+vel_y = $3B
+vel_x = $3D
+
 ; Code
 * = $000000 
         .byte 0
@@ -220,7 +223,14 @@ done_lut:
     STZ MMU_IO_CTRL
 
     STZ frame_counter
-        
+
+    LDA #$03
+    STA vel_y
+    STZ vel_y+1
+    LDA #$03
+    STA vel_x
+    STZ vel_x+1
+
 Lock
     LDA frame_counter
     BNE Lock
@@ -235,24 +245,50 @@ Lock
     stz MMU_IO_CTRL ; Go back to I/O Page 0
 
     ; Nudge sprite to the right
+    setaxl
     CLC
-    LDA sprite_x
-    ADC #$03
-    STA sprite_x
-    LDA sprite_x+1
-    ADC #$00
-    STA sprite_x+1
+    LDA @w sprite_x
+    ADC @w vel_x
+    STA @w sprite_x
+    
 
     ; Nudge sprite down
     CLC
-    LDA sprite_y
-    ADC #$03
-    STA sprite_y
-    LDA sprite_y+1
-    ADC #$00
-    STA sprite_y+1
+    LDA @w sprite_y
+    ADC @w vel_y
+    STA @w sprite_y
 
     ; Check for bounce off the bottom
+    LDA sprite_y
+    CMP #$00FB
+    BMI DoneBottomCheck
+    LDA #$FFFC
+    STA vel_y
+DoneBottomCheck
+
+    ; Check for bounce off the right
+    LDA sprite_x
+    CMP #$014F
+    BMI DoneRightCheck
+    LDA #$FFFC
+    STA vel_x
+DoneRightCheck
+
+    ; Check for bounce off the top
+    LDA sprite_y
+    CMP #$0020
+    BPL DoneTopCheck
+    LDA #$3
+    STA vel_y
+DoneTopCheck
+
+    ; Check for bounce off the left
+    LDA sprite_x
+    CMP #$0020
+    BPL DoneLeftCheck
+    LDA #$3
+    STA vel_x
+DoneLeftCheck
 
 
     ; Commit sprite positions
@@ -266,6 +302,7 @@ Lock
     STA SP0_Y_H
 
     ; Reset frame counter
+    setaxs
     LDA #3
     STA frame_counter
 
