@@ -1,0 +1,1784 @@
+; This code is all in 3d.bin, in the hacked-up kernel.
+; Normally, that's built out of F256_Jr_Kernel_DOS. More specifically it's part of the TinyCore 65c02 MicroKernel.
+
+; Write to port 0, sets clk speed
+009CC8  8D 00 DD     STA $DD00      A:0002 X:00E0 Y:00F0 P:EnvMXdizc
+SDWrite data[0] = 02
+
+; Set arg and call Fn_9C53
+009CCB  A2 0A        LDX #$0A       A:0002 X:00E0 Y:00F0 P:EnvMXdizc
+009CCD  20 53 9C     JSR FnWriteSPIDataFF      A:0002 X:000A Y:00F0 P:EnvMXdizc
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Function: FnWriteSPIDataFF
+; Send a #$FF to SPI_DATA
+009C53  A9 FF        LDA #$FF       A:0002 X:000A Y:00F0 P:EnvMXdizc
+009C55  8D 01 DD     STA $DD01      A:00FF X:000A Y:00F0 P:ENvMXdizc
+SDWrite data[1] = FF
+
+; Read back port 0. Does it have any bits set?
+WaitUntilDone:
+009C58  2C 00 DD     BIT $DD00      A:00FF X:000A Y:00F0 P:ENvMXdizc
+SDRead data[0]
+
+; If high bits are set, loop. Otherwise, skip ahead
+009C5B  30 FB        BMI WaitUntilDone A:00FF X:000A Y:00F0 P:EnvMXdizc
+
+; Read SPI_DATA and call
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:000A Y:00F0 P:EnvMXdizc
+009C60  20 70 9C     JSR HandleSPIData      A:00FF X:000A Y:00F0 P:ENvMXdizc
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Function: HandleSPIData
+; Read value is passed in A
+009C70  48           PHA            A:00FF X:000A Y:00F0 P:ENvMXdizc
+009C71  A9 2E        LDA #$2E       A:00FF X:000A Y:00F0 P:ENvMXdizc
+009C73  20 78 81     JSR DummyReturn      A:002E X:000A Y:00F0 P:EnvMXdizc ; Call DummyReturn
+009C76  68           PLA            A:002E X:000A Y:00F0 P:EnvMXdizc
+009C77  48           PHA            A:00FF X:000A Y:00F0 P:ENvMXdizc
+009C78  20 49 81     JSR $8149      A:00FF X:000A Y:00F0 P:ENvMXdizc
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Function: Fn_8149
+008149  48           PHA            A:00FF X:000A Y:00F0 P:ENvMXdizc
+00814A  4A           LSR            A:00FF X:000A Y:00F0 P:ENvMXdizc
+00814B  4A           LSR            A:007F X:000A Y:00F0 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:000A Y:00F0 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:000A Y:00F0 P:EnvMXdizC
+00814E  20 58 81     JSR Fn_8158      A:000F X:000A Y:00F0 P:EnvMXdizC
+008151  68           PLA            A:0066 X:0009 Y:00F0 P:ENvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0009 Y:00F0 P:ENvMXdizC
+008154  20 58 81     JSR Fn_8158      A:000F X:0009 Y:00F0 P:EnvMXdizC
+008157  60           RTS            A:0066 X:0009 Y:00F0 P:ENvMXdizC
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Function: Fn_8158
+008158  5A           PHY            A:000F X:000A Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:000A Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:000A Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR DummyReturn      A:0066 X:000A Y:000F P:EnvMXdizC ; Call DummyReturn
+008160  7A           PLY            A:0066 X:000A Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:000A Y:00F0 P:ENvMXdizC
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Function: DummyReturn
+008178  60           RTS            A:002E X:000A Y:00F0 P:EnvMXdizc
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;-----------------------------------------------------------------------------
+; Registers
+;-----------------------------------------------------------------------------
+SPI_CTRL      = VERA_SPI_CTRL
+SPI_DATA      = VERA_SPI_DATA
+
+;-----------------------------------------------------------------------------
+; Register bits
+;-----------------------------------------------------------------------------
+SPI_CTRL_SELECT_SDCARD = $01
+SPI_CTRL_SELECT_MASK   = $01
+SPI_CTRL_SLOWCLK       = $02
+SPI_CTRL_AUTOTX        = $08
+SPI_CTRL_BUSY          = $80
+
+;-----------------------------------------------------------------------------
+; spi_read
+;
+; result in A
+;-----------------------------------------------------------------------------
+spi_read:
+	lda #$FF	; 2
+	sta SPI_DATA	; 4
+@1:	bit SPI_CTRL	; 4
+	bmi @1		; 2 + 1 if branch
+	lda SPI_DATA	; 4
+	rts		; 6
+			; >= 22 cycles
+
+.macro spi_read_macro
+	.local @1
+	lda #$FF	; 2
+	sta SPI_DATA	; 4
+@1:	bit SPI_CTRL	; 4
+	bmi l1		; 2 + 1 if branch
+	lda SPI_DATA	; 4
+.endmacro
+
+;-----------------------------------------------------------------------------
+; spi_write
+;
+; byte to write in A
+;-----------------------------------------------------------------------------
+spi_write:
+	sta SPI_DATA
+@1:	bit SPI_CTRL
+	bmi @1
+	rts
+
+.macro spi_write_macro
+	.local @1
+	sta SPI_DATA
+@1:	bit SPI_CTRL
+	bmi @1
+	
+
+
+;-----------------------------------------------------------------------------
+; sdcard_read_sector
+; Set sector_lba prior to calling this function.
+; result: C=0 -> error, C=1 -> success
+;-----------------------------------------------------------------------------
+sdcard_read_sector:
+	; Send READ_SINGLE_BLOCK command
+	lda #($40 | 17)
+	sta cmd_idx
+	lda #1
+	sta cmd_crc
+	jsr send_cmd
+
+	; Wait for start of data packet
+	ldx #0
+@1:	ldy #0
+@2:	jsr spi_read
+	cmp #$FE
+	beq @start
+	dey
+	bne @2
+	dex
+	bne @1
+
+	; Timeout error
+	jsr deselect
+	clc
+	rts
+	
+;-----------------------------------------------------------------------------
+
+When unplugged:
+Writes data[2] = 1. 1 means the command INIT
+Readback data[4]. No device present, return 0
+Readback data[5]. No device present, return data[5] == 1
+
+When plugged in:
+Writes data[2] = 1. 1 means the command INIT
+Writes data[3] = 1. Runs the init command. Sets blockPtr = 4, waitCounter = 4
+Readback data[4]. Waitcounter still pending, so return 1
+Readback data[4]. Waitcounter still pending, so return 1
+Readback data[4]. Waitcounter still pending, so return 1
+Readback data[4]. Wait is done, return 0
+Readback data[5]. return data[5], which is 0
+Write data[7] = 0. 
+Write data[8] = 0. 
+Write data[9] = 0. 
+Write data[A] = 0. 
+
+Write data[2] = 2. 2 means the command READ_BLK
+Writes data[3] = 1. Runs the READ_BLK command. Sets blockPtr = 0, waitCounter = 10. readAddress = 0. readBlock set to mbr. Tell the reader we've got 512 bytes. To do that, data[0x12] = 2, data[0x13] = 0.
+Readback data[4]. Waitcounter still pending, so return 1
+Readback data[4]. Waitcounter still pending, so return 1
+Readback data[4]. Waitcounter still pending, so return 1
+...
+Readback data[4]. Wait is done, return 0
+Readback data[5]. return data[5], which is 0
+Readback data[0x13], returns 0
+Readback data[0x12], returns 2
+
+Readback data[0x10], returns readBlock[0]
+Readback data[0x10], returns readBlock[1]
+Readback data[0x10], returns readBlock[2]
+...
+Readback data[0x10], returns readBlock[511]
+Readback data[5]. return data[5], which is 0
+Write data[7] = 0. 
+Write data[8] = 52. 
+Write data[9] = 0. 
+Write data[A] = 0. 
+
+Write data[2] = 2. 2 means the command READ_BLK
+Writes data[3] = 1. Runs the READ_BLK command. Sets blockPtr = 0, waitCounter = 10. readAddress = 5200=BOOT_SECTOR_ADDR. readBlock set to boot_sector. Tell the reader we've got 512 bytes. To do that, data[0x12] = 2, data[0x13] = 0.
+Readback data[4]. Waitcounter still pending, so return 1
+Readback data[4]. Waitcounter still pending, so return 1
+Readback data[4]. Waitcounter still pending, so return 1
+...
+Readback data[5]. return data[5], which is 0
+Readback data[0x13], returns 0
+Readback data[0x12], returns 2
+Readback data[0x10], returns readBlock[0]
+Readback data[0x10], returns readBlock[1]
+Readback data[0x10], returns readBlock[2]
+...
+Readback data[0x10], returns readBlock[511]
+Readback data[5]. return data[5], which is 0
+Write data[7] = 0. 
+Write data[8] = 52. 
+Write data[9] = 10. 
+Write data[A] = 0. 
+
+Write data[2] = 2. 2 means the command READ_BLK
+Writes data[3] = 1. Runs the READ_BLK command. Sets blockPtr = 0, waitCounter = 10. readAddress = 105200 = ROOT_OFFSET_START. readBlock set to root (root table). Tell the reader we've got 512 bytes. To do that, data[0x12] = 2, data[0x13] = 0.
+Readback data[4]. Waitcounter still pending, so return 1
+Readback data[4]. Waitcounter still pending, so return 1
+Readback data[4]. Waitcounter still pending, so return 1
+...
+Readback data[5]. return data[5], which is 0
+Readback data[0x13], returns 0
+Readback data[0x12], returns 2, indicating we have 512 bytes of data
+Readback data[0x10], returns readBlock[0]
+Readback data[0x10], returns readBlock[1]
+Readback data[0x10], returns readBlock[2]
+...
+Readback data[0x10], returns readBlock[511]
+Readback data[5]. return data[5], which is 0
+
+That's it.
+In summary, there are 3 reads:
+	- READ_BLK 0 (master boot record)
+	- READ_BLK 5200 (boot sector)
+	- READ_BLK 105200 (root)
+
+-		mbr	{byte[0x00000200]}	byte[]
+		[0]	0x00	byte
+		[1]	0x00	byte
+		[2]	0x00	byte
+		[3]	0x00	byte
+		[4]	0x00	byte
+		[5]	0x00	byte
+		[6]	0x00	byte
+		[7]	0x00	byte
+		[8]	0x00	byte
+		[9]	0x00	byte
+		[10]	0x00	byte
+		[11]	0x00	byte
+		[12]	0x00	byte
+		[13]	0x00	byte
+		[14]	0x00	byte
+		[15]	0x00	byte
+		[16]	0x00	byte
+		[17]	0x00	byte
+		[18]	0x00	byte
+		[19]	0x00	byte
+		[20]	0x00	byte
+		[21]	0x00	byte
+		[22]	0x00	byte
+		[23]	0x00	byte
+		[24]	0x00	byte
+		[25]	0x00	byte
+		[26]	0x00	byte
+		[27]	0x00	byte
+		[28]	0x00	byte
+		[29]	0x00	byte
+		[30]	0x00	byte
+		[31]	0x00	byte
+		[32]	0x00	byte
+		[33]	0x00	byte
+		[34]	0x00	byte
+		[35]	0x00	byte
+		[36]	0x00	byte
+		[37]	0x00	byte
+		[38]	0x00	byte
+		[39]	0x00	byte
+		[40]	0x00	byte
+		[41]	0x00	byte
+		[42]	0x00	byte
+		[43]	0x00	byte
+		[44]	0x00	byte
+		[45]	0x00	byte
+		[46]	0x00	byte
+		[47]	0x00	byte
+		[48]	0x00	byte
+		[49]	0x00	byte
+		[50]	0x00	byte
+		[51]	0x00	byte
+		[52]	0x00	byte
+		[53]	0x00	byte
+		[54]	0x00	byte
+		[55]	0x00	byte
+		[56]	0x00	byte
+		[57]	0x00	byte
+		[58]	0x00	byte
+		[59]	0x00	byte
+		[60]	0x00	byte
+		[61]	0x00	byte
+		[62]	0x00	byte
+		[63]	0x00	byte
+		[64]	0x00	byte
+		[65]	0x00	byte
+		[66]	0x00	byte
+		[67]	0x00	byte
+		[68]	0x00	byte
+		[69]	0x00	byte
+		[70]	0x00	byte
+		[71]	0x00	byte
+		[72]	0x00	byte
+		[73]	0x00	byte
+		[74]	0x00	byte
+		[75]	0x00	byte
+		[76]	0x00	byte
+		[77]	0x00	byte
+		[78]	0x00	byte
+		[79]	0x00	byte
+		[80]	0x00	byte
+		[81]	0x00	byte
+		[82]	0x00	byte
+		[83]	0x00	byte
+		[84]	0x00	byte
+		[85]	0x00	byte
+		[86]	0x00	byte
+		[87]	0x00	byte
+		[88]	0x00	byte
+		[89]	0x00	byte
+		[90]	0x00	byte
+		[91]	0x00	byte
+		[92]	0x00	byte
+		[93]	0x00	byte
+		[94]	0x00	byte
+		[95]	0x00	byte
+		[96]	0x00	byte
+		[97]	0x00	byte
+		[98]	0x00	byte
+		[99]	0x00	byte
+		[100]	0x00	byte
+		[101]	0x00	byte
+		[102]	0x00	byte
+		[103]	0x00	byte
+		[104]	0x00	byte
+		[105]	0x00	byte
+		[106]	0x00	byte
+		[107]	0x00	byte
+		[108]	0x00	byte
+		[109]	0x00	byte
+		[110]	0x00	byte
+		[111]	0x00	byte
+		[112]	0x00	byte
+		[113]	0x00	byte
+		[114]	0x00	byte
+		[115]	0x00	byte
+		[116]	0x00	byte
+		[117]	0x00	byte
+		[118]	0x00	byte
+		[119]	0x00	byte
+		[120]	0x00	byte
+		[121]	0x00	byte
+		[122]	0x00	byte
+		[123]	0x00	byte
+		[124]	0x00	byte
+		[125]	0x00	byte
+		[126]	0x00	byte
+		[127]	0x00	byte
+		[128]	0x00	byte
+		[129]	0x00	byte
+		[130]	0x00	byte
+		[131]	0x00	byte
+		[132]	0x00	byte
+		[133]	0x00	byte
+		[134]	0x00	byte
+		[135]	0x00	byte
+		[136]	0x00	byte
+		[137]	0x00	byte
+		[138]	0x00	byte
+		[139]	0x00	byte
+		[140]	0x00	byte
+		[141]	0x00	byte
+		[142]	0x00	byte
+		[143]	0x00	byte
+		[144]	0x00	byte
+		[145]	0x00	byte
+		[146]	0x00	byte
+		[147]	0x00	byte
+		[148]	0x00	byte
+		[149]	0x00	byte
+		[150]	0x00	byte
+		[151]	0x00	byte
+		[152]	0x00	byte
+		[153]	0x00	byte
+		[154]	0x00	byte
+		[155]	0x00	byte
+		[156]	0x00	byte
+		[157]	0x00	byte
+		[158]	0x00	byte
+		[159]	0x00	byte
+		[160]	0x00	byte
+		[161]	0x00	byte
+		[162]	0x00	byte
+		[163]	0x00	byte
+		[164]	0x00	byte
+		[165]	0x00	byte
+		[166]	0x00	byte
+		[167]	0x00	byte
+		[168]	0x00	byte
+		[169]	0x00	byte
+		[170]	0x00	byte
+		[171]	0x00	byte
+		[172]	0x00	byte
+		[173]	0x00	byte
+		[174]	0x00	byte
+		[175]	0x00	byte
+		[176]	0x00	byte
+		[177]	0x00	byte
+		[178]	0x00	byte
+		[179]	0x00	byte
+		[180]	0x00	byte
+		[181]	0x00	byte
+		[182]	0x00	byte
+		[183]	0x00	byte
+		[184]	0x00	byte
+		[185]	0x00	byte
+		[186]	0x00	byte
+		[187]	0x00	byte
+		[188]	0x00	byte
+		[189]	0x00	byte
+		[190]	0x00	byte
+		[191]	0x00	byte
+		[192]	0x00	byte
+		[193]	0x00	byte
+		[194]	0x00	byte
+		[195]	0x00	byte
+		[196]	0x00	byte
+		[197]	0x00	byte
+		[198]	0x00	byte
+		[199]	0x00	byte
+		[200]	0x00	byte
+		[201]	0x00	byte
+		[202]	0x00	byte
+		[203]	0x00	byte
+		[204]	0x00	byte
+		[205]	0x00	byte
+		[206]	0x00	byte
+		[207]	0x00	byte
+		[208]	0x00	byte
+		[209]	0x00	byte
+		[210]	0x00	byte
+		[211]	0x00	byte
+		[212]	0x00	byte
+		[213]	0x00	byte
+		[214]	0x00	byte
+		[215]	0x00	byte
+		[216]	0x00	byte
+		[217]	0x00	byte
+		[218]	0x00	byte
+		[219]	0x00	byte
+		[220]	0x00	byte
+		[221]	0x00	byte
+		[222]	0x00	byte
+		[223]	0x00	byte
+		[224]	0x00	byte
+		[225]	0x00	byte
+		[226]	0x00	byte
+		[227]	0x00	byte
+		[228]	0x00	byte
+		[229]	0x00	byte
+		[230]	0x00	byte
+		[231]	0x00	byte
+		[232]	0x00	byte
+		[233]	0x00	byte
+		[234]	0x00	byte
+		[235]	0x00	byte
+		[236]	0x00	byte
+		[237]	0x00	byte
+		[238]	0x00	byte
+		[239]	0x00	byte
+		[240]	0x00	byte
+		[241]	0x00	byte
+		[242]	0x00	byte
+		[243]	0x00	byte
+		[244]	0x00	byte
+		[245]	0x00	byte
+		[246]	0x00	byte
+		[247]	0x00	byte
+		[248]	0x00	byte
+		[249]	0x00	byte
+		[250]	0x00	byte
+		[251]	0x00	byte
+		[252]	0x00	byte
+		[253]	0x00	byte
+		[254]	0x00	byte
+		[255]	0x00	byte
+		[256]	0x00	byte
+		[257]	0x00	byte
+		[258]	0x00	byte
+		[259]	0x00	byte
+		[260]	0x00	byte
+		[261]	0x00	byte
+		[262]	0x00	byte
+		[263]	0x00	byte
+		[264]	0x00	byte
+		[265]	0x00	byte
+		[266]	0x00	byte
+		[267]	0x00	byte
+		[268]	0x00	byte
+		[269]	0x00	byte
+		[270]	0x00	byte
+		[271]	0x00	byte
+		[272]	0x00	byte
+		[273]	0x00	byte
+		[274]	0x00	byte
+		[275]	0x00	byte
+		[276]	0x00	byte
+		[277]	0x00	byte
+		[278]	0x00	byte
+		[279]	0x00	byte
+		[280]	0x00	byte
+		[281]	0x00	byte
+		[282]	0x00	byte
+		[283]	0x00	byte
+		[284]	0x00	byte
+		[285]	0x00	byte
+		[286]	0x00	byte
+		[287]	0x00	byte
+		[288]	0x00	byte
+		[289]	0x00	byte
+		[290]	0x00	byte
+		[291]	0x00	byte
+		[292]	0x00	byte
+		[293]	0x00	byte
+		[294]	0x00	byte
+		[295]	0x00	byte
+		[296]	0x00	byte
+		[297]	0x00	byte
+		[298]	0x00	byte
+		[299]	0x00	byte
+		[300]	0x00	byte
+		[301]	0x00	byte
+		[302]	0x00	byte
+		[303]	0x00	byte
+		[304]	0x00	byte
+		[305]	0x00	byte
+		[306]	0x00	byte
+		[307]	0x00	byte
+		[308]	0x00	byte
+		[309]	0x00	byte
+		[310]	0x00	byte
+		[311]	0x00	byte
+		[312]	0x00	byte
+		[313]	0x00	byte
+		[314]	0x00	byte
+		[315]	0x00	byte
+		[316]	0x00	byte
+		[317]	0x00	byte
+		[318]	0x00	byte
+		[319]	0x00	byte
+		[320]	0x00	byte
+		[321]	0x00	byte
+		[322]	0x00	byte
+		[323]	0x00	byte
+		[324]	0x00	byte
+		[325]	0x00	byte
+		[326]	0x00	byte
+		[327]	0x00	byte
+		[328]	0x00	byte
+		[329]	0x00	byte
+		[330]	0x00	byte
+		[331]	0x00	byte
+		[332]	0x00	byte
+		[333]	0x00	byte
+		[334]	0x00	byte
+		[335]	0x00	byte
+		[336]	0x00	byte
+		[337]	0x00	byte
+		[338]	0x00	byte
+		[339]	0x00	byte
+		[340]	0x00	byte
+		[341]	0x00	byte
+		[342]	0x00	byte
+		[343]	0x00	byte
+		[344]	0x00	byte
+		[345]	0x00	byte
+		[346]	0x00	byte
+		[347]	0x00	byte
+		[348]	0x00	byte
+		[349]	0x00	byte
+		[350]	0x00	byte
+		[351]	0x00	byte
+		[352]	0x00	byte
+		[353]	0x00	byte
+		[354]	0x00	byte
+		[355]	0x00	byte
+		[356]	0x00	byte
+		[357]	0x00	byte
+		[358]	0x00	byte
+		[359]	0x00	byte
+		[360]	0x00	byte
+		[361]	0x00	byte
+		[362]	0x00	byte
+		[363]	0x00	byte
+		[364]	0x00	byte
+		[365]	0x00	byte
+		[366]	0x00	byte
+		[367]	0x00	byte
+		[368]	0x00	byte
+		[369]	0x00	byte
+		[370]	0x00	byte
+		[371]	0x00	byte
+		[372]	0x00	byte
+		[373]	0x00	byte
+		[374]	0x00	byte
+		[375]	0x00	byte
+		[376]	0x00	byte
+		[377]	0x00	byte
+		[378]	0x00	byte
+		[379]	0x00	byte
+		[380]	0x00	byte
+		[381]	0x00	byte
+		[382]	0x00	byte
+		[383]	0x00	byte
+		[384]	0x00	byte
+		[385]	0x00	byte
+		[386]	0x00	byte
+		[387]	0x00	byte
+		[388]	0x00	byte
+		[389]	0x00	byte
+		[390]	0x00	byte
+		[391]	0x00	byte
+		[392]	0x00	byte
+		[393]	0x00	byte
+		[394]	0x00	byte
+		[395]	0x00	byte
+		[396]	0x00	byte
+		[397]	0x00	byte
+		[398]	0x00	byte
+		[399]	0x00	byte
+		[400]	0x00	byte
+		[401]	0x00	byte
+		[402]	0x00	byte
+		[403]	0x00	byte
+		[404]	0x00	byte
+		[405]	0x00	byte
+		[406]	0x00	byte
+		[407]	0x00	byte
+		[408]	0x00	byte
+		[409]	0x00	byte
+		[410]	0x00	byte
+		[411]	0x00	byte
+		[412]	0x00	byte
+		[413]	0x00	byte
+		[414]	0x00	byte
+		[415]	0x00	byte
+		[416]	0x00	byte
+		[417]	0x00	byte
+		[418]	0x00	byte
+		[419]	0x00	byte
+		[420]	0x00	byte
+		[421]	0x00	byte
+		[422]	0x00	byte
+		[423]	0x00	byte
+		[424]	0x00	byte
+		[425]	0x00	byte
+		[426]	0x00	byte
+		[427]	0x00	byte
+		[428]	0x00	byte
+		[429]	0x00	byte
+		[430]	0x00	byte
+		[431]	0x00	byte
+		[432]	0x00	byte
+		[433]	0x00	byte
+		[434]	0x00	byte
+		[435]	0x00	byte
+		[436]	0x00	byte
+		[437]	0x00	byte
+		[438]	0x00	byte
+		[439]	0x00	byte
+		[440]	0x00	byte
+		[441]	0x00	byte
+		[442]	0x00	byte
+		[443]	0x00	byte
+		[444]	0x00	byte
+		[445]	0x00	byte
+		[446]	0x80	byte
+		[447]	0x01	byte
+		[448]	0x0a	byte
+		[449]	0x00	byte
+		[450]	0x0c	byte
+		[451]	0x01	byte
+		[452]	0x20	byte
+		[453]	0xce	byte
+		[454]	0x29	byte
+		[455]	0x00	byte
+		[456]	0x00	byte
+		[457]	0x00	byte
+		[458]	0x97	byte
+		[459]	0x33	byte
+		[460]	0x00	byte
+		[461]	0x00	byte
+		[462]	0x00	byte
+		[463]	0x00	byte
+		[464]	0x00	byte
+		[465]	0x00	byte
+		[466]	0x00	byte
+		[467]	0x00	byte
+		[468]	0x00	byte
+		[469]	0x00	byte
+		[470]	0x00	byte
+		[471]	0x00	byte
+		[472]	0x00	byte
+		[473]	0x00	byte
+		[474]	0x00	byte
+		[475]	0x00	byte
+		[476]	0x00	byte
+		[477]	0x00	byte
+		[478]	0x00	byte
+		[479]	0x00	byte
+		[480]	0x00	byte
+		[481]	0x00	byte
+		[482]	0x00	byte
+		[483]	0x00	byte
+		[484]	0x00	byte
+		[485]	0x00	byte
+		[486]	0x00	byte
+		[487]	0x00	byte
+		[488]	0x00	byte
+		[489]	0x00	byte
+		[490]	0x00	byte
+		[491]	0x00	byte
+		[492]	0x00	byte
+		[493]	0x00	byte
+		[494]	0x00	byte
+		[495]	0x00	byte
+		[496]	0x00	byte
+		[497]	0x00	byte
+		[498]	0x00	byte
+		[499]	0x00	byte
+		[500]	0x00	byte
+		[501]	0x00	byte
+		[502]	0x00	byte
+		[503]	0x00	byte
+		[504]	0x00	byte
+		[505]	0x00	byte
+		[506]	0x00	byte
+		[507]	0x00	byte
+		[508]	0x00	byte
+		[509]	0x00	byte
+		[510]	0x55	byte
+		[511]	0xaa	byte
+
+-		boot_sector	{byte[0x00000200]}	byte[]
+		[0]	0xeb	byte
+		[1]	0x3c	byte
+		[2]	0x90	byte
+		[3]	0x4d	byte
+		[4]	0x53	byte
+		[5]	0x44	byte
+		[6]	0x4f	byte
+		[7]	0x53	byte
+		[8]	0x35	byte
+		[9]	0x2e	byte
+		[10]	0x30	byte
+		[11]	0x00	byte
+		[12]	0x02	byte
+		[13]	0x01	byte
+		[14]	0x02	byte
+		[15]	0x00	byte
+		[16]	0x02	byte
+		[17]	0x00	byte
+		[18]	0x02	byte
+		[19]	0x00	byte
+		[20]	0x00	byte
+		[21]	0xf8	byte
+		[22]	0x00	byte
+		[23]	0x00	byte
+		[24]	0x00	byte
+		[25]	0x00	byte
+		[26]	0x00	byte
+		[27]	0x00	byte
+		[28]	0x29	byte
+		[29]	0x00	byte
+		[30]	0x00	byte
+		[31]	0x00	byte
+		[32]	0xcb	byte
+		[33]	0x07	byte
+		[34]	0x02	byte
+		[35]	0x00	byte
+		[36]	0xff	byte
+		[37]	0x03	byte
+		[38]	0x00	byte
+		[39]	0x00	byte
+		[40]	0x00	byte
+		[41]	0x00	byte
+		[42]	0x00	byte
+		[43]	0x4e	byte
+		[44]	0x02	byte
+		[45]	0x00	byte
+		[46]	0x00	byte
+		[47]	0x00	byte
+		[48]	0x4d	byte
+		[49]	0x45	byte
+		[50]	0x20	byte
+		[51]	0x20	byte
+		[52]	0x20	byte
+		[53]	0x20	byte
+		[54]	0x00	byte
+		[55]	0x00	byte
+		[56]	0x00	byte
+		[57]	0x00	byte
+		[58]	0x00	byte
+		[59]	0x00	byte
+		[60]	0x00	byte
+		[61]	0x00	byte
+		[62]	0x00	byte
+		[63]	0x00	byte
+		[64]	0x00	byte
+		[65]	0x00	byte
+		[66]	0x00	byte
+		[67]	0x00	byte
+		[68]	0x00	byte
+		[69]	0x00	byte
+		[70]	0x00	byte
+		[71]	0x00	byte
+		[72]	0x00	byte
+		[73]	0x00	byte
+		[74]	0x00	byte
+		[75]	0x00	byte
+		[76]	0x00	byte
+		[77]	0x00	byte
+		[78]	0x00	byte
+		[79]	0x00	byte
+		[80]	0x00	byte
+		[81]	0x00	byte
+		[82]	0x46	byte
+		[83]	0x41	byte
+		[84]	0x54	byte
+		[85]	0x33	byte
+		[86]	0x32	byte
+		[87]	0x20	byte
+		[88]	0x20	byte
+		[89]	0x20	byte
+		[90]	0x00	byte
+		[91]	0x00	byte
+		[92]	0x00	byte
+		[93]	0x00	byte
+		[94]	0x00	byte
+		[95]	0x00	byte
+		[96]	0x00	byte
+		[97]	0x00	byte
+		[98]	0x00	byte
+		[99]	0x00	byte
+		[100]	0x00	byte
+		[101]	0x00	byte
+		[102]	0x00	byte
+		[103]	0x00	byte
+		[104]	0x00	byte
+		[105]	0x00	byte
+		[106]	0x00	byte
+		[107]	0x00	byte
+		[108]	0x00	byte
+		[109]	0x00	byte
+		[110]	0x00	byte
+		[111]	0x00	byte
+		[112]	0x00	byte
+		[113]	0x00	byte
+		[114]	0x00	byte
+		[115]	0x00	byte
+		[116]	0x00	byte
+		[117]	0x00	byte
+		[118]	0x00	byte
+		[119]	0x00	byte
+		[120]	0x00	byte
+		[121]	0x00	byte
+		[122]	0x00	byte
+		[123]	0x00	byte
+		[124]	0x00	byte
+		[125]	0x00	byte
+		[126]	0x00	byte
+		[127]	0x00	byte
+		[128]	0x00	byte
+		[129]	0x00	byte
+		[130]	0x00	byte
+		[131]	0x00	byte
+		[132]	0x00	byte
+		[133]	0x00	byte
+		[134]	0x00	byte
+		[135]	0x00	byte
+		[136]	0x00	byte
+		[137]	0x00	byte
+		[138]	0x00	byte
+		[139]	0x00	byte
+		[140]	0x00	byte
+		[141]	0x00	byte
+		[142]	0x00	byte
+		[143]	0x00	byte
+		[144]	0x00	byte
+		[145]	0x00	byte
+		[146]	0x00	byte
+		[147]	0x00	byte
+		[148]	0x00	byte
+		[149]	0x00	byte
+		[150]	0x00	byte
+		[151]	0x00	byte
+		[152]	0x00	byte
+		[153]	0x00	byte
+		[154]	0x00	byte
+		[155]	0x00	byte
+		[156]	0x00	byte
+		[157]	0x00	byte
+		[158]	0x00	byte
+		[159]	0x00	byte
+		[160]	0x00	byte
+		[161]	0x00	byte
+		[162]	0x00	byte
+		[163]	0x00	byte
+		[164]	0x00	byte
+		[165]	0x00	byte
+		[166]	0x00	byte
+		[167]	0x00	byte
+		[168]	0x00	byte
+		[169]	0x00	byte
+		[170]	0x00	byte
+		[171]	0x00	byte
+		[172]	0x00	byte
+		[173]	0x00	byte
+		[174]	0x00	byte
+		[175]	0x00	byte
+		[176]	0x00	byte
+		[177]	0x00	byte
+		[178]	0x00	byte
+		[179]	0x00	byte
+		[180]	0x00	byte
+		[181]	0x00	byte
+		[182]	0x00	byte
+		[183]	0x00	byte
+		[184]	0x00	byte
+		[185]	0x00	byte
+		[186]	0x00	byte
+		[187]	0x00	byte
+		[188]	0x00	byte
+		[189]	0x00	byte
+		[190]	0x00	byte
+		[191]	0x00	byte
+		[192]	0x00	byte
+		[193]	0x00	byte
+		[194]	0x00	byte
+		[195]	0x00	byte
+		[196]	0x00	byte
+		[197]	0x00	byte
+		[198]	0x00	byte
+		[199]	0x00	byte
+		[200]	0x00	byte
+		[201]	0x00	byte
+		[202]	0x00	byte
+		[203]	0x00	byte
+		[204]	0x00	byte
+		[205]	0x00	byte
+		[206]	0x00	byte
+		[207]	0x00	byte
+		[208]	0x00	byte
+		[209]	0x00	byte
+		[210]	0x00	byte
+		[211]	0x00	byte
+		[212]	0x00	byte
+		[213]	0x00	byte
+		[214]	0x00	byte
+		[215]	0x00	byte
+		[216]	0x00	byte
+		[217]	0x00	byte
+		[218]	0x00	byte
+		[219]	0x00	byte
+		[220]	0x00	byte
+		[221]	0x00	byte
+		[222]	0x00	byte
+		[223]	0x00	byte
+		[224]	0x00	byte
+		[225]	0x00	byte
+		[226]	0x00	byte
+		[227]	0x00	byte
+		[228]	0x00	byte
+		[229]	0x00	byte
+		[230]	0x00	byte
+		[231]	0x00	byte
+		[232]	0x00	byte
+		[233]	0x00	byte
+		[234]	0x00	byte
+		[235]	0x00	byte
+		[236]	0x00	byte
+		[237]	0x00	byte
+		[238]	0x00	byte
+		[239]	0x00	byte
+		[240]	0x00	byte
+		[241]	0x00	byte
+		[242]	0x00	byte
+		[243]	0x00	byte
+		[244]	0x00	byte
+		[245]	0x00	byte
+		[246]	0x00	byte
+		[247]	0x00	byte
+		[248]	0x00	byte
+		[249]	0x00	byte
+		[250]	0x00	byte
+		[251]	0x00	byte
+		[252]	0x00	byte
+		[253]	0x00	byte
+		[254]	0x00	byte
+		[255]	0x00	byte
+		[256]	0x00	byte
+		[257]	0x00	byte
+		[258]	0x00	byte
+		[259]	0x00	byte
+		[260]	0x00	byte
+		[261]	0x00	byte
+		[262]	0x00	byte
+		[263]	0x00	byte
+		[264]	0x00	byte
+		[265]	0x00	byte
+		[266]	0x00	byte
+		[267]	0x00	byte
+		[268]	0x00	byte
+		[269]	0x00	byte
+		[270]	0x00	byte
+		[271]	0x00	byte
+		[272]	0x00	byte
+		[273]	0x00	byte
+		[274]	0x00	byte
+		[275]	0x00	byte
+		[276]	0x00	byte
+		[277]	0x00	byte
+		[278]	0x00	byte
+		[279]	0x00	byte
+		[280]	0x00	byte
+		[281]	0x00	byte
+		[282]	0x00	byte
+		[283]	0x00	byte
+		[284]	0x00	byte
+		[285]	0x00	byte
+		[286]	0x00	byte
+		[287]	0x00	byte
+		[288]	0x00	byte
+		[289]	0x00	byte
+		[290]	0x00	byte
+		[291]	0x00	byte
+		[292]	0x00	byte
+		[293]	0x00	byte
+		[294]	0x00	byte
+		[295]	0x00	byte
+		[296]	0x00	byte
+		[297]	0x00	byte
+		[298]	0x00	byte
+		[299]	0x00	byte
+		[300]	0x00	byte
+		[301]	0x00	byte
+		[302]	0x00	byte
+		[303]	0x00	byte
+		[304]	0x00	byte
+		[305]	0x00	byte
+		[306]	0x00	byte
+		[307]	0x00	byte
+		[308]	0x00	byte
+		[309]	0x00	byte
+		[310]	0x00	byte
+		[311]	0x00	byte
+		[312]	0x00	byte
+		[313]	0x00	byte
+		[314]	0x00	byte
+		[315]	0x00	byte
+		[316]	0x00	byte
+		[317]	0x00	byte
+		[318]	0x00	byte
+		[319]	0x00	byte
+		[320]	0x00	byte
+		[321]	0x00	byte
+		[322]	0x00	byte
+		[323]	0x00	byte
+		[324]	0x00	byte
+		[325]	0x00	byte
+		[326]	0x00	byte
+		[327]	0x00	byte
+		[328]	0x00	byte
+		[329]	0x00	byte
+		[330]	0x00	byte
+		[331]	0x00	byte
+		[332]	0x00	byte
+		[333]	0x00	byte
+		[334]	0x00	byte
+		[335]	0x00	byte
+		[336]	0x00	byte
+		[337]	0x00	byte
+		[338]	0x00	byte
+		[339]	0x00	byte
+		[340]	0x00	byte
+		[341]	0x00	byte
+		[342]	0x00	byte
+		[343]	0x00	byte
+		[344]	0x00	byte
+		[345]	0x00	byte
+		[346]	0x00	byte
+		[347]	0x00	byte
+		[348]	0x00	byte
+		[349]	0x00	byte
+		[350]	0x00	byte
+		[351]	0x00	byte
+		[352]	0x00	byte
+		[353]	0x00	byte
+		[354]	0x00	byte
+		[355]	0x00	byte
+		[356]	0x00	byte
+		[357]	0x00	byte
+		[358]	0x00	byte
+		[359]	0x00	byte
+		[360]	0x00	byte
+		[361]	0x00	byte
+		[362]	0x00	byte
+		[363]	0x00	byte
+		[364]	0x00	byte
+		[365]	0x00	byte
+		[366]	0x00	byte
+		[367]	0x00	byte
+		[368]	0x00	byte
+		[369]	0x00	byte
+		[370]	0x00	byte
+		[371]	0x00	byte
+		[372]	0x00	byte
+		[373]	0x00	byte
+		[374]	0x00	byte
+		[375]	0x00	byte
+		[376]	0x00	byte
+		[377]	0x00	byte
+		[378]	0x00	byte
+		[379]	0x00	byte
+		[380]	0x00	byte
+		[381]	0x00	byte
+		[382]	0x00	byte
+		[383]	0x00	byte
+		[384]	0x00	byte
+		[385]	0x00	byte
+		[386]	0x00	byte
+		[387]	0x00	byte
+		[388]	0x00	byte
+		[389]	0x00	byte
+		[390]	0x00	byte
+		[391]	0x00	byte
+		[392]	0x00	byte
+		[393]	0x00	byte
+		[394]	0x00	byte
+		[395]	0x00	byte
+		[396]	0x00	byte
+		[397]	0x00	byte
+		[398]	0x00	byte
+		[399]	0x00	byte
+		[400]	0x00	byte
+		[401]	0x00	byte
+		[402]	0x00	byte
+		[403]	0x00	byte
+		[404]	0x00	byte
+		[405]	0x00	byte
+		[406]	0x00	byte
+		[407]	0x00	byte
+		[408]	0x00	byte
+		[409]	0x00	byte
+		[410]	0x00	byte
+		[411]	0x00	byte
+		[412]	0x00	byte
+		[413]	0x00	byte
+		[414]	0x00	byte
+		[415]	0x00	byte
+		[416]	0x00	byte
+		[417]	0x00	byte
+		[418]	0x00	byte
+		[419]	0x00	byte
+		[420]	0x00	byte
+		[421]	0x00	byte
+		[422]	0x00	byte
+		[423]	0x00	byte
+		[424]	0x00	byte
+		[425]	0x00	byte
+		[426]	0x00	byte
+		[427]	0x00	byte
+		[428]	0x00	byte
+		[429]	0x00	byte
+		[430]	0x00	byte
+		[431]	0x00	byte
+		[432]	0x00	byte
+		[433]	0x00	byte
+		[434]	0x00	byte
+		[435]	0x00	byte
+		[436]	0x00	byte
+		[437]	0x00	byte
+		[438]	0x00	byte
+		[439]	0x00	byte
+		[440]	0x00	byte
+		[441]	0x00	byte
+		[442]	0x00	byte
+		[443]	0x00	byte
+		[444]	0x00	byte
+		[445]	0x00	byte
+		[446]	0x00	byte
+		[447]	0x00	byte
+		[448]	0x00	byte
+		[449]	0x00	byte
+		[450]	0x00	byte
+		[451]	0x00	byte
+		[452]	0x00	byte
+		[453]	0x00	byte
+		[454]	0x00	byte
+		[455]	0x00	byte
+		[456]	0x00	byte
+		[457]	0x00	byte
+		[458]	0x00	byte
+		[459]	0x00	byte
+		[460]	0x00	byte
+		[461]	0x00	byte
+		[462]	0x00	byte
+		[463]	0x00	byte
+		[464]	0x00	byte
+		[465]	0x00	byte
+		[466]	0x00	byte
+		[467]	0x00	byte
+		[468]	0x00	byte
+		[469]	0x00	byte
+		[470]	0x00	byte
+		[471]	0x00	byte
+		[472]	0x00	byte
+		[473]	0x00	byte
+		[474]	0x00	byte
+		[475]	0x00	byte
+		[476]	0x00	byte
+		[477]	0x00	byte
+		[478]	0x00	byte
+		[479]	0x00	byte
+		[480]	0x00	byte
+		[481]	0x00	byte
+		[482]	0x00	byte
+		[483]	0x00	byte
+		[484]	0x00	byte
+		[485]	0x00	byte
+		[486]	0x00	byte
+		[487]	0x00	byte
+		[488]	0x00	byte
+		[489]	0x00	byte
+		[490]	0x00	byte
+		[491]	0x00	byte
+		[492]	0x00	byte
+		[493]	0x00	byte
+		[494]	0x00	byte
+		[495]	0x00	byte
+		[496]	0x00	byte
+		[497]	0x00	byte
+		[498]	0x00	byte
+		[499]	0x00	byte
+		[500]	0x00	byte
+		[501]	0x00	byte
+		[502]	0x00	byte
+		[503]	0x00	byte
+		[504]	0x00	byte
+		[505]	0x00	byte
+		[506]	0x00	byte
+		[507]	0x00	byte
+		[508]	0x00	byte
+		[509]	0x00	byte
+		[510]	0x55	byte
+		[511]	0xaa	byte
+
+-		root	{byte[0x00004000]}	byte[]
+		[0]	0x46	byte
+		[1]	0x4f	byte
+		[2]	0x45	byte
+		[3]	0x4e	byte
+		[4]	0x49	byte
+		[5]	0x58	byte
+		[6]	0x49	byte
+		[7]	0x44	byte
+		[8]	0x45	byte
+		[9]	0x20	byte
+		[10]	0x20	byte
+		[11]	0x08	byte
+		[12]	0x00	byte
+		[13]	0x00	byte
+		[14]	0x00	byte
+		[15]	0x00	byte
+		[16]	0x00	byte
+		[17]	0x00	byte
+		[18]	0x00	byte
+		[19]	0x00	byte
+		[20]	0x00	byte
+		[21]	0x00	byte
+		[22]	0x00	byte
+		[23]	0x00	byte
+		[24]	0x00	byte
+		[25]	0x00	byte
+		[26]	0x00	byte
+		[27]	0x00	byte
+		[28]	0x00	byte
+		[29]	0x00	byte
+		[30]	0x00	byte
+		[31]	0x00	byte
+		[32]	0x48	byte
+		[33]	0x45	byte
+		[34]	0x4c	byte
+		[35]	0x4c	byte
+		[36]	0x4f	byte
+		[37]	0x20	byte
+		[38]	0x20	byte
+		[39]	0x20	byte
+		[40]	0x50	byte
+		[41]	0x47	byte
+		[42]	0x5a	byte
+		[43]	0x00	byte
+		[44]	0x00	byte
+		[45]	0x00	byte
+		[46]	0x00	byte
+		[47]	0x00	byte
+		[48]	0x00	byte
+		[49]	0x00	byte
+		[50]	0x00	byte
+		[51]	0x00	byte
+		[52]	0x00	byte
+		[53]	0x00	byte
+		[54]	0x00	byte
+		[55]	0x00	byte
+		[56]	0x00	byte
+		[57]	0x00	byte
+		[58]	0x22	byte
+		[59]	0x00	byte
+		[60]	0x07	byte
+		[61]	0x00	byte
+		[62]	0x00	byte
+		[63]	0x00	byte
+		[64]	0x00	byte
+		[65]	0x00	byte
+		[66]	0x00	byte
+		[67]	0x00	byte
+		[68]	0x00	byte
+		[69]	0x00	byte
+		[70]	0x00	byte
+		[71]	0x00	byte
+		[72]	0x00	byte
+		[73]	0x00	byte
+		[74]	0x00	byte
+		[75]	0x00	byte
+		[76]	0x00	byte
+		[77]	0x00	byte
+		[78]	0x00	byte
+		[79]	0x00	byte
+		[80]	0x00	byte
+		[81]	0x00	byte
+		[82]	0x00	byte
+		[83]	0x00	byte
+		[84]	0x00	byte
+		[85]	0x00	byte
+		[86]	0x00	byte
+		[87]	0x00	byte
+		[88]	0x00	byte
+		[89]	0x00	byte
+		[90]	0x00	byte
+		[91]	0x00	byte
+		[92]	0x00	byte
+		[93]	0x00	byte
+		[94]	0x00	byte
+		[95]	0x00	byte
+		[96]	0x00	byte
+		[97]	0x00	byte
+		[98]	0x00	byte
+		[99]	0x00	byte
+		[100]	0x00	byte
+		[101]	0x00	byte
+		[102]	0x00	byte
+		[103]	0x00	byte
+		[104]	0x00	byte
+		[105]	0x00	byte
+		[106]	0x00	byte
+		[107]	0x00	byte
+		[108]	0x00	byte
+		[109]	0x00	byte
+		[110]	0x00	byte
+		[111]	0x00	byte
+		[112]	0x00	byte
+		[113]	0x00	byte
+		[114]	0x00	byte
+		[115]	0x00	byte
+		[116]	0x00	byte
+		[117]	0x00	byte
+		[118]	0x00	byte
+		[119]	0x00	byte
+		[120]	0x00	byte
+		[121]	0x00	byte
+		[122]	0x00	byte
+		[123]	0x00	byte
+		[124]	0x00	byte
+		[125]	0x00	byte
+		[126]	0x00	byte
+		[127]	0x00	byte
+		[128]	0x00	byte
+		[129]	0x00	byte
+		[130]	0x00	byte
+		[131]	0x00	byte
+		[132]	0x00	byte
+		[133]	0x00	byte
+		[134]	0x00	byte
+		[135]	0x00	byte
+		[136]	0x00	byte
+		[137]	0x00	byte
+		[138]	0x00	byte
+		[139]	0x00	byte
+		[140]	0x00	byte
+		[141]	0x00	byte
+		[142]	0x00	byte
+		[143]	0x00	byte
+		[144]	0x00	byte
+		[145]	0x00	byte
+		[146]	0x00	byte
+		[147]	0x00	byte
+		[148]	0x00	byte
+		[149]	0x00	byte
+		[150]	0x00	byte
+		[151]	0x00	byte
+		[152]	0x00	byte
+		[153]	0x00	byte
+		[154]	0x00	byte
+		[155]	0x00	byte
+		[156]	0x00	byte
+		[157]	0x00	byte
+		[158]	0x00	byte
+		[159]	0x00	byte
+		[160]	0x00	byte
+		[161]	0x00	byte
+		[162]	0x00	byte
+		[163]	0x00	byte
+		[164]	0x00	byte
+		[165]	0x00	byte
+		[166]	0x00	byte
+		[167]	0x00	byte
+		[168]	0x00	byte
+		[169]	0x00	byte
+		[170]	0x00	byte
+		[171]	0x00	byte
+		[172]	0x00	byte
+		[173]	0x00	byte
+		[174]	0x00	byte
+		[175]	0x00	byte
+		[176]	0x00	byte
+		[177]	0x00	byte
+		[178]	0x00	byte
+		[179]	0x00	byte
+		[180]	0x00	byte
+		[181]	0x00	byte
+		[182]	0x00	byte
+		[183]	0x00	byte
+		[184]	0x00	byte
+		[185]	0x00	byte
+		[186]	0x00	byte
+		[187]	0x00	byte
+		[188]	0x00	byte
+		[189]	0x00	byte
+		[190]	0x00	byte
+		[191]	0x00	byte
+		[192]	0x00	byte
+		[193]	0x00	byte
+		[194]	0x00	byte
+		[195]	0x00	byte
+		[196]	0x00	byte
+		[197]	0x00	byte
+		[198]	0x00	byte
+		[199]	0x00	byte
+		[200]	0x00	byte
+		[201]	0x00	byte
+		[202]	0x00	byte
+		[203]	0x00	byte
+		[204]	0x00	byte
+		[205]	0x00	byte
+		[206]	0x00	byte
+		[207]	0x00	byte
+		[208]	0x00	byte
+		[209]	0x00	byte
+		[210]	0x00	byte
+		[211]	0x00	byte
+		[212]	0x00	byte
+		[213]	0x00	byte
+		[214]	0x00	byte
+		[215]	0x00	byte
+		[216]	0x00	byte
+		[217]	0x00	byte
+		[218]	0x00	byte
+		[219]	0x00	byte
+		[220]	0x00	byte
+		[221]	0x00	byte
+		[222]	0x00	byte
+		[223]	0x00	byte
+		[224]	0x00	byte
+		[225]	0x00	byte
+		[226]	0x00	byte
+		[227]	0x00	byte
+		[228]	0x00	byte
+		[229]	0x00	byte
+		[230]	0x00	byte
+		[231]	0x00	byte
+		[232]	0x00	byte
+		[233]	0x00	byte
+		[234]	0x00	byte
+		[235]	0x00	byte
+		[236]	0x00	byte
+		[237]	0x00	byte
+		[238]	0x00	byte
+		[239]	0x00	byte
+		[240]	0x00	byte
+		[241]	0x00	byte
+		[242]	0x00	byte
+		[243]	0x00	byte
+		[244]	0x00	byte
+		[245]	0x00	byte
+		[246]	0x00	byte
+		[247]	0x00	byte
+		[248]	0x00	byte
+		[249]	0x00	byte
+		[250]	0x00	byte
+		[251]	0x00	byte
+		[252]	0x00	byte
+		[253]	0x00	byte
+		[254]	0x00	byte
+		[255]	0x00	byte
+		[256]	0x00	byte
+		[257]	0x00	byte
+		[258]	0x00	byte
+		[259]	0x00	byte
+		[260]	0x00	byte
+		[261]	0x00	byte
+		[262]	0x00	byte
+		[263]	0x00	byte
+		[264]	0x00	byte
+		[265]	0x00	byte
+		[266]	0x00	byte
+		[267]	0x00	byte
+		[268]	0x00	byte
+		[269]	0x00	byte
+		[270]	0x00	byte
+		[271]	0x00	byte
+		[272]	0x00	byte
+		[273]	0x00	byte
+		[274]	0x00	byte
+		[275]	0x00	byte
+		[276]	0x00	byte
+		[277]	0x00	byte
+		[278]	0x00	byte
+		[279]	0x00	byte
+		[280]	0x00	byte
+		[281]	0x00	byte
+		[282]	0x00	byte
+		[283]	0x00	byte
+		[284]	0x00	byte
+		[285]	0x00	byte
+		[286]	0x00	byte
+		[287]	0x00	byte
+		[288]	0x00	byte
+		[289]	0x00	byte
+		[290]	0x00	byte
+		[291]	0x00	byte
+		[292]	0x00	byte
+		[293]	0x00	byte
+		[294]	0x00	byte
+		[295]	0x00	byte
+		[296]	0x00	byte
+		[297]	0x00	byte
+		[298]	0x00	byte
+		[299]	0x00	byte
+		[300]	0x00	byte
+		[301]	0x00	byte
+		[302]	0x00	byte
+		[303]	0x00	byte
+		[304]	0x00	byte
+		[305]	0x00	byte
+		[306]	0x00	byte
+		[307]	0x00	byte
+		[308]	0x00	byte
+		[309]	0x00	byte
+		[310]	0x00	byte
+		[311]	0x00	byte
+		[312]	0x00	byte
+		[313]	0x00	byte
+		[314]	0x00	byte
+		[315]	0x00	byte
+		[316]	0x00	byte
+		[317]	0x00	byte
+		[318]	0x00	byte
+		[319]	0x00	byte
+		[320]	0x00	byte
+		[321]	0x00	byte
+		[322]	0x00	byte
+		[323]	0x00	byte
+		[324]	0x00	byte
+		[325]	0x00	byte
+		[326]	0x00	byte
+		[327]	0x00	byte
+		[328]	0x00	byte
+		[329]	0x00	byte
+		[330]	0x00	byte
+		[331]	0x00	byte
+		[332]	0x00	byte
+		[333]	0x00	byte
+		[334]	0x00	byte
+		[335]	0x00	byte
+		[336]	0x00	byte
+		[337]	0x00	byte
+		[338]	0x00	byte
+		[339]	0x00	byte
+		[340]	0x00	byte
+		[341]	0x00	byte
+		[342]	0x00	byte
+		[343]	0x00	byte
+		[344]	0x00	byte
+		[345]	0x00	byte
+		[346]	0x00	byte
+		[347]	0x00	byte
+		[348]	0x00	byte
+		[349]	0x00	byte
+		[350]	0x00	byte
+		[351]	0x00	byte
+		[352]	0x00	byte
+		[353]	0x00	byte
+		[354]	0x00	byte
+		[355]	0x00	byte
+		[356]	0x00	byte
+		[357]	0x00	byte
+		[358]	0x00	byte
+		[359]	0x00	byte
+		[360]	0x00	byte
+		[361]	0x00	byte
+		[362]	0x00	byte
+		[363]	0x00	byte
+		[364]	0x00	byte
+		[365]	0x00	byte
+		[366]	0x00	byte
+		[367]	0x00	byte
+		[368]	0x00	byte
+		[369]	0x00	byte
+		[370]	0x00	byte
+		[371]	0x00	byte
+		[372]	0x00	byte
+		[373]	0x00	byte
+		[374]	0x00	byte
+		[375]	0x00	byte
+		[376]	0x00	byte
+		[377]	0x00	byte
+		[378]	0x00	byte
+		[379]	0x00	byte
+		[380]	0x00	byte
+		[381]	0x00	byte
+		[382]	0x00	byte
+		[383]	0x00	byte
+		[384]	0x00	byte
+		[385]	0x00	byte
+		[386]	0x00	byte
+		[387]	0x00	byte
+		[388]	0x00	byte
+		[389]	0x00	byte
+		[390]	0x00	byte
+		[391]	0x00	byte
+		[392]	0x00	byte
+		[393]	0x00	byte
+		[394]	0x00	byte
+		[395]	0x00	byte
+		[396]	0x00	byte
+		[397]	0x00	byte
+		[398]	0x00	byte
+		[399]	0x00	byte
+		[400]	0x00	byte
+		[401]	0x00	byte
+		[402]	0x00	byte
+		[403]	0x00	byte
+		[404]	0x00	byte
+		[405]	0x00	byte
+		[406]	0x00	byte
+		[407]	0x00	byte
+		[408]	0x00	byte
+		[409]	0x00	byte
+		[410]	0x00	byte
+		[411]	0x00	byte
+		[412]	0x00	byte
+		[413]	0x00	byte
+		[414]	0x00	byte
+		[415]	0x00	byte
+		[416]	0x00	byte
+		[417]	0x00	byte
+		[418]	0x00	byte
+		[419]	0x00	byte
+		[420]	0x00	byte
+		[421]	0x00	byte
+		[422]	0x00	byte
+		[423]	0x00	byte
+		[424]	0x00	byte
+		[425]	0x00	byte
+		[426]	0x00	byte
+		[427]	0x00	byte
+		[428]	0x00	byte
+		[429]	0x00	byte
+		[430]	0x00	byte
+		[431]	0x00	byte
+		[432]	0x00	byte
+		[433]	0x00	byte
+		[434]	0x00	byte
+		[435]	0x00	byte
+		[436]	0x00	byte
+		[437]	0x00	byte
+		[438]	0x00	byte
+		[439]	0x00	byte
+		[440]	0x00	byte
+		[441]	0x00	byte
+		[442]	0x00	byte
+		[443]	0x00	byte
+		[444]	0x00	byte
+		[445]	0x00	byte
+		[446]	0x00	byte
+		[447]	0x00	byte
+		[448]	0x00	byte
+		[449]	0x00	byte
+		[450]	0x00	byte
+		[451]	0x00	byte
+		[452]	0x00	byte
+		[453]	0x00	byte
+		[454]	0x00	byte
+		[455]	0x00	byte
+		[456]	0x00	byte
+		[457]	0x00	byte
+		[458]	0x00	byte
+		[459]	0x00	byte
+		[460]	0x00	byte
+		[461]	0x00	byte
+		[462]	0x00	byte
+		[463]	0x00	byte
+		[464]	0x00	byte
+		[465]	0x00	byte
+		[466]	0x00	byte
+		[467]	0x00	byte
+		[468]	0x00	byte
+		[469]	0x00	byte
+		[470]	0x00	byte
+		[471]	0x00	byte
+		[472]	0x00	byte
+		[473]	0x00	byte
+		[474]	0x00	byte
+		[475]	0x00	byte
+		[476]	0x00	byte
+		[477]	0x00	byte
+		[478]	0x00	byte
+		[479]	0x00	byte
+		[480]	0x00	byte
+		[481]	0x00	byte
+		[482]	0x00	byte
+		[483]	0x00	byte
+		[484]	0x00	byte
+		[485]	0x00	byte
+		[486]	0x00	byte
+		[487]	0x00	byte
+		[488]	0x00	byte
+		[489]	0x00	byte
+		[490]	0x00	byte
+		[491]	0x00	byte
+		[492]	0x00	byte
+		[493]	0x00	byte
+		[494]	0x00	byte
+		[495]	0x00	byte
+		[496]	0x00	byte
+		[497]	0x00	byte
+		[498]	0x00	byte
+		[499]	0x00	byte
+		[500]	0x00	byte
+		[501]	0x00	byte
+		[502]	0x00	byte
+		[503]	0x00	byte
+		[504]	0x00	byte
+		[505]	0x00	byte
+		[506]	0x00	byte
+		[507]	0x00	byte
+		[508]	0x00	byte
+		[509]	0x00	byte
+		[510]	0x00	byte
+		[511]	0x00	byte
+
+
+
+maybe rip out these 3 blocks, and copy them?

@@ -1,3 +1,4 @@
+GENERAL SIZES
 
 Offset range		Size		Comment
 ------------		----		-------	
@@ -14,7 +15,22 @@ Offset range		Size		Comment
 00:00000-60:0000	6144KB  /  6MB	Largest SNES cartridge, 48 megabits, Star Ocean
 00:00000-FF:FFFF        16384KB / 16MB	Complete 24bit address space
 
-Other sizes
------------
-A 1bpp 320x240 image: 01:2C00
+SNES CART SIZES
+
+Offset range		Size(KB)	Size(Megabits)		Title
+------------		-------		--------------		-----
+00:00000-08:0000	512KB			4		Zoop
+00:00000-10:0000	1024KB  / 1.0MB		8		Lagoon, Star Fox, NHL '94
+00:00000-18:0000	1536KB  / 1.5MB		12		Brain Lord
+00:00000-20:0000	2048KB  / 2.0MB		16		Spike McFang, UW:NH, SoM
+00:00000-28:0000	2560KB  / 2.5MB		20		Lufia 2
+00:00000-30:0000	3072KB  / 3.0MB		24		SoE, FF6
+00:00000-40:0000	4096KB  / 4.0MB		32		Kirby Super Star, Super Mario RPG, Chrono Trigger
+00:00000-60:0000	6144KB  / 6.0MB		48		Star Ocean
+
+OTHER SIZES
+
+Offset range		Comment
+------------		-------
+00:00000-01:2C00	A 1bpp 320x240 image
 

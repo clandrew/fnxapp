@@ -1,0 +1,1400 @@
+009C60  20 70 9C     JSR $9C70      A:00FF X:000A Y:00F0 P:ENvMXdizc
+009C70  48           PHA            A:00FF X:000A Y:00F0 P:ENvMXdizc
+009C71  A9 2E        LDA #$2E       A:00FF X:000A Y:00F0 P:ENvMXdizc
+009C73  20 78 81     JSR $8178      A:002E X:000A Y:00F0 P:EnvMXdizc
+008178  60           RTS            A:002E X:000A Y:00F0 P:EnvMXdizc
+009C76  68           PLA            A:002E X:000A Y:00F0 P:EnvMXdizc
+009C77  48           PHA            A:00FF X:000A Y:00F0 P:ENvMXdizc
+009C78  20 49 81     JSR $8149      A:00FF X:000A Y:00F0 P:ENvMXdizc
+008149  48           PHA            A:00FF X:000A Y:00F0 P:ENvMXdizc
+00814A  4A           LSR            A:00FF X:000A Y:00F0 P:ENvMXdizc
+00814B  4A           LSR            A:007F X:000A Y:00F0 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:000A Y:00F0 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:000A Y:00F0 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:000A Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:000A Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:000A Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:000A Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:000A Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:000A Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:000A Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:000A Y:00F0 P:ENvMXdizC
+008151  68           PLA            A:0066 X:000A Y:00F0 P:ENvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:000A Y:00F0 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:000A Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:000A Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:000A Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:000A Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:000A Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:000A Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:000A Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:000A Y:00F0 P:ENvMXdizC
+008157  60           RTS            A:0066 X:000A Y:00F0 P:ENvMXdizC
+009C7B  68           PLA            A:0066 X:000A Y:00F0 P:ENvMXdizC
+009C7C  60           RTS            A:00FF X:000A Y:00F0 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:000A Y:00F0 P:ENvMXdizC
+
+009CD0  CA           DEX            A:00FF X:000A Y:00F0 P:ENvMXdizC
+009CD1  D0 FA        BNE $FA        A:00FF X:0009 Y:00F0 P:EnvMXdizC
+009CCD  20 53 9C     JSR $9C53      A:00FF X:0009 Y:00F0 P:EnvMXdizC
+
+009C53  A9 FF        LDA #$FF       A:00FF X:0009 Y:00F0 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0009 Y:00F0 P:ENvMXdizC ; Send an #$FF
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0009 Y:00F0 P:ENvMXdizC ; Read back
+009C5B  30 FB        BMI $FB        A:00FF X:0009 Y:00F0 P:EnvMXdizC ; Check SPI_BUSY. Is it set? No, so...
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0009 Y:00F0 P:EnvMXdizC ; Load SPI_DATA
+
+009C60  20 70 9C     JSR $9C70      A:00FF X:0009 Y:00F0 P:ENvMXdizC ; then call a function
+009C70  48           PHA            A:00FF X:0009 Y:00F0 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0009 Y:00F0 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0009 Y:00F0 P:EnvMXdizC
+008178  60           RTS            A:002E X:0009 Y:00F0 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0009 Y:00F0 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0009 Y:00F0 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0009 Y:00F0 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0009 Y:00F0 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0009 Y:00F0 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0009 Y:00F0 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0009 Y:00F0 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0009 Y:00F0 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0009 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0009 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0009 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0009 Y:000F P:EnvMXdizC
+
+00815D  20 78 81     JSR $8178      A:0066 X:0009 Y:000F P:EnvMXdizC ; Call dummy fn
+008178  60           RTS            A:0066 X:0009 Y:000F P:EnvMXdizC
+
+008160  7A           PLY            A:0066 X:0009 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0009 Y:00F0 P:ENvMXdizC
+008151  68           PLA            A:0066 X:0009 Y:00F0 P:ENvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0009 Y:00F0 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0009 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0009 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0009 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0009 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0009 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0009 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0009 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0009 Y:00F0 P:ENvMXdizC
+008157  60           RTS            A:0066 X:0009 Y:00F0 P:ENvMXdizC
+009C7B  68           PLA            A:0066 X:0009 Y:00F0 P:ENvMXdizC
+009C7C  60           RTS            A:00FF X:0009 Y:00F0 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0009 Y:00F0 P:ENvMXdizC
+009CD0  CA           DEX            A:00FF X:0009 Y:00F0 P:ENvMXdizC
+009CD1  D0 FA        BNE $FA        A:00FF X:0008 Y:00F0 P:EnvMXdizC
+009CCD  20 53 9C     JSR $9C53      A:00FF X:0008 Y:00F0 P:EnvMXdizC
+009C53  A9 FF        LDA #$FF       A:00FF X:0008 Y:00F0 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0008 Y:00F0 P:ENvMXdizC
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0008 Y:00F0 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0008 Y:00F0 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0008 Y:00F0 P:EnvMXdizC
+009C60  20 70 9C     JSR $9C70      A:00FF X:0008 Y:00F0 P:ENvMXdizC
+009C70  48           PHA            A:00FF X:0008 Y:00F0 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0008 Y:00F0 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0008 Y:00F0 P:EnvMXdizC
+008178  60           RTS            A:002E X:0008 Y:00F0 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0008 Y:00F0 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0008 Y:00F0 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0008 Y:00F0 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0008 Y:00F0 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0008 Y:00F0 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0008 Y:00F0 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0008 Y:00F0 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0008 Y:00F0 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0008 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0008 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0008 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0008 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0008 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0008 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0008 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0008 Y:00F0 P:ENvMXdizC
+008151  68           PLA            A:0066 X:0008 Y:00F0 P:ENvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0008 Y:00F0 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0008 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0008 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0008 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0008 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0008 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0008 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0008 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0008 Y:00F0 P:ENvMXdizC
+008157  60           RTS            A:0066 X:0008 Y:00F0 P:ENvMXdizC
+009C7B  68           PLA            A:0066 X:0008 Y:00F0 P:ENvMXdizC
+009C7C  60           RTS            A:00FF X:0008 Y:00F0 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0008 Y:00F0 P:ENvMXdizC
+009CD0  CA           DEX            A:00FF X:0008 Y:00F0 P:ENvMXdizC
+009CD1  D0 FA        BNE $FA        A:00FF X:0007 Y:00F0 P:EnvMXdizC
+009CCD  20 53 9C     JSR $9C53      A:00FF X:0007 Y:00F0 P:EnvMXdizC
+009C53  A9 FF        LDA #$FF       A:00FF X:0007 Y:00F0 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0007 Y:00F0 P:ENvMXdizC
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0007 Y:00F0 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0007 Y:00F0 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0007 Y:00F0 P:EnvMXdizC
+009C60  20 70 9C     JSR $9C70      A:00FF X:0007 Y:00F0 P:ENvMXdizC
+009C70  48           PHA            A:00FF X:0007 Y:00F0 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0007 Y:00F0 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0007 Y:00F0 P:EnvMXdizC
+008178  60           RTS            A:002E X:0007 Y:00F0 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0007 Y:00F0 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0007 Y:00F0 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0007 Y:00F0 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0007 Y:00F0 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0007 Y:00F0 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0007 Y:00F0 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0007 Y:00F0 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0007 Y:00F0 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0007 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0007 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0007 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0007 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0007 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0007 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0007 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0007 Y:00F0 P:ENvMXdizC
+008151  68           PLA            A:0066 X:0007 Y:00F0 P:ENvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0007 Y:00F0 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0007 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0007 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0007 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0007 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0007 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0007 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0007 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0007 Y:00F0 P:ENvMXdizC
+008157  60           RTS            A:0066 X:0007 Y:00F0 P:ENvMXdizC
+009C7B  68           PLA            A:0066 X:0007 Y:00F0 P:ENvMXdizC
+009C7C  60           RTS            A:00FF X:0007 Y:00F0 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0007 Y:00F0 P:ENvMXdizC
+009CD0  CA           DEX            A:00FF X:0007 Y:00F0 P:ENvMXdizC
+009CD1  D0 FA        BNE $FA        A:00FF X:0006 Y:00F0 P:EnvMXdizC
+009CCD  20 53 9C     JSR $9C53      A:00FF X:0006 Y:00F0 P:EnvMXdizC
+009C53  A9 FF        LDA #$FF       A:00FF X:0006 Y:00F0 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0006 Y:00F0 P:ENvMXdizC
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0006 Y:00F0 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0006 Y:00F0 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0006 Y:00F0 P:EnvMXdizC
+009C60  20 70 9C     JSR $9C70      A:00FF X:0006 Y:00F0 P:ENvMXdizC
+009C70  48           PHA            A:00FF X:0006 Y:00F0 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0006 Y:00F0 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0006 Y:00F0 P:EnvMXdizC
+008178  60           RTS            A:002E X:0006 Y:00F0 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0006 Y:00F0 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0006 Y:00F0 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0006 Y:00F0 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0006 Y:00F0 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0006 Y:00F0 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0006 Y:00F0 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0006 Y:00F0 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0006 Y:00F0 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0006 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0006 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0006 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0006 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0006 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0006 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0006 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0006 Y:00F0 P:ENvMXdizC
+008151  68           PLA            A:0066 X:0006 Y:00F0 P:ENvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0006 Y:00F0 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0006 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0006 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0006 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0006 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0006 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0006 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0006 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0006 Y:00F0 P:ENvMXdizC
+008157  60           RTS            A:0066 X:0006 Y:00F0 P:ENvMXdizC
+009C7B  68           PLA            A:0066 X:0006 Y:00F0 P:ENvMXdizC
+009C7C  60           RTS            A:00FF X:0006 Y:00F0 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0006 Y:00F0 P:ENvMXdizC
+009CD0  CA           DEX            A:00FF X:0006 Y:00F0 P:ENvMXdizC
+009CD1  D0 FA        BNE $FA        A:00FF X:0005 Y:00F0 P:EnvMXdizC
+009CCD  20 53 9C     JSR $9C53      A:00FF X:0005 Y:00F0 P:EnvMXdizC
+009C53  A9 FF        LDA #$FF       A:00FF X:0005 Y:00F0 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0005 Y:00F0 P:ENvMXdizC
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0005 Y:00F0 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0005 Y:00F0 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0005 Y:00F0 P:EnvMXdizC
+009C60  20 70 9C     JSR $9C70      A:00FF X:0005 Y:00F0 P:ENvMXdizC
+009C70  48           PHA            A:00FF X:0005 Y:00F0 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0005 Y:00F0 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0005 Y:00F0 P:EnvMXdizC
+008178  60           RTS            A:002E X:0005 Y:00F0 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0005 Y:00F0 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0005 Y:00F0 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0005 Y:00F0 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0005 Y:00F0 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0005 Y:00F0 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0005 Y:00F0 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0005 Y:00F0 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0005 Y:00F0 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0005 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0005 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0005 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0005 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0005 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0005 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0005 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0005 Y:00F0 P:ENvMXdizC
+008151  68           PLA            A:0066 X:0005 Y:00F0 P:ENvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0005 Y:00F0 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0005 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0005 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0005 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0005 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0005 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0005 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0005 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0005 Y:00F0 P:ENvMXdizC
+008157  60           RTS            A:0066 X:0005 Y:00F0 P:ENvMXdizC
+009C7B  68           PLA            A:0066 X:0005 Y:00F0 P:ENvMXdizC
+009C7C  60           RTS            A:00FF X:0005 Y:00F0 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0005 Y:00F0 P:ENvMXdizC
+009CD0  CA           DEX            A:00FF X:0005 Y:00F0 P:ENvMXdizC
+009CD1  D0 FA        BNE $FA        A:00FF X:0004 Y:00F0 P:EnvMXdizC
+009CCD  20 53 9C     JSR $9C53      A:00FF X:0004 Y:00F0 P:EnvMXdizC
+009C53  A9 FF        LDA #$FF       A:00FF X:0004 Y:00F0 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0004 Y:00F0 P:ENvMXdizC
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0004 Y:00F0 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0004 Y:00F0 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0004 Y:00F0 P:EnvMXdizC
+009C60  20 70 9C     JSR $9C70      A:00FF X:0004 Y:00F0 P:ENvMXdizC
+009C70  48           PHA            A:00FF X:0004 Y:00F0 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0004 Y:00F0 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0004 Y:00F0 P:EnvMXdizC
+008178  60           RTS            A:002E X:0004 Y:00F0 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0004 Y:00F0 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0004 Y:00F0 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0004 Y:00F0 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0004 Y:00F0 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0004 Y:00F0 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0004 Y:00F0 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0004 Y:00F0 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0004 Y:00F0 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0004 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0004 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0004 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0004 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0004 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0004 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0004 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0004 Y:00F0 P:ENvMXdizC
+008151  68           PLA            A:0066 X:0004 Y:00F0 P:ENvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0004 Y:00F0 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0004 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0004 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0004 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0004 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0004 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0004 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0004 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0004 Y:00F0 P:ENvMXdizC
+008157  60           RTS            A:0066 X:0004 Y:00F0 P:ENvMXdizC
+009C7B  68           PLA            A:0066 X:0004 Y:00F0 P:ENvMXdizC
+009C7C  60           RTS            A:00FF X:0004 Y:00F0 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0004 Y:00F0 P:ENvMXdizC
+009CD0  CA           DEX            A:00FF X:0004 Y:00F0 P:ENvMXdizC
+009CD1  D0 FA        BNE $FA        A:00FF X:0003 Y:00F0 P:EnvMXdizC
+009CCD  20 53 9C     JSR $9C53      A:00FF X:0003 Y:00F0 P:EnvMXdizC
+009C53  A9 FF        LDA #$FF       A:00FF X:0003 Y:00F0 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0003 Y:00F0 P:ENvMXdizC
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0003 Y:00F0 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0003 Y:00F0 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0003 Y:00F0 P:EnvMXdizC
+009C60  20 70 9C     JSR $9C70      A:00FF X:0003 Y:00F0 P:ENvMXdizC
+009C70  48           PHA            A:00FF X:0003 Y:00F0 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0003 Y:00F0 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0003 Y:00F0 P:EnvMXdizC
+008178  60           RTS            A:002E X:0003 Y:00F0 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0003 Y:00F0 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0003 Y:00F0 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0003 Y:00F0 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0003 Y:00F0 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0003 Y:00F0 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0003 Y:00F0 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0003 Y:00F0 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0003 Y:00F0 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0003 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0003 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0003 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0003 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0003 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0003 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0003 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0003 Y:00F0 P:ENvMXdizC
+008151  68           PLA            A:0066 X:0003 Y:00F0 P:ENvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0003 Y:00F0 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0003 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0003 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0003 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0003 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0003 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0003 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0003 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0003 Y:00F0 P:ENvMXdizC
+008157  60           RTS            A:0066 X:0003 Y:00F0 P:ENvMXdizC
+009C7B  68           PLA            A:0066 X:0003 Y:00F0 P:ENvMXdizC
+009C7C  60           RTS            A:00FF X:0003 Y:00F0 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0003 Y:00F0 P:ENvMXdizC
+009CD0  CA           DEX            A:00FF X:0003 Y:00F0 P:ENvMXdizC
+009CD1  D0 FA        BNE $FA        A:00FF X:0002 Y:00F0 P:EnvMXdizC
+009CCD  20 53 9C     JSR $9C53      A:00FF X:0002 Y:00F0 P:EnvMXdizC
+009C53  A9 FF        LDA #$FF       A:00FF X:0002 Y:00F0 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0002 Y:00F0 P:ENvMXdizC
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0002 Y:00F0 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0002 Y:00F0 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0002 Y:00F0 P:EnvMXdizC
+009C60  20 70 9C     JSR $9C70      A:00FF X:0002 Y:00F0 P:ENvMXdizC
+009C70  48           PHA            A:00FF X:0002 Y:00F0 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0002 Y:00F0 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0002 Y:00F0 P:EnvMXdizC
+008178  60           RTS            A:002E X:0002 Y:00F0 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0002 Y:00F0 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0002 Y:00F0 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0002 Y:00F0 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0002 Y:00F0 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0002 Y:00F0 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0002 Y:00F0 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0002 Y:00F0 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0002 Y:00F0 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0002 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0002 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0002 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0002 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0002 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0002 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0002 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0002 Y:00F0 P:ENvMXdizC
+008151  68           PLA            A:0066 X:0002 Y:00F0 P:ENvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0002 Y:00F0 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0002 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0002 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0002 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0002 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0002 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0002 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0002 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0002 Y:00F0 P:ENvMXdizC
+008157  60           RTS            A:0066 X:0002 Y:00F0 P:ENvMXdizC
+009C7B  68           PLA            A:0066 X:0002 Y:00F0 P:ENvMXdizC
+009C7C  60           RTS            A:00FF X:0002 Y:00F0 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0002 Y:00F0 P:ENvMXdizC
+009CD0  CA           DEX            A:00FF X:0002 Y:00F0 P:ENvMXdizC
+009CD1  D0 FA        BNE $FA        A:00FF X:0001 Y:00F0 P:EnvMXdizC
+009CCD  20 53 9C     JSR $9C53      A:00FF X:0001 Y:00F0 P:EnvMXdizC
+009C53  A9 FF        LDA #$FF       A:00FF X:0001 Y:00F0 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0001 Y:00F0 P:ENvMXdizC
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0001 Y:00F0 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0001 Y:00F0 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0001 Y:00F0 P:EnvMXdizC
+009C60  20 70 9C     JSR $9C70      A:00FF X:0001 Y:00F0 P:ENvMXdizC
+009C70  48           PHA            A:00FF X:0001 Y:00F0 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0001 Y:00F0 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0001 Y:00F0 P:EnvMXdizC
+008178  60           RTS            A:002E X:0001 Y:00F0 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0001 Y:00F0 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0001 Y:00F0 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0001 Y:00F0 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0001 Y:00F0 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0001 Y:00F0 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0001 Y:00F0 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0001 Y:00F0 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0001 Y:00F0 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0001 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0001 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0001 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0001 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0001 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0001 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0001 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0001 Y:00F0 P:ENvMXdizC
+008151  68           PLA            A:0066 X:0001 Y:00F0 P:ENvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0001 Y:00F0 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0001 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0001 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0001 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0001 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0001 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0001 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0001 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0001 Y:00F0 P:ENvMXdizC
+008157  60           RTS            A:0066 X:0001 Y:00F0 P:ENvMXdizC
+009C7B  68           PLA            A:0066 X:0001 Y:00F0 P:ENvMXdizC
+009C7C  60           RTS            A:00FF X:0001 Y:00F0 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0001 Y:00F0 P:ENvMXdizC
+009CD0  CA           DEX            A:00FF X:0001 Y:00F0 P:ENvMXdizC
+009CD1  D0 FA        BNE $FA        A:00FF X:0000 Y:00F0 P:EnvMXdiZC
+009CD3  A9 40        LDA #$40       A:00FF X:0000 Y:00F0 P:EnvMXdiZC
+009CD5  8D 3F 28     STA $283F      A:0040 X:0000 Y:00F0 P:EnvMXdizC
+009CD8  9C 43 28     STZ $2843      A:0040 X:0000 Y:00F0 P:EnvMXdizC
+009CDB  9C 42 28     STZ $2842      A:0040 X:0000 Y:00F0 P:EnvMXdizC
+009CDE  9C 41 28     STZ $2841      A:0040 X:0000 Y:00F0 P:EnvMXdizC
+009CE1  9C 40 28     STZ $2840      A:0040 X:0000 Y:00F0 P:EnvMXdizC
+009CE4  A9 95        LDA #$95       A:0040 X:0000 Y:00F0 P:EnvMXdizC
+009CE6  8D 44 28     STA $2844      A:0095 X:0000 Y:00F0 P:ENvMXdizC
+009CE9  20 8A 9C     JSR $9C8A      A:0095 X:0000 Y:00F0 P:ENvMXdizC
+009C8A  20 32 9C     JSR $9C32      A:0095 X:0000 Y:00F0 P:ENvMXdizC
+009C32  AD 00 DD     LDA $DD00      A:0095 X:0000 Y:00F0 P:ENvMXdizC
+009C35  29 FE        AND #$FE       A:0002 X:0000 Y:00F0 P:EnvMXdizC
+009C37  8D 00 DD     STA $DD00      A:0002 X:0000 Y:00F0 P:EnvMXdizC
+009C3A  4C 53 9C     JMP $9C53      A:0002 X:0000 Y:00F0 P:EnvMXdizC
+009C53  A9 FF        LDA #$FF       A:0002 X:0000 Y:00F0 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0000 Y:00F0 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0000 Y:00F0 P:EnvMXdizC
+009C60  20 70 9C     JSR $9C70      A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C70  48           PHA            A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0000 Y:00F0 P:EnvMXdizC
+008178  60           RTS            A:002E X:0000 Y:00F0 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0000 Y:00F0 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0000 Y:00F0 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0000 Y:00F0 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0000 Y:00F0 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0000 Y:00F0 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0000 Y:00F0 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0000 Y:00F0 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0000 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:00F0 P:ENvMXdizC
+008151  68           PLA            A:0066 X:0000 Y:00F0 P:ENvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0000 Y:00F0 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0000 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:00F0 P:ENvMXdizC
+008157  60           RTS            A:0066 X:0000 Y:00F0 P:ENvMXdizC
+009C7B  68           PLA            A:0066 X:0000 Y:00F0 P:ENvMXdizC
+009C7C  60           RTS            A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C8D  20 3D 9C     JSR $9C3D      A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C3D  AD 00 DD     LDA $DD00      A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C40  09 01        ORA #$01       A:0002 X:0000 Y:00F0 P:EnvMXdizC
+009C42  8D 00 DD     STA $DD00      A:0003 X:0000 Y:00F0 P:EnvMXdizC
+009C45  20 53 9C     JSR $9C53      A:0003 X:0000 Y:00F0 P:EnvMXdizC
+009C53  A9 FF        LDA #$FF       A:0003 X:0000 Y:00F0 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0000 Y:00F0 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0000 Y:00F0 P:EnvMXdizC
+009C60  20 70 9C     JSR $9C70      A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C70  48           PHA            A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0000 Y:00F0 P:EnvMXdizC
+008178  60           RTS            A:002E X:0000 Y:00F0 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0000 Y:00F0 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0000 Y:00F0 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0000 Y:00F0 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0000 Y:00F0 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0000 Y:00F0 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0000 Y:00F0 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0000 Y:00F0 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0000 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:00F0 P:ENvMXdizC
+008151  68           PLA            A:0066 X:0000 Y:00F0 P:ENvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0000 Y:00F0 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0000 Y:00F0 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:00F0 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:00F0 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:00F0 P:ENvMXdizC
+008157  60           RTS            A:0066 X:0000 Y:00F0 P:ENvMXdizC
+009C7B  68           PLA            A:0066 X:0000 Y:00F0 P:ENvMXdizC
+009C7C  60           RTS            A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C48  20 13 9C     JSR $9C13      A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C13  A9 02        LDA #$02       A:00FF X:0000 Y:00F0 P:ENvMXdizC
+009C15  8D 45 28     STA $2845      A:0002 X:0000 Y:00F0 P:EnvMXdizC
+009C18  A2 00        LDX #$00       A:0002 X:0000 Y:00F0 P:EnvMXdizC
+009C1A  A0 00        LDY #$00       A:0002 X:0000 Y:00F0 P:EnvMXdiZC
+009C1C  20 53 9C     JSR $9C53      A:0002 X:0000 Y:0000 P:EnvMXdiZC
+009C53  A9 FF        LDA #$FF       A:0002 X:0000 Y:0000 P:EnvMXdiZC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0000 Y:0000 P:ENvMXdizC
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0000 Y:0000 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0000 Y:0000 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0000 Y:0000 P:EnvMXdizC
+009C60  20 70 9C     JSR $9C70      A:00FF X:0000 Y:0000 P:ENvMXdizC
+00E102  48           PHA            A:00FF X:0000 Y:0000 P:ENvMXdIzC
+00E103  DA           PHX            A:00FF X:0000 Y:0000 P:ENvMXdIzC
+00E104  5A           PHY            A:00FF X:0000 Y:0000 P:ENvMXdIzC
+00E105  A5 00        LDA $00        A:00FF X:0000 Y:0000 P:ENvMXdIzC
+00E107  64 00        STZ $00        A:0001 X:0000 Y:0000 P:EnvMXdIzC
+00E109  48           PHA            A:0001 X:0000 Y:0000 P:EnvMXdIzC
+00E10A  A5 01        LDA $01        A:0001 X:0000 Y:0000 P:EnvMXdIzC
+00E10C  48           PHA            A:0000 X:0000 Y:0000 P:EnvMXdIZC
+00E10D  20 3B 44     JSR $443B      A:0000 X:0000 Y:0000 P:EnvMXdIZC
+00443B  64 01        STZ $01        A:0000 X:0000 Y:0000 P:EnvMXdIZC
+00443D  AE 60 D6     LDX $D660      A:0000 X:0000 Y:0000 P:EnvMXdIZC
+004440  F0 11        BEQ $11        A:0000 X:0001 Y:0000 P:EnvMXdIzC
+004442  BC 00 43     LDY $4300,X    A:0000 X:0001 Y:0000 P:EnvMXdIzC
+004445  B9 75 44     LDA $4475,Y    A:0000 X:0001 Y:0000 P:EnvMXdIZC
+004448  8D 60 D6     STA $D660      A:0001 X:0001 Y:0000 P:EnvMXdIzC
+00444B  BE 00 0A     LDX $0A00,Y    A:0001 X:0001 Y:0000 P:EnvMXdIzC
+00444E  20 C9 50     JSR $50C9      A:0001 X:00F0 Y:0000 P:ENvMXdIzC
+0050C9  7C 00 04     JMP ($0400,X)   A:0001 X:00F0 Y:0000 P:ENvMXdIzC
+005C70  BD 01 06     LDA $0601,X    A:0001 X:00F0 Y:0000 P:ENvMXdIzC
+005C73  D0 03        BNE $03        A:0000 X:00F0 Y:0000 P:EnvMXdIZC
+005C75  20 7D 44     JSR $447D      A:0000 X:00F0 Y:0000 P:EnvMXdIZC
+00447D  DA           PHX            A:0000 X:00F0 Y:0000 P:EnvMXdIZC
+00447E  20 8C 44     JSR $448C      A:0000 X:00F0 Y:0000 P:EnvMXdIZC
+00448C  AD 6C D6     LDA $D66C      A:0000 X:00F0 Y:0000 P:EnvMXdIZC
+00448F  89 04        BIT #$04       A:00FE X:00F0 Y:0000 P:ENvMXdIzC
+004491  D0 2D        BNE $2D        A:00FE X:00F0 Y:0000 P:ENvMXdIzC
+0044C0  60           RTS            A:00FE X:00F0 Y:0000 P:ENvMXdIzC
+004481  20 99 44     JSR $4499      A:00FE X:00F0 Y:0000 P:ENvMXdIzC
+004499  AD 6C D6     LDA $D66C      A:00FE X:00F0 Y:0000 P:ENvMXdIzC
+00449C  89 08        BIT #$08       A:00FE X:00F0 Y:0000 P:ENvMXdIzC
+00449E  D0 20        BNE $20        A:00FE X:00F0 Y:0000 P:ENvMXdIzC
+0044C0  60           RTS            A:00FE X:00F0 Y:0000 P:ENvMXdIzC
+004484  20 A6 44     JSR $44A6      A:00FE X:00F0 Y:0000 P:ENvMXdIzC
+0044A6  AD 6D D6     LDA $D66D      A:00FE X:00F0 Y:0000 P:ENvMXdIzC
+0044A9  89 01        BIT #$01       A:006F X:00F0 Y:0000 P:EnvMXdIzC
+0044AB  D0 13        BNE $13        A:006F X:00F0 Y:0000 P:EnvMXdIzC
+0044C0  60           RTS            A:006F X:00F0 Y:0000 P:EnvMXdIzC
+004487  20 B3 44     JSR $44B3      A:006F X:00F0 Y:0000 P:EnvMXdIzC
+0044B3  AD 6D D6     LDA $D66D      A:006F X:00F0 Y:0000 P:EnvMXdIzC
+0044B6  89 10        BIT #$10       A:006F X:00F0 Y:0000 P:EnvMXdIzC
+0044B8  D0 06        BNE $06        A:006F X:00F0 Y:0000 P:EnvMXdIZC
+0044BA  AE 0C 0A     LDX $0A0C      A:006F X:00F0 Y:0000 P:EnvMXdIZC
+0044BD  4C C9 50     JMP $50C9      A:006F X:00F8 Y:0000 P:ENvMXdIzC
+0050C9  7C 00 04     JMP ($0400,X)   A:006F X:00F8 Y:0000 P:ENvMXdIzC
+0061A4  AD 9D D6     LDA $D69D      A:006F X:00F8 Y:0000 P:ENvMXdIzC
+0061A7  9D 01 06     STA $0601,X    A:0000 X:00F8 Y:0000 P:EnvMXdIZC
+0061AA  89 08        BIT #$08       A:0000 X:00F8 Y:0000 P:EnvMXdIZC
+0061AC  D0 11        BNE $11        A:0000 X:00F8 Y:0000 P:EnvMXdIZC
+0061AE  89 04        BIT #$04       A:0000 X:00F8 Y:0000 P:EnvMXdIZC
+0061B0  D0 01        BNE $01        A:0000 X:00F8 Y:0000 P:EnvMXdIZC
+0061B2  60           RTS            A:0000 X:00F8 Y:0000 P:EnvMXdIZC
+00448A  FA           PLX            A:0000 X:00F8 Y:0000 P:EnvMXdIZC
+00448B  60           RTS            A:0000 X:00F0 Y:0000 P:ENvMXdIzC
+005C78  20 BE E8     JSR $E8BE      A:0000 X:00F0 Y:0000 P:ENvMXdIzC
+00E8BE  E6 6A        INC $6A        A:0000 X:00F0 Y:0000 P:ENvMXdIzC
+00E8C0  D0 02        BNE $02        A:0000 X:00F0 Y:0000 P:EnvMXdIzC
+00E8C4  4C 9D 50     JMP $509D      A:0000 X:00F0 Y:0000 P:EnvMXdIzC
+00509D  A5 86        LDA $86        A:0000 X:00F0 Y:0000 P:EnvMXdIzC
+00509F  64 86        STZ $86        A:0000 X:00F0 Y:0000 P:EnvMXdIZC
+0050A1  A8           TAY            A:0000 X:00F0 Y:0000 P:EnvMXdIZC
+0050A2  F0 24        BEQ $24        A:0000 X:00F0 Y:0000 P:EnvMXdIZC
+0050C8  60           RTS            A:0000 X:00F0 Y:0000 P:EnvMXdIZC
+005C7B  4C 29 5F     JMP $5F29      A:0000 X:00F0 Y:0000 P:EnvMXdIZC
+005F29  64 01        STZ $01        A:0000 X:00F0 Y:0000 P:EnvMXdIZC
+005F2B  AD 01 DC     LDA $DC01      A:0000 X:00F0 Y:0000 P:EnvMXdIZC
+005F2E  4D 28 0A     EOR $0A28      A:0000 X:00F0 Y:0000 P:EnvMXdIZC
+005F31  D0 08        BNE $08        A:0000 X:00F0 Y:0000 P:EnvMXdIZC
+005F33  AD 00 DC     LDA $DC00      A:0000 X:00F0 Y:0000 P:EnvMXdIZC
+005F36  4D 29 0A     EOR $0A29      A:007F X:00F0 Y:0000 P:EnvMXdIzC
+005F39  F0 03        BEQ $03        A:0000 X:00F0 Y:0000 P:EnvMXdIZC
+005F3E  A9 7F        LDA #$7F       A:0000 X:00F0 Y:0000 P:EnvMXdIZC
+005F40  A2 00        LDX #$00       A:007F X:00F0 Y:0000 P:EnvMXdIzC
+005F42  8D 01 DB     STA $DB01      A:007F X:0000 Y:0000 P:EnvMXdIZC
+005F45  8D 24 0A     STA $0A24      A:007F X:0000 Y:0000 P:EnvMXdIZC
+005F48  AD 00 DC     LDA $DC00      A:007F X:0000 Y:0000 P:EnvMXdIZC
+005F4B  2A           ROL            A:007F X:0000 Y:0000 P:EnvMXdIzC
+005F4C  26 4E        ROL $4E        A:00FF X:0000 Y:0000 P:ENvMXdIzc
+005F4E  AD 00 DB     LDA $DB00      A:00FF X:0000 Y:0000 P:ENvMXdIzc
+005F51  8D 25 0A     STA $0A25      A:00FF X:0000 Y:0000 P:ENvMXdIzc
+005F54  55 45        EOR $45,X      A:00FF X:0000 Y:0000 P:ENvMXdIzc
+005F56  F0 03        BEQ $03        A:0000 X:0000 Y:0000 P:EnvMXdIZc
+005F5B  E8           INX            A:0000 X:0000 Y:0000 P:EnvMXdIZc
+005F5C  AD 24 0A     LDA $0A24      A:0000 X:0001 Y:0000 P:EnvMXdIzc
+005F5F  38           SEC            A:007F X:0001 Y:0000 P:EnvMXdIzc
+005F60  6A           ROR            A:007F X:0001 Y:0000 P:EnvMXdIzC
+005F61  B0 DF        BCS $DF        A:00BF X:0001 Y:0000 P:ENvMXdIzC
+005F42  8D 01 DB     STA $DB01      A:00BF X:0001 Y:0000 P:ENvMXdIzC
+005F45  8D 24 0A     STA $0A24      A:00BF X:0001 Y:0000 P:ENvMXdIzC
+005F48  AD 00 DC     LDA $DC00      A:00BF X:0001 Y:0000 P:ENvMXdIzC
+005F4B  2A           ROL            A:00FF X:0001 Y:0000 P:ENvMXdIzC
+005F4C  26 4E        ROL $4E        A:00FF X:0001 Y:0000 P:ENvMXdIzC
+005F4E  AD 00 DB     LDA $DB00      A:00FF X:0001 Y:0000 P:EnvMXdIzC
+005F51  8D 25 0A     STA $0A25      A:00FF X:0001 Y:0000 P:ENvMXdIzC
+005F54  55 45        EOR $45,X      A:00FF X:0001 Y:0000 P:ENvMXdIzC
+005F56  F0 03        BEQ $03        A:0000 X:0001 Y:0000 P:EnvMXdIZC
+005F5B  E8           INX            A:0000 X:0001 Y:0000 P:EnvMXdIZC
+005F5C  AD 24 0A     LDA $0A24      A:0000 X:0002 Y:0000 P:EnvMXdIzC
+005F5F  38           SEC            A:00BF X:0002 Y:0000 P:ENvMXdIzC
+005F60  6A           ROR            A:00BF X:0002 Y:0000 P:ENvMXdIzC
+005F61  B0 DF        BCS $DF        A:00DF X:0002 Y:0000 P:ENvMXdIzC
+005F42  8D 01 DB     STA $DB01      A:00DF X:0002 Y:0000 P:ENvMXdIzC
+005F45  8D 24 0A     STA $0A24      A:00DF X:0002 Y:0000 P:ENvMXdIzC
+005F48  AD 00 DC     LDA $DC00      A:00DF X:0002 Y:0000 P:ENvMXdIzC
+005F4B  2A           ROL            A:007F X:0002 Y:0000 P:EnvMXdIzC
+005F4C  26 4E        ROL $4E        A:00FF X:0002 Y:0000 P:ENvMXdIzc
+005F4E  AD 00 DB     LDA $DB00      A:00FF X:0002 Y:0000 P:EnvMXdIzc
+005F51  8D 25 0A     STA $0A25      A:00FF X:0002 Y:0000 P:ENvMXdIzc
+005F54  55 45        EOR $45,X      A:00FF X:0002 Y:0000 P:ENvMXdIzc
+005F56  F0 03        BEQ $03        A:0000 X:0002 Y:0000 P:EnvMXdIZc
+005F5B  E8           INX            A:0000 X:0002 Y:0000 P:EnvMXdIZc
+005F5C  AD 24 0A     LDA $0A24      A:0000 X:0003 Y:0000 P:EnvMXdIzc
+005F5F  38           SEC            A:00DF X:0003 Y:0000 P:ENvMXdIzc
+005F60  6A           ROR            A:00DF X:0003 Y:0000 P:ENvMXdIzC
+005F61  B0 DF        BCS $DF        A:00EF X:0003 Y:0000 P:ENvMXdIzC
+005F42  8D 01 DB     STA $DB01      A:00EF X:0003 Y:0000 P:ENvMXdIzC
+005F45  8D 24 0A     STA $0A24      A:00EF X:0003 Y:0000 P:ENvMXdIzC
+005F48  AD 00 DC     LDA $DC00      A:00EF X:0003 Y:0000 P:ENvMXdIzC
+005F4B  2A           ROL            A:007F X:0003 Y:0000 P:EnvMXdIzC
+005F4C  26 4E        ROL $4E        A:00FF X:0003 Y:0000 P:ENvMXdIzc
+005F4E  AD 00 DB     LDA $DB00      A:00FF X:0003 Y:0000 P:EnvMXdIzc
+005F51  8D 25 0A     STA $0A25      A:00FF X:0003 Y:0000 P:ENvMXdIzc
+005F54  55 45        EOR $45,X      A:00FF X:0003 Y:0000 P:ENvMXdIzc
+005F56  F0 03        BEQ $03        A:0000 X:0003 Y:0000 P:EnvMXdIZc
+005F5B  E8           INX            A:0000 X:0003 Y:0000 P:EnvMXdIZc
+005F5C  AD 24 0A     LDA $0A24      A:0000 X:0004 Y:0000 P:EnvMXdIzc
+005F5F  38           SEC            A:00EF X:0004 Y:0000 P:ENvMXdIzc
+005F60  6A           ROR            A:00EF X:0004 Y:0000 P:ENvMXdIzC
+005F61  B0 DF        BCS $DF        A:00F7 X:0004 Y:0000 P:ENvMXdIzC
+005F42  8D 01 DB     STA $DB01      A:00F7 X:0004 Y:0000 P:ENvMXdIzC
+005F45  8D 24 0A     STA $0A24      A:00F7 X:0004 Y:0000 P:ENvMXdIzC
+005F48  AD 00 DC     LDA $DC00      A:00F7 X:0004 Y:0000 P:ENvMXdIzC
+005F4B  2A           ROL            A:007F X:0004 Y:0000 P:EnvMXdIzC
+005F4C  26 4E        ROL $4E        A:00FF X:0004 Y:0000 P:ENvMXdIzc
+005F4E  AD 00 DB     LDA $DB00      A:00FF X:0004 Y:0000 P:EnvMXdIzc
+005F51  8D 25 0A     STA $0A25      A:00FF X:0004 Y:0000 P:ENvMXdIzc
+005F54  55 45        EOR $45,X      A:00FF X:0004 Y:0000 P:ENvMXdIzc
+005F56  F0 03        BEQ $03        A:0000 X:0004 Y:0000 P:EnvMXdIZc
+005F5B  E8           INX            A:0000 X:0004 Y:0000 P:EnvMXdIZc
+005F5C  AD 24 0A     LDA $0A24      A:0000 X:0005 Y:0000 P:EnvMXdIzc
+005F5F  38           SEC            A:00F7 X:0005 Y:0000 P:ENvMXdIzc
+005F60  6A           ROR            A:00F7 X:0005 Y:0000 P:ENvMXdIzC
+005F61  B0 DF        BCS $DF        A:00FB X:0005 Y:0000 P:ENvMXdIzC
+005F42  8D 01 DB     STA $DB01      A:00FB X:0005 Y:0000 P:ENvMXdIzC
+005F45  8D 24 0A     STA $0A24      A:00FB X:0005 Y:0000 P:ENvMXdIzC
+005F48  AD 00 DC     LDA $DC00      A:00FB X:0005 Y:0000 P:ENvMXdIzC
+005F4B  2A           ROL            A:007F X:0005 Y:0000 P:EnvMXdIzC
+005F4C  26 4E        ROL $4E        A:00FF X:0005 Y:0000 P:ENvMXdIzc
+005F4E  AD 00 DB     LDA $DB00      A:00FF X:0005 Y:0000 P:EnvMXdIzc
+005F51  8D 25 0A     STA $0A25      A:00FF X:0005 Y:0000 P:ENvMXdIzc
+005F54  55 45        EOR $45,X      A:00FF X:0005 Y:0000 P:ENvMXdIzc
+005F56  F0 03        BEQ $03        A:0000 X:0005 Y:0000 P:EnvMXdIZc
+005F5B  E8           INX            A:0000 X:0005 Y:0000 P:EnvMXdIZc
+005F5C  AD 24 0A     LDA $0A24      A:0000 X:0006 Y:0000 P:EnvMXdIzc
+005F5F  38           SEC            A:00FB X:0006 Y:0000 P:ENvMXdIzc
+005F60  6A           ROR            A:00FB X:0006 Y:0000 P:ENvMXdIzC
+005F61  B0 DF        BCS $DF        A:00FD X:0006 Y:0000 P:ENvMXdIzC
+005F42  8D 01 DB     STA $DB01      A:00FD X:0006 Y:0000 P:ENvMXdIzC
+005F45  8D 24 0A     STA $0A24      A:00FD X:0006 Y:0000 P:ENvMXdIzC
+005F48  AD 00 DC     LDA $DC00      A:00FD X:0006 Y:0000 P:ENvMXdIzC
+005F4B  2A           ROL            A:007F X:0006 Y:0000 P:EnvMXdIzC
+005F4C  26 4E        ROL $4E        A:00FF X:0006 Y:0000 P:ENvMXdIzc
+005F4E  AD 00 DB     LDA $DB00      A:00FF X:0006 Y:0000 P:ENvMXdIzc
+005F51  8D 25 0A     STA $0A25      A:00FF X:0006 Y:0000 P:ENvMXdIzc
+005F54  55 45        EOR $45,X      A:00FF X:0006 Y:0000 P:ENvMXdIzc
+005F56  F0 03        BEQ $03        A:0000 X:0006 Y:0000 P:EnvMXdIZc
+005F5B  E8           INX            A:0000 X:0006 Y:0000 P:EnvMXdIZc
+005F5C  AD 24 0A     LDA $0A24      A:0000 X:0007 Y:0000 P:EnvMXdIzc
+005F5F  38           SEC            A:00FD X:0007 Y:0000 P:ENvMXdIzc
+005F60  6A           ROR            A:00FD X:0007 Y:0000 P:ENvMXdIzC
+005F61  B0 DF        BCS $DF        A:00FE X:0007 Y:0000 P:ENvMXdIzC
+005F42  8D 01 DB     STA $DB01      A:00FE X:0007 Y:0000 P:ENvMXdIzC
+005F45  8D 24 0A     STA $0A24      A:00FE X:0007 Y:0000 P:ENvMXdIzC
+005F48  AD 00 DC     LDA $DC00      A:00FE X:0007 Y:0000 P:ENvMXdIzC
+005F4B  2A           ROL            A:00FF X:0007 Y:0000 P:ENvMXdIzC
+005F4C  26 4E        ROL $4E        A:00FF X:0007 Y:0000 P:ENvMXdIzC
+005F4E  AD 00 DB     LDA $DB00      A:00FF X:0007 Y:0000 P:EnvMXdIzC
+005F51  8D 25 0A     STA $0A25      A:00FD X:0007 Y:0000 P:ENvMXdIzC
+005F54  55 45        EOR $45,X      A:00FD X:0007 Y:0000 P:ENvMXdIzC
+005F56  F0 03        BEQ $03        A:0000 X:0007 Y:0000 P:EnvMXdIZC
+005F5B  E8           INX            A:0000 X:0007 Y:0000 P:EnvMXdIZC
+005F5C  AD 24 0A     LDA $0A24      A:0000 X:0008 Y:0000 P:EnvMXdIzC
+005F5F  38           SEC            A:00FE X:0008 Y:0000 P:ENvMXdIzC
+005F60  6A           ROR            A:00FE X:0008 Y:0000 P:ENvMXdIzC
+005F61  B0 DF        BCS $DF        A:00FF X:0008 Y:0000 P:ENvMXdIzc
+005F63  8D 01 DB     STA $DB01      A:00FF X:0008 Y:0000 P:ENvMXdIzc
+005F66  A5 4E        LDA $4E        A:00FF X:0008 Y:0000 P:ENvMXdIzc
+005F68  8D 25 0A     STA $0A25      A:0041 X:0008 Y:0000 P:EnvMXdIzc
+005F6B  55 45        EOR $45,X      A:0041 X:0008 Y:0000 P:EnvMXdIzc
+005F6D  F0 03        BEQ $03        A:0000 X:0008 Y:0000 P:EnvMXdIZc
+005F72  60           RTS            A:0000 X:0008 Y:0000 P:EnvMXdIZc
+004451  80 E8        BRA $E8        A:0000 X:0008 Y:0000 P:EnvMXdIZc
+00443B  64 01        STZ $01        A:0000 X:0008 Y:0000 P:EnvMXdIZc
+00443D  AE 60 D6     LDX $D660      A:0000 X:0008 Y:0000 P:EnvMXdIZc
+004440  F0 11        BEQ $11        A:0000 X:0000 Y:0000 P:EnvMXdIZc
+004453  64 01        STZ $01        A:0000 X:0000 Y:0000 P:EnvMXdIZc
+004455  AE 61 D6     LDX $D661      A:0000 X:0000 Y:0000 P:EnvMXdIZc
+004458  F0 11        BEQ $11        A:0000 X:0000 Y:0000 P:EnvMXdIZc
+00446B  60           RTS            A:0000 X:0000 Y:0000 P:EnvMXdIZc
+00E110  A5 84        LDA $84        A:0000 X:0000 Y:0000 P:EnvMXdIZc
+00E112  D0 0E        BNE $0E        A:0000 X:0000 Y:0000 P:EnvMXdIZc
+00E114  A5 83        LDA $83        A:0000 X:0000 Y:0000 P:EnvMXdIZc
+00E116  F0 0A        BEQ $0A        A:0000 X:0000 Y:0000 P:EnvMXdIZc
+00E122  68           PLA            A:0000 X:0000 Y:0000 P:EnvMXdIZc
+00E123  85 01        STA $01        A:0000 X:0000 Y:0000 P:EnvMXdIZc
+00E125  68           PLA            A:0000 X:0000 Y:0000 P:EnvMXdIZc
+00E126  85 00        STA $00        A:0001 X:0000 Y:0000 P:EnvMXdIzc
+00E128  7A           PLY            A:0001 X:0000 Y:0000 P:EnvMXdIzc
+00E129  FA           PLX            A:0001 X:0000 Y:0000 P:EnvMXdIZc
+00E12A  68           PLA            A:0001 X:0000 Y:0000 P:EnvMXdIZc
+00E12B  40           RTI            A:00FF X:0000 Y:0000 P:ENvMXdIzc
+009C60  20 70 9C     JSR $9C70      A:00FF X:0000 Y:0000 P:ENvMXdizC
+009C70  48           PHA            A:00FF X:0000 Y:0000 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0000 Y:0000 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0000 Y:0000 P:EnvMXdizC
+008178  60           RTS            A:002E X:0000 Y:0000 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0000 Y:0000 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0000 Y:0000 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0000 Y:0000 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0000 Y:0000 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0000 Y:0000 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0000 Y:0000 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0000 Y:0000 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0000 Y:0000 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0000 Y:0000 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:0000 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:0000 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:0000 P:EnvMXdiZC
+008151  68           PLA            A:0066 X:0000 Y:0000 P:EnvMXdiZC
+008152  29 0F        AND #$0F       A:00FF X:0000 Y:0000 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0000 Y:0000 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:0000 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:0000 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:0000 P:EnvMXdiZC
+008157  60           RTS            A:0066 X:0000 Y:0000 P:EnvMXdiZC
+009C7B  68           PLA            A:0066 X:0000 Y:0000 P:EnvMXdiZC
+009C7C  60           RTS            A:00FF X:0000 Y:0000 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0000 Y:0000 P:ENvMXdizC
+009C1F  C9 FF        CMP #$FF       A:00FF X:0000 Y:0000 P:ENvMXdizC
+009C21  F0 0D        BEQ $0D        A:00FF X:0000 Y:0000 P:EnvMXdiZC
+009C30  38           SEC            A:00FF X:0000 Y:0000 P:EnvMXdiZC
+009C31  60           RTS            A:00FF X:0000 Y:0000 P:EnvMXdiZC
+009C4B  90 01        BCC $01        A:00FF X:0000 Y:0000 P:EnvMXdiZC
+009C4D  60           RTS            A:00FF X:0000 Y:0000 P:EnvMXdiZC
+009C90  90 32        BCC $32        A:00FF X:0000 Y:0000 P:EnvMXdiZC
+009C92  AD 3F 28     LDA $283F      A:00FF X:0000 Y:0000 P:EnvMXdiZC
+009C95  20 64 9C     JSR $9C64      A:0040 X:0000 Y:0000 P:EnvMXdizC
+009C64  20 7D 9C     JSR $9C7D      A:0040 X:0000 Y:0000 P:EnvMXdizC
+009C7D  48           PHA            A:0040 X:0000 Y:0000 P:EnvMXdizC
+009C7E  A9 20        LDA #$20       A:0040 X:0000 Y:0000 P:EnvMXdizC
+009C80  20 78 81     JSR $8178      A:0020 X:0000 Y:0000 P:EnvMXdizC
+008178  60           RTS            A:0020 X:0000 Y:0000 P:EnvMXdizC
+009C83  68           PLA            A:0020 X:0000 Y:0000 P:EnvMXdizC
+009C84  48           PHA            A:0040 X:0000 Y:0000 P:EnvMXdizC
+009C85  20 49 81     JSR $8149      A:0040 X:0000 Y:0000 P:EnvMXdizC
+008149  48           PHA            A:0040 X:0000 Y:0000 P:EnvMXdizC
+00814A  4A           LSR            A:0040 X:0000 Y:0000 P:EnvMXdizC
+00814B  4A           LSR            A:0020 X:0000 Y:0000 P:EnvMXdizc
+00814C  4A           LSR            A:0010 X:0000 Y:0000 P:EnvMXdizc
+00814D  4A           LSR            A:0008 X:0000 Y:0000 P:EnvMXdizc
+00814E  20 58 81     JSR $8158      A:0004 X:0000 Y:0000 P:EnvMXdizc
+008158  5A           PHY            A:0004 X:0000 Y:0000 P:EnvMXdizc
+008159  A8           TAY            A:0004 X:0000 Y:0000 P:EnvMXdizc
+00815A  B9 62 81     LDA $8162,Y    A:0004 X:0000 Y:0004 P:EnvMXdizc
+00815D  20 78 81     JSR $8178      A:0034 X:0000 Y:0004 P:EnvMXdizc
+008178  60           RTS            A:0034 X:0000 Y:0004 P:EnvMXdizc
+008160  7A           PLY            A:0034 X:0000 Y:0004 P:EnvMXdizc
+008161  60           RTS            A:0034 X:0000 Y:0000 P:EnvMXdiZc
+008151  68           PLA            A:0034 X:0000 Y:0000 P:EnvMXdiZc
+008152  29 0F        AND #$0F       A:0040 X:0000 Y:0000 P:EnvMXdizc
+008154  20 58 81     JSR $8158      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008158  5A           PHY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008159  A8           TAY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815A  B9 62 81     LDA $8162,Y    A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815D  20 78 81     JSR $8178      A:0030 X:0000 Y:0000 P:EnvMXdizc
+008178  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008160  7A           PLY            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008161  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+008157  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+009C88  68           PLA            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+009C89  60           RTS            A:0040 X:0000 Y:0000 P:EnvMXdizc
+009C67  8D 01 DD     STA $DD01      A:0040 X:0000 Y:0000 P:EnvMXdizc
+009C6A  2C 00 DD     BIT $DD00      A:0040 X:0000 Y:0000 P:EnvMXdizc
+009C6D  30 FB        BMI $FB        A:0040 X:0000 Y:0000 P:EnvMXdiZc
+009C6F  60           RTS            A:0040 X:0000 Y:0000 P:EnvMXdiZc
+009C98  AD 43 28     LDA $2843      A:0040 X:0000 Y:0000 P:EnvMXdiZc
+009C9B  20 64 9C     JSR $9C64      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C64  20 7D 9C     JSR $9C7D      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C7D  48           PHA            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C7E  A9 20        LDA #$20       A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C80  20 78 81     JSR $8178      A:0020 X:0000 Y:0000 P:EnvMXdizc
+008178  60           RTS            A:0020 X:0000 Y:0000 P:EnvMXdizc
+009C83  68           PLA            A:0020 X:0000 Y:0000 P:EnvMXdizc
+009C84  48           PHA            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C85  20 49 81     JSR $8149      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008149  48           PHA            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814A  4A           LSR            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814B  4A           LSR            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814C  4A           LSR            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814D  4A           LSR            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814E  20 58 81     JSR $8158      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008158  5A           PHY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008159  A8           TAY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815A  B9 62 81     LDA $8162,Y    A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815D  20 78 81     JSR $8178      A:0030 X:0000 Y:0000 P:EnvMXdizc
+008178  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008160  7A           PLY            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008161  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+008151  68           PLA            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+008152  29 0F        AND #$0F       A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008154  20 58 81     JSR $8158      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008158  5A           PHY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008159  A8           TAY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815A  B9 62 81     LDA $8162,Y    A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815D  20 78 81     JSR $8178      A:0030 X:0000 Y:0000 P:EnvMXdizc
+008178  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008160  7A           PLY            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008161  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+008157  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+009C88  68           PLA            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+009C89  60           RTS            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C67  8D 01 DD     STA $DD01      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C6A  2C 00 DD     BIT $DD00      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C6D  30 FB        BMI $FB        A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C6F  60           RTS            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C9E  AD 42 28     LDA $2842      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009CA1  20 64 9C     JSR $9C64      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C64  20 7D 9C     JSR $9C7D      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C7D  48           PHA            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C7E  A9 20        LDA #$20       A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C80  20 78 81     JSR $8178      A:0020 X:0000 Y:0000 P:EnvMXdizc
+008178  60           RTS            A:0020 X:0000 Y:0000 P:EnvMXdizc
+009C83  68           PLA            A:0020 X:0000 Y:0000 P:EnvMXdizc
+009C84  48           PHA            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C85  20 49 81     JSR $8149      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008149  48           PHA            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814A  4A           LSR            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814B  4A           LSR            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814C  4A           LSR            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814D  4A           LSR            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814E  20 58 81     JSR $8158      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008158  5A           PHY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008159  A8           TAY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815A  B9 62 81     LDA $8162,Y    A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815D  20 78 81     JSR $8178      A:0030 X:0000 Y:0000 P:EnvMXdizc
+008178  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008160  7A           PLY            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008161  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+008151  68           PLA            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+008152  29 0F        AND #$0F       A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008154  20 58 81     JSR $8158      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008158  5A           PHY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008159  A8           TAY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815A  B9 62 81     LDA $8162,Y    A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815D  20 78 81     JSR $8178      A:0030 X:0000 Y:0000 P:EnvMXdizc
+008178  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008160  7A           PLY            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008161  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+008157  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+009C88  68           PLA            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+009C89  60           RTS            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C67  8D 01 DD     STA $DD01      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C6A  2C 00 DD     BIT $DD00      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C6D  30 FB        BMI $FB        A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C6F  60           RTS            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009CA4  AD 41 28     LDA $2841      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009CA7  20 64 9C     JSR $9C64      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C64  20 7D 9C     JSR $9C7D      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C7D  48           PHA            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C7E  A9 20        LDA #$20       A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C80  20 78 81     JSR $8178      A:0020 X:0000 Y:0000 P:EnvMXdizc
+008178  60           RTS            A:0020 X:0000 Y:0000 P:EnvMXdizc
+009C83  68           PLA            A:0020 X:0000 Y:0000 P:EnvMXdizc
+009C84  48           PHA            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C85  20 49 81     JSR $8149      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008149  48           PHA            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814A  4A           LSR            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814B  4A           LSR            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814C  4A           LSR            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814D  4A           LSR            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814E  20 58 81     JSR $8158      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008158  5A           PHY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008159  A8           TAY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815A  B9 62 81     LDA $8162,Y    A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815D  20 78 81     JSR $8178      A:0030 X:0000 Y:0000 P:EnvMXdizc
+008178  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008160  7A           PLY            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008161  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+008151  68           PLA            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+008152  29 0F        AND #$0F       A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008154  20 58 81     JSR $8158      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008158  5A           PHY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008159  A8           TAY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815A  B9 62 81     LDA $8162,Y    A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815D  20 78 81     JSR $8178      A:0030 X:0000 Y:0000 P:EnvMXdizc
+008178  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008160  7A           PLY            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008161  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+008157  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+009C88  68           PLA            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+009C89  60           RTS            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C67  8D 01 DD     STA $DD01      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C6A  2C 00 DD     BIT $DD00      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C6D  30 FB        BMI $FB        A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C6F  60           RTS            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009CAA  AD 40 28     LDA $2840      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009CAD  20 64 9C     JSR $9C64      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C64  20 7D 9C     JSR $9C7D      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C7D  48           PHA            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C7E  A9 20        LDA #$20       A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C80  20 78 81     JSR $8178      A:0020 X:0000 Y:0000 P:EnvMXdizc
+008178  60           RTS            A:0020 X:0000 Y:0000 P:EnvMXdizc
+009C83  68           PLA            A:0020 X:0000 Y:0000 P:EnvMXdizc
+009C84  48           PHA            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C85  20 49 81     JSR $8149      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008149  48           PHA            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814A  4A           LSR            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814B  4A           LSR            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814C  4A           LSR            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814D  4A           LSR            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00814E  20 58 81     JSR $8158      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008158  5A           PHY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008159  A8           TAY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815A  B9 62 81     LDA $8162,Y    A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815D  20 78 81     JSR $8178      A:0030 X:0000 Y:0000 P:EnvMXdizc
+008178  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008160  7A           PLY            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008161  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+008151  68           PLA            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+008152  29 0F        AND #$0F       A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008154  20 58 81     JSR $8158      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008158  5A           PHY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+008159  A8           TAY            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815A  B9 62 81     LDA $8162,Y    A:0000 X:0000 Y:0000 P:EnvMXdiZc
+00815D  20 78 81     JSR $8178      A:0030 X:0000 Y:0000 P:EnvMXdizc
+008178  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008160  7A           PLY            A:0030 X:0000 Y:0000 P:EnvMXdizc
+008161  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+008157  60           RTS            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+009C88  68           PLA            A:0030 X:0000 Y:0000 P:EnvMXdiZc
+009C89  60           RTS            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C67  8D 01 DD     STA $DD01      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C6A  2C 00 DD     BIT $DD00      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C6D  30 FB        BMI $FB        A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009C6F  60           RTS            A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009CB0  AD 44 28     LDA $2844      A:0000 X:0000 Y:0000 P:EnvMXdiZc
+009CB3  20 64 9C     JSR $9C64      A:0095 X:0000 Y:0000 P:ENvMXdizc
+009C64  20 7D 9C     JSR $9C7D      A:0095 X:0000 Y:0000 P:ENvMXdizc
+009C7D  48           PHA            A:0095 X:0000 Y:0000 P:ENvMXdizc
+009C7E  A9 20        LDA #$20       A:0095 X:0000 Y:0000 P:ENvMXdizc
+009C80  20 78 81     JSR $8178      A:0020 X:0000 Y:0000 P:EnvMXdizc
+008178  60           RTS            A:0020 X:0000 Y:0000 P:EnvMXdizc
+009C83  68           PLA            A:0020 X:0000 Y:0000 P:EnvMXdizc
+009C84  48           PHA            A:0095 X:0000 Y:0000 P:ENvMXdizc
+009C85  20 49 81     JSR $8149      A:0095 X:0000 Y:0000 P:ENvMXdizc
+008149  48           PHA            A:0095 X:0000 Y:0000 P:ENvMXdizc
+00814A  4A           LSR            A:0095 X:0000 Y:0000 P:ENvMXdizc
+00814B  4A           LSR            A:004A X:0000 Y:0000 P:EnvMXdizC
+00814C  4A           LSR            A:0025 X:0000 Y:0000 P:EnvMXdizc
+00814D  4A           LSR            A:0012 X:0000 Y:0000 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:0009 X:0000 Y:0000 P:EnvMXdizc
+008158  5A           PHY            A:0009 X:0000 Y:0000 P:EnvMXdizc
+008159  A8           TAY            A:0009 X:0000 Y:0000 P:EnvMXdizc
+00815A  B9 62 81     LDA $8162,Y    A:0009 X:0000 Y:0009 P:EnvMXdizc
+00815D  20 78 81     JSR $8178      A:0039 X:0000 Y:0009 P:EnvMXdizc
+008178  60           RTS            A:0039 X:0000 Y:0009 P:EnvMXdizc
+008160  7A           PLY            A:0039 X:0000 Y:0009 P:EnvMXdizc
+008161  60           RTS            A:0039 X:0000 Y:0000 P:EnvMXdiZc
+008151  68           PLA            A:0039 X:0000 Y:0000 P:EnvMXdiZc
+008152  29 0F        AND #$0F       A:0095 X:0000 Y:0000 P:ENvMXdizc
+008154  20 58 81     JSR $8158      A:0005 X:0000 Y:0000 P:EnvMXdizc
+008158  5A           PHY            A:0005 X:0000 Y:0000 P:EnvMXdizc
+008159  A8           TAY            A:0005 X:0000 Y:0000 P:EnvMXdizc
+00815A  B9 62 81     LDA $8162,Y    A:0005 X:0000 Y:0005 P:EnvMXdizc
+00815D  20 78 81     JSR $8178      A:0035 X:0000 Y:0005 P:EnvMXdizc
+008178  60           RTS            A:0035 X:0000 Y:0005 P:EnvMXdizc
+008160  7A           PLY            A:0035 X:0000 Y:0005 P:EnvMXdizc
+008161  60           RTS            A:0035 X:0000 Y:0000 P:EnvMXdiZc
+008157  60           RTS            A:0035 X:0000 Y:0000 P:EnvMXdiZc
+009C88  68           PLA            A:0035 X:0000 Y:0000 P:EnvMXdiZc
+009C89  60           RTS            A:0095 X:0000 Y:0000 P:ENvMXdizc
+009C67  8D 01 DD     STA $DD01      A:0095 X:0000 Y:0000 P:ENvMXdizc
+009C6A  2C 00 DD     BIT $DD00      A:0095 X:0000 Y:0000 P:ENvMXdizc
+009C6D  30 FB        BMI $FB        A:0095 X:0000 Y:0000 P:EnvMXdizc
+009C6F  60           RTS            A:0095 X:0000 Y:0000 P:EnvMXdizc
+009CB6  A0 0B        LDY #$0B       A:0095 X:0000 Y:0000 P:EnvMXdizc
+009CB8  88           DEY            A:0095 X:0000 Y:000B P:EnvMXdizc
+009CB9  F0 09        BEQ $09        A:0095 X:0000 Y:000A P:EnvMXdizc
+009CBB  20 53 9C     JSR $9C53      A:0095 X:0000 Y:000A P:EnvMXdizc
+009C53  A9 FF        LDA #$FF       A:0095 X:0000 Y:000A P:EnvMXdizc
+009C55  8D 01 DD     STA $DD01      A:00FF X:0000 Y:000A P:ENvMXdizc
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0000 Y:000A P:ENvMXdizc
+009C5B  30 FB        BMI $FB        A:00FF X:0000 Y:000A P:EnvMXdizc
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0000 Y:000A P:EnvMXdizc
+009C60  20 70 9C     JSR $9C70      A:00FF X:0000 Y:000A P:ENvMXdizc
+009C70  48           PHA            A:00FF X:0000 Y:000A P:ENvMXdizc
+009C71  A9 2E        LDA #$2E       A:00FF X:0000 Y:000A P:ENvMXdizc
+009C73  20 78 81     JSR $8178      A:002E X:0000 Y:000A P:EnvMXdizc
+008178  60           RTS            A:002E X:0000 Y:000A P:EnvMXdizc
+009C76  68           PLA            A:002E X:0000 Y:000A P:EnvMXdizc
+009C77  48           PHA            A:00FF X:0000 Y:000A P:ENvMXdizc
+009C78  20 49 81     JSR $8149      A:00FF X:0000 Y:000A P:ENvMXdizc
+008149  48           PHA            A:00FF X:0000 Y:000A P:ENvMXdizc
+00814A  4A           LSR            A:00FF X:0000 Y:000A P:ENvMXdizc
+00814B  4A           LSR            A:007F X:0000 Y:000A P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0000 Y:000A P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0000 Y:000A P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0000 Y:000A P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:000A P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:000A P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:000A P:EnvMXdizC
+008151  68           PLA            A:0066 X:0000 Y:000A P:EnvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0000 Y:000A P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0000 Y:000A P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:000A P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:000A P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:000A P:EnvMXdizC
+008157  60           RTS            A:0066 X:0000 Y:000A P:EnvMXdizC
+009C7B  68           PLA            A:0066 X:0000 Y:000A P:EnvMXdizC
+009C7C  60           RTS            A:00FF X:0000 Y:000A P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0000 Y:000A P:ENvMXdizC
+009CBE  89 80        BIT #$80       A:00FF X:0000 Y:000A P:ENvMXdizC
+009CC0  D0 F6        BNE $F6        A:00FF X:0000 Y:000A P:ENvMXdizC
+009CB8  88           DEY            A:00FF X:0000 Y:000A P:ENvMXdizC
+009CB9  F0 09        BEQ $09        A:00FF X:0000 Y:0009 P:EnvMXdizC
+009CBB  20 53 9C     JSR $9C53      A:00FF X:0000 Y:0009 P:EnvMXdizC
+009C53  A9 FF        LDA #$FF       A:00FF X:0000 Y:0009 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0000 Y:0009 P:ENvMXdizC
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0000 Y:0009 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0000 Y:0009 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0000 Y:0009 P:EnvMXdizC
+009C60  20 70 9C     JSR $9C70      A:00FF X:0000 Y:0009 P:ENvMXdizC
+009C70  48           PHA            A:00FF X:0000 Y:0009 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0000 Y:0009 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0000 Y:0009 P:EnvMXdizC
+008178  60           RTS            A:002E X:0000 Y:0009 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0000 Y:0009 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0000 Y:0009 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0000 Y:0009 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0000 Y:0009 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0000 Y:0009 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0000 Y:0009 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0000 Y:0009 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0000 Y:0009 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0000 Y:0009 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:0009 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:0009 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:0009 P:EnvMXdizC
+008151  68           PLA            A:0066 X:0000 Y:0009 P:EnvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0000 Y:0009 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0000 Y:0009 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:0009 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:0009 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:0009 P:EnvMXdizC
+008157  60           RTS            A:0066 X:0000 Y:0009 P:EnvMXdizC
+009C7B  68           PLA            A:0066 X:0000 Y:0009 P:EnvMXdizC
+009C7C  60           RTS            A:00FF X:0000 Y:0009 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0000 Y:0009 P:ENvMXdizC
+009CBE  89 80        BIT #$80       A:00FF X:0000 Y:0009 P:ENvMXdizC
+009CC0  D0 F6        BNE $F6        A:00FF X:0000 Y:0009 P:ENvMXdizC
+009CB8  88           DEY            A:00FF X:0000 Y:0009 P:ENvMXdizC
+009CB9  F0 09        BEQ $09        A:00FF X:0000 Y:0008 P:EnvMXdizC
+009CBB  20 53 9C     JSR $9C53      A:00FF X:0000 Y:0008 P:EnvMXdizC
+009C53  A9 FF        LDA #$FF       A:00FF X:0000 Y:0008 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0000 Y:0008 P:ENvMXdizC
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0000 Y:0008 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0000 Y:0008 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0000 Y:0008 P:EnvMXdizC
+009C60  20 70 9C     JSR $9C70      A:00FF X:0000 Y:0008 P:ENvMXdizC
+009C70  48           PHA            A:00FF X:0000 Y:0008 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0000 Y:0008 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0000 Y:0008 P:EnvMXdizC
+008178  60           RTS            A:002E X:0000 Y:0008 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0000 Y:0008 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0000 Y:0008 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0000 Y:0008 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0000 Y:0008 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0000 Y:0008 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0000 Y:0008 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0000 Y:0008 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0000 Y:0008 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0000 Y:0008 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:0008 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:0008 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:0008 P:EnvMXdizC
+008151  68           PLA            A:0066 X:0000 Y:0008 P:EnvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0000 Y:0008 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0000 Y:0008 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:0008 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:0008 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:0008 P:EnvMXdizC
+008157  60           RTS            A:0066 X:0000 Y:0008 P:EnvMXdizC
+009C7B  68           PLA            A:0066 X:0000 Y:0008 P:EnvMXdizC
+009C7C  60           RTS            A:00FF X:0000 Y:0008 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0000 Y:0008 P:ENvMXdizC
+009CBE  89 80        BIT #$80       A:00FF X:0000 Y:0008 P:ENvMXdizC
+009CC0  D0 F6        BNE $F6        A:00FF X:0000 Y:0008 P:ENvMXdizC
+009CB8  88           DEY            A:00FF X:0000 Y:0008 P:ENvMXdizC
+009CB9  F0 09        BEQ $09        A:00FF X:0000 Y:0007 P:EnvMXdizC
+009CBB  20 53 9C     JSR $9C53      A:00FF X:0000 Y:0007 P:EnvMXdizC
+009C53  A9 FF        LDA #$FF       A:00FF X:0000 Y:0007 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0000 Y:0007 P:ENvMXdizC
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0000 Y:0007 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0000 Y:0007 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0000 Y:0007 P:EnvMXdizC
+009C60  20 70 9C     JSR $9C70      A:00FF X:0000 Y:0007 P:ENvMXdizC
+009C70  48           PHA            A:00FF X:0000 Y:0007 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0000 Y:0007 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0000 Y:0007 P:EnvMXdizC
+008178  60           RTS            A:002E X:0000 Y:0007 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0000 Y:0007 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0000 Y:0007 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0000 Y:0007 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0000 Y:0007 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0000 Y:0007 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0000 Y:0007 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0000 Y:0007 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0000 Y:0007 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0000 Y:0007 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:0007 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:0007 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:0007 P:EnvMXdizC
+008151  68           PLA            A:0066 X:0000 Y:0007 P:EnvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0000 Y:0007 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0000 Y:0007 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:0007 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:0007 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:0007 P:EnvMXdizC
+008157  60           RTS            A:0066 X:0000 Y:0007 P:EnvMXdizC
+009C7B  68           PLA            A:0066 X:0000 Y:0007 P:EnvMXdizC
+009C7C  60           RTS            A:00FF X:0000 Y:0007 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0000 Y:0007 P:ENvMXdizC
+009CBE  89 80        BIT #$80       A:00FF X:0000 Y:0007 P:ENvMXdizC
+009CC0  D0 F6        BNE $F6        A:00FF X:0000 Y:0007 P:ENvMXdizC
+009CB8  88           DEY            A:00FF X:0000 Y:0007 P:ENvMXdizC
+009CB9  F0 09        BEQ $09        A:00FF X:0000 Y:0006 P:EnvMXdizC
+009CBB  20 53 9C     JSR $9C53      A:00FF X:0000 Y:0006 P:EnvMXdizC
+009C53  A9 FF        LDA #$FF       A:00FF X:0000 Y:0006 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0000 Y:0006 P:ENvMXdizC
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0000 Y:0006 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0000 Y:0006 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0000 Y:0006 P:EnvMXdizC
+009C60  20 70 9C     JSR $9C70      A:00FF X:0000 Y:0006 P:ENvMXdizC
+009C70  48           PHA            A:00FF X:0000 Y:0006 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0000 Y:0006 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0000 Y:0006 P:EnvMXdizC
+008178  60           RTS            A:002E X:0000 Y:0006 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0000 Y:0006 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0000 Y:0006 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0000 Y:0006 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0000 Y:0006 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0000 Y:0006 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0000 Y:0006 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0000 Y:0006 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0000 Y:0006 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0000 Y:0006 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:0006 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:0006 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:0006 P:EnvMXdizC
+008151  68           PLA            A:0066 X:0000 Y:0006 P:EnvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0000 Y:0006 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0000 Y:0006 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:0006 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:0006 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:0006 P:EnvMXdizC
+008157  60           RTS            A:0066 X:0000 Y:0006 P:EnvMXdizC
+009C7B  68           PLA            A:0066 X:0000 Y:0006 P:EnvMXdizC
+009C7C  60           RTS            A:00FF X:0000 Y:0006 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0000 Y:0006 P:ENvMXdizC
+009CBE  89 80        BIT #$80       A:00FF X:0000 Y:0006 P:ENvMXdizC
+009CC0  D0 F6        BNE $F6        A:00FF X:0000 Y:0006 P:ENvMXdizC
+009CB8  88           DEY            A:00FF X:0000 Y:0006 P:ENvMXdizC
+009CB9  F0 09        BEQ $09        A:00FF X:0000 Y:0005 P:EnvMXdizC
+009CBB  20 53 9C     JSR $9C53      A:00FF X:0000 Y:0005 P:EnvMXdizC
+009C53  A9 FF        LDA #$FF       A:00FF X:0000 Y:0005 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0000 Y:0005 P:ENvMXdizC
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0000 Y:0005 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0000 Y:0005 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0000 Y:0005 P:EnvMXdizC
+009C60  20 70 9C     JSR $9C70      A:00FF X:0000 Y:0005 P:ENvMXdizC
+009C70  48           PHA            A:00FF X:0000 Y:0005 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0000 Y:0005 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0000 Y:0005 P:EnvMXdizC
+008178  60           RTS            A:002E X:0000 Y:0005 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0000 Y:0005 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0000 Y:0005 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0000 Y:0005 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0000 Y:0005 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0000 Y:0005 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0000 Y:0005 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0000 Y:0005 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0000 Y:0005 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0000 Y:0005 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:0005 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:0005 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:0005 P:EnvMXdizC
+008151  68           PLA            A:0066 X:0000 Y:0005 P:EnvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0000 Y:0005 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0000 Y:0005 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:0005 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:0005 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:0005 P:EnvMXdizC
+008157  60           RTS            A:0066 X:0000 Y:0005 P:EnvMXdizC
+009C7B  68           PLA            A:0066 X:0000 Y:0005 P:EnvMXdizC
+009C7C  60           RTS            A:00FF X:0000 Y:0005 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0000 Y:0005 P:ENvMXdizC
+009CBE  89 80        BIT #$80       A:00FF X:0000 Y:0005 P:ENvMXdizC
+009CC0  D0 F6        BNE $F6        A:00FF X:0000 Y:0005 P:ENvMXdizC
+009CB8  88           DEY            A:00FF X:0000 Y:0005 P:ENvMXdizC
+009CB9  F0 09        BEQ $09        A:00FF X:0000 Y:0004 P:EnvMXdizC
+009CBB  20 53 9C     JSR $9C53      A:00FF X:0000 Y:0004 P:EnvMXdizC
+009C53  A9 FF        LDA #$FF       A:00FF X:0000 Y:0004 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0000 Y:0004 P:ENvMXdizC
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0000 Y:0004 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0000 Y:0004 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0000 Y:0004 P:EnvMXdizC
+009C60  20 70 9C     JSR $9C70      A:00FF X:0000 Y:0004 P:ENvMXdizC
+009C70  48           PHA            A:00FF X:0000 Y:0004 P:ENvMXdizC
+009C71  A9 2E        LDA #$2E       A:00FF X:0000 Y:0004 P:ENvMXdizC
+009C73  20 78 81     JSR $8178      A:002E X:0000 Y:0004 P:EnvMXdizC
+008178  60           RTS            A:002E X:0000 Y:0004 P:EnvMXdizC
+009C76  68           PLA            A:002E X:0000 Y:0004 P:EnvMXdizC
+009C77  48           PHA            A:00FF X:0000 Y:0004 P:ENvMXdizC
+009C78  20 49 81     JSR $8149      A:00FF X:0000 Y:0004 P:ENvMXdizC
+008149  48           PHA            A:00FF X:0000 Y:0004 P:ENvMXdizC
+00814A  4A           LSR            A:00FF X:0000 Y:0004 P:ENvMXdizC
+00814B  4A           LSR            A:007F X:0000 Y:0004 P:EnvMXdizC
+00814C  4A           LSR            A:003F X:0000 Y:0004 P:EnvMXdizC
+00814D  4A           LSR            A:001F X:0000 Y:0004 P:EnvMXdizC
+00814E  20 58 81     JSR $8158      A:000F X:0000 Y:0004 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:0004 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:0004 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:0004 P:EnvMXdizC
+008151  68           PLA            A:0066 X:0000 Y:0004 P:EnvMXdizC
+008152  29 0F        AND #$0F       A:00FF X:0000 Y:0004 P:ENvMXdizC
+008154  20 58 81     JSR $8158      A:000F X:0000 Y:0004 P:EnvMXdizC
+008158  5A           PHY            A:000F X:0000 Y:0004 P:EnvMXdizC
+008159  A8           TAY            A:000F X:0000 Y:0004 P:EnvMXdizC
+00815A  B9 62 81     LDA $8162,Y    A:000F X:0000 Y:000F P:EnvMXdizC
+00815D  20 78 81     JSR $8178      A:0066 X:0000 Y:000F P:EnvMXdizC
+008178  60           RTS            A:0066 X:0000 Y:000F P:EnvMXdizC
+008160  7A           PLY            A:0066 X:0000 Y:000F P:EnvMXdizC
+008161  60           RTS            A:0066 X:0000 Y:0004 P:EnvMXdizC
+008157  60           RTS            A:0066 X:0000 Y:0004 P:EnvMXdizC
+009C7B  68           PLA            A:0066 X:0000 Y:0004 P:EnvMXdizC
+009C7C  60           RTS            A:00FF X:0000 Y:0004 P:ENvMXdizC
+009C63  60           RTS            A:00FF X:0000 Y:0004 P:ENvMXdizC
+
+009CBE  89 80        BIT #$80       A:00FF X:0000 Y:0004 P:ENvMXdizC
+009CC0  D0 F6        BNE $F6        A:00FF X:0000 Y:0004 P:ENvMXdizC
+009CB8  88           DEY            A:00FF X:0000 Y:0004 P:ENvMXdizC
+009CB9  F0 09        BEQ $09        A:00FF X:0000 Y:0003 P:EnvMXdizC
+
+009CBB  20 53 9C     JSR $9C53      A:00FF X:0000 Y:0003 P:EnvMXdizC
+009C53  A9 FF        LDA #$FF       A:00FF X:0000 Y:0003 P:EnvMXdizC
+009C55  8D 01 DD     STA $DD01      A:00FF X:0000 Y:0003 P:ENvMXdizC ; Send an #$FF. This code is in dos.bin
+009C58  2C 00 DD     BIT $DD00      A:00FF X:0000 Y:0003 P:ENvMXdizC
+009C5B  30 FB        BMI $FB        A:00FF X:0000 Y:0003 P:EnvMXdizC
+009C5D  AD 01 DD     LDA $DD01      A:00FF X:0000 Y:0003 P:EnvMXdizC
+
+; DOS code
+
+            jsr     kernel.Directory.Open
+            bcc     _loop
+            
+          ; Invalid device or out-of-memory.
+            lda     #sorry_str	; "No media found."
+            jsr     puts_cr     
+            clc
+
+					          ; Open
+.a8f5	20 78 ff	jsr $ff78	            jsr     kernel.Directory.Open
+.a8f8	90 07		bcc $a901	            bcc     _loop
+            
+As for kernel.Directory.Open:
+Open        .fill   4   ; Open a directory for reading.
+
+; Kernel code
+>e8ea	50 e9				            .word   open_dir
+
+.e950					open_dir
+					          ; Terminate the filename (passed in via SETNAM).
+.e950	a6 28		ldx $28		            ldx     kernel.io.fname_len
+.e952	9e 00 02	stz $0200,x	            stz     kernel.io.fname,x
+
+					          ; Set path (null ptr for "current" directory).
+.e955	8a		txa		            txa
+.e956	f0 02		beq $e95a	            beq     +
+.e958	a9 02		lda #$02	            lda     #>kernel.io.fname
+.e95a	20 12 80	jsr $8012	+           jsr     set_ptr
+
+					          ; Open the directory.
+.e95d	4c 42 80	jmp $8042	            jmp     fat32_open_dir
+
+.e960					read_dirent
+
+					        ; Load the next entry into dirent.
+.e960	20 48 80	jsr $8048	            jsr     fat32_read_dirent
+.e963	90 02		bcc $e967	            bcc     _out
+.e965	80 09		bra $e970	            bra     copy_dirent
+.e967	60		rts		_out        rts
