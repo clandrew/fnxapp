@@ -1,0 +1,43 @@
+SHORT (SFN) FORMAT
+
+ ______8 char name____   _ext__ attr R creatTime 
+|                     | |      | |   | |      |
+48 45 4C 4C 4F 20 20 20 50 47 5A 00 00 00 00 00 
+            
+           cluster           cluster   file
+ __dates__   _hi   __modif__   _lo   __size___
+|         | |   | |         | |   | |         |
+00 00 00 00 00 00 00 00 00 00 23 00 00 02 00 00
+
+00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
+
+The eight-character name is padded with 0x20.
+The eight-character name is stored in narrow ASCII.
+The extension name is too.
+R means reserved.
+
+-------------------------------------------------------------
+
+LONG (LFN) FORMAT
+                                attr E
+L   ________5 char name________  |   |csum  _1 char name
+|| |                           | |   | |   |  |  
+41 61 00 73 00 64 00 66 00 2E 00 0F 00 D8 62 00 
+
+ __5 char name______________  zero   _2 more chars
+|                           | |   | |         |
+61 00 73 00 00 00 FF FF FF FF 00 00 FF FF FF FF
+
+00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
+
+There are 13 chars total.
+Names are null terminated.
+
+For 'L':
+First, the one (01) tells us that this is the first long file name entry for the regular 8.3 entry.
+Second the forty (40) part tells us that this is also the last long file name entry for this regular 8.3 entry.
+
+E = long entry type. Zero for name entries.
+
+Unused fields are filled with FF.
+For the last entry in the table, L is ORed with 0x40.
