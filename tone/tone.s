@@ -9,6 +9,7 @@
 dst_pointer = $30
 src_pointer = $32
 tone = $34
+sound_enabled = $36
 text_memory_pointer = $38
 
 ; Code
@@ -133,15 +134,17 @@ MAIN
     STA tone
     LDA #$1F
     STA tone+1
+    STZ sound_enabled
+        
+Poll
     
-    ; Place the four-digit number
+    ; Place the four-digit number and print it
     LDA #(<VKY_TEXT_MEMORY + $20)
     STA text_memory_pointer
     LDA #((>VKY_TEXT_MEMORY) + $00)
     STA text_memory_pointer+1
     JSR PrintFourDigitHexNumber
-        
-Poll
+
     ; Check for key    
     LDA #$00 ; Need to be on I/O page 0
     STA MMU_IO_CTRL
@@ -151,9 +154,15 @@ Poll
     STA VIA_PRB
     LDA VIA_PRA
     CMP #(1 << 7 ^ $FF)
-    BNE DoneCheckInput
+    BEQ OnSpacePress
+
+    JMP Poll
     
-    ; On key press
+OnSpacePress
+    LDA sound_enabled
+    BEQ EnableSound
+    BRA DisableSound
+EnableSound
     lda #$90 ; %10010000 = Channel 1 attenuation = 0
     sta $D600 ; Send it to left PSG
     sta $D610 ; Send it to right PSG
@@ -163,29 +172,15 @@ Poll
     lda #$1F ; %00001111 = Set the high 6 bits of the frequency
     sta $D600 ; Send it to left PSG
     sta $D610 ; Send it to right PSG
-
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL
-    
-    ; Put text lower down
-    LDA #(<VKY_TEXT_MEMORY + $80)
-    STA text_memory_pointer
-    LDA #((>VKY_TEXT_MEMORY) + $00)
-    STA text_memory_pointer+1
-
-    LDA #<TX_RESPONSE
-    STA src_pointer
-
-    LDA #>TX_RESPONSE
-    STA src_pointer+1
-    
-    JSR PrintAnsiString
-
-Lock
-    JMP Lock
-
-DoneCheckInput   
+    LDA #$01
+    STA sound_enabled
     JMP Poll
+DisableSound
+    lda #$9F ; %10011111 = Channel 1 attenuation = 15 (silence)
+    sta $D600 ; Send it to left PSG
+    sta $D610 ; Send it to right PSG    
+    STZ sound_enabled
+    JMP Poll    
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
