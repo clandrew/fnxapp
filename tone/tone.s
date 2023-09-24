@@ -8,6 +8,7 @@
 
 dst_pointer = $30
 src_pointer = $32
+tone = $34
 text_memory_pointer = $38
 
 ; Code
@@ -127,6 +128,18 @@ MAIN
     STA src_pointer+1
     
     JSR PrintAnsiString
+
+    LDA #$8E
+    STA tone
+    LDA #$1F
+    STA tone+1
+    
+    ; Place the four-digit number
+    LDA #(<VKY_TEXT_MEMORY + $20)
+    STA text_memory_pointer
+    LDA #((>VKY_TEXT_MEMORY) + $00)
+    STA text_memory_pointer+1
+    JSR PrintFourDigitHexNumber
         
 Poll
     ; Check for key    
@@ -243,8 +256,70 @@ PrintAnsiString_EachCharToColorMemory
     PLA
     STA MMU_IO_CTRL ; Restore I/O page
 
-    RTS    
+    RTS   
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+PrintHexDigitImpl
+; Precondition: Hex value is in X.
+;               text_memory_pointer,Y is the desired output location.
+; Postcondition:
+;               Y is updated.
+;               A is scrambled.
+;   
+    TXA
+    AND #$F0
+    LSR
+    LSR
+    LSR
+    LSR
+    CLC
+    PHY
+    TAY
+    LDA TX_HEX,Y
+    PLY
+    STA (text_memory_pointer),Y
+    INY
+    
+    TXA
+    AND #$0F
+    PHY
+    TAY
+    LDA TX_HEX,Y
+    PLY
+    STA (text_memory_pointer),Y
+    INY
+    RTS
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+PrintFourDigitHexNumber
+
+    LDA MMU_IO_CTRL ; Back up I/O page
+    PHA
+
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL
+
+    LDX tone+1
+    JSR PrintHexDigitImpl
+    LDX tone
+    JSR PrintHexDigitImpl    
+
+    LDA #$03 ; Set I/O page to 3
+    STA MMU_IO_CTRL
+    
+    LDA #$F0 ; Text color
+    DEY
+    STA (text_memory_pointer),Y
+    DEY
+    STA (text_memory_pointer),Y
+    DEY
+    STA (text_memory_pointer),Y
+    DEY
+    STA (text_memory_pointer),Y
+
+    PLA
+    STA MMU_IO_CTRL ; Restore I/O page
+    RTS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 TX_PROMPT
@@ -252,8 +327,11 @@ TX_PROMPT
 .byte 0 ; null term
 
 TX_RESPONSE
-.text "Tone playing"
+.text "Playing: 0x1F8E"
 .byte 0 ; null term
+
+TX_HEX
+.text "0123456789ABCDEF" ; Because I'm too lazy
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
