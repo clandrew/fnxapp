@@ -50,3 +50,7 @@
 /framerate/.vs/
 /framerate/Debug/
 /framerate/Release/
+/sd/*
+/tone/Debug/
+/tone/Release/
+/tone/.vs/
