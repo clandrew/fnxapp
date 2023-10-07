@@ -1,0 +1,173 @@
+PHYSICAL MEMORY - This is a chart of what the various MMU values (under "bank") mean.
+
+Bank	PAddr		Comment
+----	-----		-------
+00	00:0000		RAM - first bank of RAM
+01	00:2000		RAM
+02	00:4000		RAM
+03	00:6000		RAM
+04	00:8000		RAM
+05	00:A000		RAM
+06	00:C000		RAM
+07	00:E000		RAM
+08	01:0000		RAM
+09	01:2000		RAM
+0A	01:4000		RAM
+0B	01:6000		RAM
+0C	01:8000		RAM
+0D	01:A000		RAM
+0E	01:C000		RAM
+0F	01:E000		RAM
+
+10	02:0000		RAM
+11	02:2000		RAM
+12	02:4000		RAM
+13	02:6000		RAM
+14	02:8000		RAM
+15	02:A000		RAM
+16	02:C000		RAM
+17	02:E000		RAM
+18	03:0000		RAM
+19	03:2000		RAM
+1A	03:4000		RAM
+1B	03:6000		RAM
+1C	03:8000		RAM
+1D	03:A000		RAM
+1E	03:C000		RAM
+1F	03:E000		RAM
+
+20	04:0000		RAM
+21	04:2000		RAM
+22	04:4000		RAM
+23	04:6000		RAM
+24	04:8000		RAM
+25	04:A000		RAM
+26	04:C000		RAM
+27	04:E000		RAM
+28	05:0000		RAM
+29	05:2000		RAM
+2A	05:4000		RAM
+2B	05:6000		RAM
+2C	05:8000		RAM
+2D	05:A000		RAM
+2E	05:C000		RAM
+2F	05:E000		RAM
+
+30	06:0000		RAM
+31	06:2000		RAM
+32	06:4000		RAM
+33	06:6000		RAM
+34	06:8000		RAM
+35	06:A000		RAM
+36	06:C000		RAM
+37	06:E000		RAM
+38	07:0000		RAM
+39	07:2000		RAM
+3A	07:4000		RAM
+3B	07:6000		RAM
+3C	07:8000		RAM
+3D	07:A000		RAM
+3E	07:C000		RAM
+3F	07:E000		RAM
+
+40	08:0000		Flash - First bank of flash
+41	08:2000		Flash
+42	08:4000		Flash
+43	08:6000		Flash
+44	08:8000		Flash
+45	08:A000		Flash
+46	08:C000		Flash
+47	08:E000		Flash
+48	09:0000		Flash
+49	09:2000		Flash
+4A	09:4000		Flash
+4B	09:6000		Flash
+4C	09:8000		Flash
+4D	09:A000		Flash
+4E	09:C000		Flash
+4F	09:E000		Flash
+
+50	0A:0000		Flash
+51	0A:2000		Flash
+52	0A:4000		Flash
+53	0A:6000		Flash
+54	0A:8000		Flash
+55	0A:A000		Flash
+56	0A:C000		Flash
+57	0A:E000		Flash
+58	0B:0000		Flash
+59	0B:2000		Flash
+5A	0B:4000		Flash
+5B	0B:6000		Flash
+5C	0B:8000		Flash
+5D	0B:A000		Flash
+5E	0B:C000		Flash
+5F	0B:E000		Flash 
+
+60	0C:0000		Flash
+61	0C:2000		Flash
+62	0C:4000		Flash
+63	0C:6000		Flash
+64	0C:8000		Flash
+65	0C:A000		Flash
+66	0C:C000		Flash
+67	0C:E000		Flash
+68	0D:0000		Flash
+69	0D:2000		Flash
+6A	0D:4000		Flash
+6B	0D:6000		Flash
+6C	0D:8000		Flash
+6D	0D:A000		Flash
+6E	0D:C000		Flash
+6F	0D:E000		Flash 
+
+70	0E:0000		Flash
+71	0E:2000		Flash
+72	0E:4000		Flash
+73	0E:6000		Flash
+74	0E:8000		Flash
+75	0E:A000		Flash
+76	0E:C000		Flash
+77	0E:E000		Flash
+78	0F:0000		Flash
+79	0F:2000		Flash
+7A	0F:4000		Flash
+7B	0F:6000		Flash
+7C	0F:8000		Flash
+7D	0F:A000		Flash
+7E	0F:C000		Flash
+7F	0F:E000		Flash 
+
+80	10:0000		Expansion RAM - first bank
+81	10:2000		Expansion RAM
+82	10:4000		Expansion RAM
+83	10:6000		Expansion RAM
+84	10:8000		Expansion RAM
+85	10:A000		Expansion RAM
+86	10:C000		Expansion RAM
+87	10:E000		Expansion RAM
+88	11:0000		Expansion RAM
+89	11:2000		Expansion RAM
+8A	11:4000		Expansion RAM
+8B	11:6000		Expansion RAM
+8C	11:8000		Expansion RAM
+8D	11:A000		Expansion RAM
+8E	11:C000		Expansion RAM
+8F	11:E000		Expansion RAM 
+
+90	12:0000		Expansion RAM 
+91	12:2000		Expansion RAM
+92	12:4000		Expansion RAM
+93	12:6000		Expansion RAM
+94	12:8000		Expansion RAM
+95	12:A000		Expansion RAM
+96	12:C000		Expansion RAM
+97	12:E000		Expansion RAM
+98	13:0000		Expansion RAM
+99	13:2000		Expansion RAM
+9A	13:4000		Expansion RAM
+9B	13:6000		Expansion RAM
+9C	13:8000		Expansion RAM
+9D	13:A000		Expansion RAM
+9E	13:C000		Expansion RAM
+9F	13:E000		Expansion RAM 
