@@ -11,6 +11,8 @@ src_pointer = $32
 tone = $34
 sound_enabled = $36
 text_memory_pointer = $38
+keys_cur = $3A
+keys_next = $3B
 
 ; Code
 * = $000000 
@@ -135,6 +137,8 @@ MAIN
     LDA #$1F
     STA tone+1
     STZ sound_enabled
+    STZ keys_cur
+    STZ keys_next
         
 Poll
     
@@ -154,6 +158,10 @@ Poll
     STA VIA_PRB
     LDA VIA_PRA
     CMP #(1 << 7 ^ $FF)
+
+    LDA keys_cur
+    ORA #$1
+    STA keys_cur
     BEQ OnSpacePress
 
     JMP Poll
