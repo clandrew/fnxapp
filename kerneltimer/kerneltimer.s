@@ -32,8 +32,6 @@ MAIN_SEGMENT_START
 ENTRYPOINT
     JSR ClearScreen
     
-    LDA MMU_IO_CTRL ; Back up I/O page
-    PHA    
     LDA #$00 ; Set I/O page to 0
     STA MMU_IO_CTRL 
 
@@ -62,8 +60,6 @@ ENTRYPOINT
     STZ TyVKY_BM1_CTRL_REG ; Make sure bitmap 1 is turned off
     STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off
 
-    PLA
-    STA MMU_IO_CTRL ; Restore I/O page
     
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
@@ -108,9 +104,6 @@ Lock
 ClearScreen
     ; Text screen is 80 x 60.
     ; Loop from C000 to C0FC
-
-    LDA MMU_IO_CTRL ; Back up I/O page
-    PHA
     
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
@@ -138,9 +131,7 @@ ClearScreen_ForEach
     LDA dst_pointer
     CMP #$70
     BNE ClearScreen_ForEach
-    
-    PLA
-    STA MMU_IO_CTRL ; Restore I/O page
+
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -151,9 +142,6 @@ ClearScreen_ForEach
 PrintAnsiString
     LDX #$00
     LDY #$00
-    
-    LDA MMU_IO_CTRL ; Back up I/O page
-    PHA
     
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
@@ -176,9 +164,6 @@ PrintAnsiString_EachCharToColorMemory
     DEY
     STA (text_memory_pointer),Y
     BNE PrintAnsiString_EachCharToColorMemory
-
-    PLA
-    STA MMU_IO_CTRL ; Restore I/O page
 
     RTS    
 
