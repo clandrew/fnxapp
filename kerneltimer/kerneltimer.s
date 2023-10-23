@@ -9,6 +9,7 @@
 
 dst_pointer = $30
 src_pointer = $32
+animation_index = $34
 text_memory_pointer = $38
 
 ; PGZ header
@@ -27,6 +28,8 @@ text_memory_pointer = $38
 .logical $4000
 MAIN_SEGMENT_START
 
+event       .dstruct    kernel.event.event_t
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ENTRYPOINT
@@ -43,15 +46,7 @@ ENTRYPOINT
     ; Disable the cursor
     LDA VKY_TXT_CURSOR_CTRL_REG
     AND #$FE
-    STA VKY_TXT_CURSOR_CTRL_REG
-       
-    ; Clear to magenta
-    LDA #$FF
-    STA $D00D ; Background red channel
-    LDA #$00
-    STA $D00E ; Background green channel
-    LDA #$FF
-    STA $D00F ; Background blue channel             
+    STA VKY_TXT_CURSOR_CTRL_REG      
 
     ; Turn off the border
     STZ VKY_BRDR_CTRL
@@ -76,25 +71,53 @@ ENTRYPOINT
     LDA #>TX_PROMPT
     STA src_pointer+1
     
-    JSR PrintAnsiString
+    JSR PrintAnsiString    
+    
+    LDA #$00 ; Set I/O page to 0
+    STA MMU_IO_CTRL 
+
+    STZ animation_index     
+
+EachFrame
 
     ; Schedule timer here
 _retry
     lda     #kernel.args.timer.FRAMES   ; Measure in frames
     sta     kernel.args.timer.units
 
-    lda     #0                          ; Frame 0
+    lda     #60                         ; Frame 60
     sta     kernel.args.timer.absolute
     
     lda     #1                          ; Cookie 1
     sta     kernel.args.timer.cookie
 
     jsr     kernel.Clock.SetTimer       ; Set the timer
-
-    LDA     kernel.args.events.pending
-    BEQ _retry
-
+   
+Poll
+    lda     #<event
+    sta     kernel.args.events.dest+0
+    lda     #>event
+    sta     kernel.args.events.dest+1
+    jsr     kernel.NextEvent    ; Populates event
+    lda     event.type
+    cmp     #kernel.event.timer.EXPIRED
+    BEQ TimerTick
+    BRA Poll
+    
+TimerTick
     BRK
+
+    ; Clear to color
+    LDA animation_index
+    STA $D00D ; Background red channel
+    LDA #$00
+    STA $D00E ; Background green channel
+    LDA #$FF
+    STA $D00F ; Background blue channel  
+
+    INC animation_index
+
+    BRA EachFrame
         
 Lock
     JMP Lock

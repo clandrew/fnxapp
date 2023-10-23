@@ -1,0 +1,53 @@
+
+
+Implementation of SetTimer:
+	Preconditions: kernel.args.timer.units ($F3) is set
+                       kernel.args.timer.absolute ($F4) is set, in this case
+                       kernel.args.timer.cookie ($F5) is set, in this case
+
+SetTimer
+00FFF0  A9 70        LDA #$70       A:0001 X:0000 Y:0000 P:EnvMXdizC	; Picks a vector to jump to
+00FFF2  80 98        BRA $98        A:0070 X:0000 Y:0000 P:EnvMXdizC
+00FF8C  4C 2D EA     JMP $EA2D      A:0070 X:0000 Y:0000 P:EnvMXdizC
+00EA2D  DA           PHX            A:0070 X:0000 Y:0000 P:EnvMXdizC
+00EA2E  A6 00        LDX $00        A:0070 X:0000 Y:0000 P:EnvMXdizC
+00EA30  64 00        STZ $00        A:0070 X:00B3 Y:0000 P:ENvMXdizC
+00EA32  DA           PHX            A:0070 X:00B3 Y:0000 P:ENvMXdizC
+00EA33  86 9D        STX $9D        A:0070 X:00B3 Y:0000 P:ENvMXdizC
+00EA35  A6 01        LDX $01        A:0070 X:00B3 Y:0000 P:ENvMXdizC
+00EA37  64 01        STZ $01        A:0070 X:0000 Y:0000 P:EnvMXdiZC
+00EA39  DA           PHX            A:0070 X:0000 Y:0000 P:EnvMXdiZC
+00EA3A  AA           TAX            A:0070 X:0000 Y:0000 P:EnvMXdiZC
+
+00EA3B  20 48 EA     JSR $EA48      A:0070 X:0070 Y:0000 P:EnvMXdizC
+00EA48  7C 4B EA     JMP ($EA4B,X)   A:0070 X:0070 Y:0000 P:EnvMXdizC	; Goto vector. It's always 70 though, which just sets carry and returns.
+00EABF  38           SEC            A:0070 X:0070 Y:0000 P:EnvMXdizC
+00EAC0  60           RTS            A:0070 X:0070 Y:0000 P:EnvMXdizC
+
+00EA3E  FA           PLX            A:0070 X:0070 Y:0000 P:EnvMXdizC
+00EA3F  86 01        STX $01        A:0070 X:0000 Y:0000 P:EnvMXdiZC
+00EA41  FA           PLX            A:0070 X:0000 Y:0000 P:EnvMXdiZC
+00EA42  86 00        STX $00        A:0070 X:00B3 Y:0000 P:ENvMXdizC
+00EA44  FA           PLX            A:0070 X:00B3 Y:0000 P:ENvMXdizC
+00EA45  09 00        ORA #$00       A:0070 X:0000 Y:0000 P:EnvMXdiZC
+00EA47  60           RTS            A:0070 X:0000 Y:0000 P:EnvMXdizC
+
+//////////////////////////////////////////////////////////////////////////////////
+Handling key press event:
+
+00EAF7  84 74        STY $74        A:0040 X:00B3 Y:00C8 P:EnvMXdizc
+00EAF9  86 00        STX $00        A:0040 X:00B3 Y:00C8 P:EnvMXdizc
+00EAFB  B0 1A        BCS $1A        A:0040 X:00B3 Y:00C8 P:EnvMXdizc
+00EAFD  98           TYA            A:0040 X:00B3 Y:00C8 P:EnvMXdizc
+00EAFE  AA           TAX            A:00C8 X:00B3 Y:00C8 P:ENvMXdizc
+00EAFF  A4 01        LDY $01        A:00C8 X:00C8 Y:00C8 P:ENvMXdizc
+00EB01  5A           PHY            A:00C8 X:00C8 Y:0000 P:EnvMXdiZc
+00EB02  A0 04        LDY #$04       A:00C8 X:00C8 Y:0000 P:EnvMXdiZc
+00EB04  84 01        STY $01        A:00C8 X:00C8 Y:0004 P:EnvMXdizc
+00EB06  A0 00        LDY #$00       A:00C8 X:00C8 Y:0004 P:EnvMXdizc
+00EB08  BD 01 C3     LDA $C301,X    A:00C8 X:00C8 Y:0000 P:EnvMXdiZc	; Load event.type
+00EB0B  91 F0        STA ($F0),Y    A:0008 X:00C8 Y:0000 P:EnvMXdizc	; Write event.type. 52 and 54 are EXPIRED and TICK. 8 is PRESSED. A is RELEASED. PRSSED was loaded here
+00EB0D  E8           INX            A:0008 X:00C8 Y:0000 P:EnvMXdizc
+
+
+Q: Where *would* it set an event type of 52?
