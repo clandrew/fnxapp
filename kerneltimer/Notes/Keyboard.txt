@@ -1,0 +1,266 @@
+init
+
+005CB5  20 BC 5C     JSR $5CBC							; jsr cia_init
+005CB8  20 D1 5C     JSR $5CD1							; jsr     ps2_init
+005CBB  60           RTS
+
+cia_init
+005CBC ...
+005CC1  C9 02        CMP #$02       A:0012 X:00F8 Y:0000 P:EnvMXdizc		; check machine ID for Jr
+005CC3  F0 06        BEQ $06        A:0012 X:00F8 Y:0000 P:EnvMXdizC		beq     _cbm
+
+005CC5  C9 12        CMP #$12       A:0012 X:00F8 Y:0000 P:EnvMXdizC		; check machine ID for F256K
+005CC7  F0 05        BEQ $05        A:0012 X:00F8 Y:0000 P:EnvMXdiZC		beq     _jr
+
+005CCE  4C 60 5C     JMP $5C60      A:0012 X:00F8 Y:0000 P:EnvMXdiZC		jmp     jr_kbd.init 
+
+; Verify that we have a valid IRQ id.
+005C60  A9 00        LDA #$00       A:0012 X:00F8 Y:0000 P:EnvMXdiZC		lda     #\IRQ
+
+005C62  20 A6 44     JSR $44A6      A:0000 X:00F8 Y:0000 P:EnvMXdiZC		jsr     irq.disable
+
+005C65  B0 2B        BCS $2B        A:00FF X:00F8 Y:0000 P:ENvMXdizc		bcs     _out
+
+005C67  20 E9 5E     JSR $5EE9      A:00FF X:00F8 Y:0000 P:ENvMXdizc		jsr     platform.jr_kbd.init
+
+; Allocate the device table entry.
+005C6A  20 5D 51     JSR $515D      A:00FF X:00FF Y:0000 P:ENvMXdizc		jsr     kernel.device.alloc
+
+005C6D  B0 23        BCS $23        A:00FF X:00F0 Y:0000 P:ENvMXdizc		bcs     _out
+005C6F  8A           TXA            A:00FF X:00F0 Y:0000 P:ENvMXdizc
+005C70  9D 00 06     STA $0600,X    A:00F0 X:00F0 Y:0000 P:ENvMXdizc		sta     self.this,x
+
+; Install our vectors.
+005C73  A9 50        LDA #$50       A:00F0 X:00F0 Y:0000 P:ENvMXdizc
+005C75  85 6E        STA $6E        A:0050 X:00F0 Y:0000 P:EnvMXdizc
+005C77  A9 5C        LDA #$5C       A:0050 X:00F0 Y:0000 P:EnvMXdizc
+005C79  85 6F        STA $6F        A:005C X:00F0 Y:0000 P:EnvMXdizc
+
+005C7B  20 29 51     JSR $5129      A:005C X:00F0 Y:0000 P:EnvMXdizc	jsr     kernel.device.install
+
+; Associate ourselves with the line interrupt
+005C7E  8A           TXA            A:005C X:00F0 Y:0000 P:EnvMXdizc
+005C7F  A0 00        LDY #$00       A:00F0 X:00F0 Y:0000 P:ENvMXdizc	ldy     #\IRQ
+
+005C81  20 74 44     JSR $4474      A:00F0 X:00F0 Y:0000 P:EnvMXdiZc	jsr     irq.install
+
+; Enable the hardware interrupt.
+005C84  A9 00        LDA #$00       A:00F0 X:00F0 Y:0000 P:ENvMXdizc
+
+005C86  20 7C 44     JSR $447C      A:0000 X:00F0 Y:0000 P:EnvMXdiZc	jsr     irq.enable
+
+005C89  5A           PHY            A:00FE X:00F0 Y:0000 P:ENvMXdizc
+005C8A  8A           TXA            A:00FE X:00F0 Y:0000 P:ENvMXdizc
+005C8B  A8           TAY            A:00F0 X:00F0 Y:0000 P:ENvMXdizc
+005C8C  A9 04        LDA #$04       A:00F0 X:00F0 Y:00F0 P:ENvMXdizc	lda     #hardware.jrk_init_str
+
+005C8E  20 F1 E8     JSR $E8F1      A:0004 X:00F0 Y:00F0 P:EnvMXdizc	jsr     kernel.log.dev_message
+005C91  7A           PLY
+005C92  60           RTS
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ps2_init
+
+005CD1  9C 15 0A     STZ $0A15		stz     ps2_0
+005CD4  9C 16 0A     STZ $0A16		stz     ps2_1
+005CD7  20 55 4C     JSR $4C55		hardware.kbd2.init		; Not the culprit
+
+005CDA  20 E1 5C     JSR $5CE1		purple_init			; These two put together are.
+005CDA  20 EF 5C     JSR $5CEF		green_init
+005CE0  60           RTS
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+purple_init
+005CE1  20 C9 5A     JSR $5AC9		; JSR purple.init			; culprit
+005CE4  B0 08        BCS $08		bcs _out
+005CE6  8E 15 0A     STX $A15           ps2_0
+005CE9  20 1A 51     JSR $511A          jsr     kernel.device.dev.open		; Not the culprit
+005CEC  B0 00        BCS $00		bcs _out	; what is the point of this?
+
+_out
+005CEE  50           RTS
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+green_init
+005CEF  20 62 5B     JSR $5B62      A:0052 X:00E8 Y:0002 P:EnvMXdizc	jsr     green.init	; culprit
+005CF2  B0 08        BCS $08        A:00EC X:00E0 Y:0003 P:EnvMXdizc	bcs     _out
+005CF4  8E 16 0A     STX $0A16      A:00EC X:00E0 Y:0003 P:EnvMXdizc	stx     ps2_1
+005CF7  20 1A 51     JSR $511A      A:00EC X:00E0 Y:0003 P:EnvMXdizc	jsr     kernel.device.dev.open
+005CFA  B0 00        BCS $00        A:0052 X:00E0 Y:0003 P:EnvMXdizc	bcs     _out
+005CFC  60           RTS            A:0052 X:00E0 Y:0003 P:EnvMXdizc
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+purple.init
+
+; Search sequence: 20 5D 51 B0 23 8A 20 8D 6F E6 85 A9 B9 85 6E A9 5A 85 6F 20 29 51 C6 85 8A A0 02 20 74 44
+; Cleanup: 7A 18 60
+
+005AC9  20 5D 51     JSR $515D      A:00F8 X:00F0 Y:0000 P:ENvMXdizc <-NOPing this causes hang.		; kernel.device.alloc
+	00515D  38           SEC            A:00F8 X:00F0 Y:0000 P:ENvMXdizc
+	00515E  AE 6C 0A     LDX $0A6C      A:00F8 X:00F0 Y:0000 P:ENvMXdizC
+	005161  F0 09        BEQ $09        A:00F8 X:00E8 Y:0000 P:ENvMXdizC
+	005163  48           PHA            A:00F8 X:00E8 Y:0000 P:ENvMXdizC
+	005164  BD 00 04     LDA $0400,X    A:00F8 X:00E8 Y:0000 P:ENvMXdizC
+	005167  8D 6C 0A     STA $0A6C      A:00E0 X:00E8 Y:0000 P:ENvMXdizC
+	00516A  68           PLA            A:00E0 X:00E8 Y:0000 P:ENvMXdizC
+	00516B  18           CLC            A:00F8 X:00E8 Y:0000 P:ENvMXdizC
+	00516C  60           RTS            A:00F8 X:00E8 Y:0000 P:ENvMXdizc
+
+005ACC  B0 23        BCS $23        A:00F8 X:00E8 Y:0000 P:ENvMXdizc					bcs     _out
+005ACE  8A           TXA            A:00F8 X:00E8 Y:0000 P:ENvMXdizc
+
+005ACF  20 8D 6F     JSR $6F8D      A:00E8 X:00E8 Y:0000 P:ENvMXdizc <-NOPing this causes brk.		; jsr     hardware.ps2.auto.init
+	006F8D  8A           TXA            A:00E8 X:00E8 Y:0000 P:ENvMXdizc
+	006F8E  9D 00 06     STA $0600,X    A:00E8 X:00E8 Y:0000 P:ENvMXdizc
+	006F91  9E 07 06     STZ $0607,X    A:00E8 X:00E8 Y:0000 P:ENvMXdizc
+	006F94  9E 06 06     STZ $0606,X    A:00E8 X:00E8 Y:0000 P:ENvMXdizc
+	006F97  4C A9 6F     JMP $6FA9      A:00E8 X:00E8 Y:0000 P:ENvMXdizc
+	006FA9  A9 00        LDA #$00       A:00E8 X:00E8 Y:0000 P:ENvMXdizc
+	006FAB  9D 02 07     STA $0702,X    A:0000 X:00E8 Y:0000 P:EnvMXdiZc
+	006FAE  9D 07 07     STA $0707,X    A:0000 X:00E8 Y:0000 P:EnvMXdiZc
+	006FB1  60           RTS            A:0000 X:00E8 Y:0000 P:EnvMXdiZc
+
+005AD2  E6 85        INC $85        A:0000 X:00E8 Y:0000 P:EnvMXdiZc		; lda     #<vectors
+005AD4  A9 B9        LDA #$B9       A:0000 X:00E8 Y:0000 P:EnvMXdizc		; sta     kernel.src+0
+005AD6  85 6E        STA $6E        A:00B9 X:00E8 Y:0000 P:ENvMXdizc		; lda     #>vectors
+005AD8  A9 5A        LDA #$5A       A:00B9 X:00E8 Y:0000 P:ENvMXdizc		; sta     kernel.src+1
+005ADA  85 6F        STA $6F        A:005A X:00E8 Y:0000 P:EnvMXdizc
+
+005ADC  20 29 51     JSR $5129      A:005A X:00E8 Y:0000 P:EnvMXdizc <-NOPing this causes brk.	; jsr     kernel.device.install
+	005129  48           PHA            A:005A X:00E8 Y:0000 P:EnvMXdizc
+	00512A  5A           PHY            A:005A X:00E8 Y:0000 P:EnvMXdizc
+	00512B  DA           PHX            A:005A X:00E8 Y:0000 P:EnvMXdizc
+	00512C  A0 00        LDY #$00       A:005A X:00E8 Y:0000 P:EnvMXdizc
+	00512E  B1 6E        LDA ($6E),Y    A:005A X:00E8 Y:0000 P:EnvMXdiZc
+	005130  9D 00 04     STA $0400,X    A:0012 X:00E8 Y:0000 P:EnvMXdizc
+	005133  E8           INX            A:0012 X:00E8 Y:0000 P:EnvMXdizc
+	005134  C8           INY            A:0012 X:00E9 Y:0000 P:ENvMXdizc
+	005135  C0 08        CPY #$08       A:0012 X:00E9 Y:0001 P:EnvMXdizc
+	005137  D0 F5        BNE $F5        A:0012 X:00E9 Y:0001 P:ENvMXdizc
+	00512E  B1 6E        LDA ($6E),Y    A:0012 X:00E9 Y:0001 P:ENvMXdizc
+	005130  9D 00 04     STA $0400,X    A:005B X:00E9 Y:0001 P:EnvMXdizc
+	005133  E8           INX            A:005B X:00E9 Y:0001 P:EnvMXdizc
+	005134  C8           INY            A:005B X:00EA Y:0001 P:ENvMXdizc
+	005135  C0 08        CPY #$08       A:005B X:00EA Y:0002 P:EnvMXdizc
+	005137  D0 F5        BNE $F5        A:005B X:00EA Y:0002 P:ENvMXdizc
+	...
+	00512E  B1 6E        LDA ($6E),Y    A:00F2 X:00EF Y:0007 P:ENvMXdizc
+	005130  9D 00 04     STA $0400,X    A:005A X:00EF Y:0007 P:EnvMXdizc
+	005133  E8           INX            A:005A X:00EF Y:0007 P:EnvMXdizc
+	005134  C8           INY            A:005A X:00F0 Y:0007 P:ENvMXdizc
+	005135  C0 08        CPY #$08       A:005A X:00F0 Y:0008 P:EnvMXdizc
+	005137  D0 F5        BNE $F5        A:005A X:00F0 Y:0008 P:EnvMXdiZC
+	005139  FA           PLX            A:005A X:00F0 Y:0008 P:EnvMXdiZC
+	00513A  DA           PHX            A:005A X:00E8 Y:0008 P:ENvMXdizC
+	00513B  B1 6E        LDA ($6E),Y    A:005A X:00E8 Y:0008 P:ENvMXdizC
+	00513D  9D 00 05     STA $0500,X    A:0038 X:00E8 Y:0008 P:EnvMXdizC
+	005140  E8           INX            A:0038 X:00E8 Y:0008 P:EnvMXdizC
+	005141  C8           INY            A:0038 X:00E9 Y:0008 P:ENvMXdizC
+	005142  C0 10        CPY #$10       A:0038 X:00E9 Y:0009 P:EnvMXdizC
+	005144  D0 F5        BNE $F5        A:0038 X:00E9 Y:0009 P:ENvMXdizc
+	...
+	00513B  B1 6E        LDA ($6E),Y    A:000D X:00EF Y:000F P:ENvMXdizc
+	00513D  9D 00 05     STA $0500,X    A:005B X:00EF Y:000F P:EnvMXdizc
+	005140  E8           INX            A:005B X:00EF Y:000F P:EnvMXdizc
+	005141  C8           INY            A:005B X:00F0 Y:000F P:ENvMXdizc
+	005142  C0 10        CPY #$10       A:005B X:00F0 Y:0010 P:EnvMXdizc
+	005144  D0 F5        BNE $F5        A:005B X:00F0 Y:0010 P:EnvMXdiZC
+	005146  FA           PLX            A:005B X:00F0 Y:0010 P:EnvMXdiZC
+	005147  7A           PLY            A:005B X:00E8 Y:0010 P:ENvMXdizC
+	005148  68           PLA            A:005B X:00E8 Y:0000 P:EnvMXdiZC
+	005149  18           CLC            A:005A X:00E8 Y:0000 P:EnvMXdizC
+	00514A  60           RTS            A:005A X:00E8 Y:0000 P:EnvMXdizc
+	
+005ADF  C6 85        DEC $85        A:005A X:00E8 Y:0000 P:EnvMXdizc
+005AE1  8A           TXA            A:005A X:00E8 Y:0000 P:EnvMXdiZc
+005AE2  A0 02        LDY #$02       A:00E8 X:00E8 Y:0000 P:ENvMXdizc	; ldy     #\IRQ
+
+005AE4  20 74 44     JSR $4474      A:00E8 X:00E8 Y:0002 P:EnvMXdizc  <--- NOPing this fixes it. Search key: C0 10 B0 03 99 00 0A 60.
+									; But quick note here- there are other callers of this function. Not just us. Can't comment out the body of this whole function because it'll disrupt the other callers.
+									; Writing 0xE8 to 0xA02 is what breaks stuff. (0 is there originally.)
+									; Nothing reads 0xA02 after that.
+									
+									; jsr     irq.install
+    ; IN:   A -> lsb of a vector in Devices
+    ;       Y -> requested IRQ ID
+									
+	004474  C0 10        CPY #$10       A:00E8 X:00E8 Y:0002 P:EnvMXdizc		cpy     #max
+	004476  B0 03        BCS $03        A:00E8 X:00E8 Y:0002 P:ENvMXdizc		bcs     _out
+	004478  99 00 0A     STA $0A00,Y    A:00E8 X:00E8 Y:0002 P:ENvMXdizc		sta     irqs,y
+	00447B  60           RTS            A:00E8 X:00E8 Y:0002 P:ENvMXdizc
+	
+005AE7  5A           PHY            A:00E8 X:00E8 Y:0002 P:ENvMXdizc
+005AE8  8A           TXA            A:00E8 X:00E8 Y:0002 P:ENvMXdizc
+005AE9  A8           TAY            A:00E8 X:00E8 Y:0002 P:ENvMXdizc
+005AEA  A9 50        LDA #$50       A:00E8 X:00E8 Y:00E8 P:ENvMXdizc			; lda     #hardware.ps2_f256_open_str
+
+005AEC  20 F1 E8     JSR $E8F1      A:0050 X:00E8 Y:00E8 P:EnvMXdizc			<-- NOPing this doesn't help.		 kernel.log.dev_message
+	00E8F1  E6 85        INC $85        A:0050 X:00E8 Y:00E8 P:EnvMXdizc
+	00E8F3  8C 80 0A     STY $0A80      A:0050 X:00E8 Y:00E8 P:EnvMXdizc
+
+	00E8F6  20 FA 4E     JSR $4EFA      A:0050 X:00E8 Y:00E8 P:EnvMXdizc
+		004EFA  48           PHA            A:0050 X:00E8 Y:00E8 P:EnvMXdizc
+		004EFB  DA           PHX            A:0050 X:00E8 Y:00E8 P:EnvMXdizc
+		004EFC  AD 68 0A     LDA $0A68      A:0050 X:00E8 Y:00E8 P:EnvMXdizc
+		004EFF  AA           TAX            A:003E X:00E8 Y:00E8 P:EnvMXdizc
+		004F00  A9 20        LDA #$20       A:003E X:003E Y:00E8 P:EnvMXdizc
+		004F02  CE 68 0A     DEC $0A68      A:0020 X:003E Y:00E8 P:EnvMXdizc
+		004F05  20 CB E1     JSR $E1CB      A:0020 X:003E Y:00E8 P:EnvMXdizc
+			00E1CB  60           RTS            A:0020 X:003E Y:00E8 P:EnvMXdizc
+		004F08  FA           PLX            A:0020 X:003E Y:00E8 P:EnvMXdizc
+		004F09  08           PHP            A:0020 X:00E8 Y:00E8 P:ENvMXdizc
+		004F0A  78           SEI            A:0020 X:00E8 Y:00E8 P:ENvMXdizc
+		004F0B  AC 67 0A     LDY $0A67      A:0020 X:00E8 Y:00E8 P:ENvMXdIzc
+		004F0E  F0 0A        BEQ $0A        A:0020 X:00E8 Y:00F4 P:ENvMXdIzc
+		004F10  B9 03 02     LDA $0203,Y    A:0020 X:00E8 Y:00F4 P:ENvMXdIzc
+		004F13  8D 67 0A     STA $0A67      A:00F0 X:00E8 Y:00F4 P:ENvMXdIzc
+		004F16  28           PLP            A:00F0 X:00E8 Y:00F4 P:ENvMXdIzc
+		004F17  68           PLA            A:00F0 X:00E8 Y:00F4 P:ENvMXdizc
+		004F18  18           CLC            A:0050 X:00E8 Y:00F4 P:EnvMXdizc
+		004F19  60           RTS            A:0050 X:00E8 Y:00F4 P:EnvMXdizc
+
+	00E8F9  B0 16        BCS $16        A:0050 X:00E8 Y:00F4 P:EnvMXdizc
+	00E8FB  99 01 02     STA $0201,Y    A:0050 X:00E8 Y:00F4 P:EnvMXdizc
+	00E8FE  8A           TXA            A:0050 X:00E8 Y:00F4 P:EnvMXdizc
+	00E8FF  99 00 02     STA $0200,Y    A:00E8 X:00E8 Y:00F4 P:ENvMXdizc
+	00E902  AD 80 0A     LDA $0A80      A:00E8 X:00E8 Y:00F4 P:ENvMXdizc
+	00E905  99 02 02     STA $0202,Y    A:00E8 X:00E8 Y:00F4 P:ENvMXdizc
+
+	00E908  20 17 E9     JSR $E917      A:00E8 X:00E8 Y:00F4 P:ENvMXdizc
+
+		00E917  E6 85        INC $85        A:00E8 X:00E8 Y:00F4 P:ENvMXdizc
+		00E919  DA           PHX            A:00E8 X:00E8 Y:00F4 P:EnvMXdizc
+		00E91A  A6 89        LDX $89        A:00E8 X:00E8 Y:00F4 P:EnvMXdizc
+		00E91C  98           TYA            A:00E8 X:0002 Y:00F4 P:EnvMXdizc
+		00E91D  9D 6F 0A     STA $0A6F,X    A:00F4 X:0002 Y:00F4 P:ENvMXdizc
+		00E920  E8           INX            A:00F4 X:0002 Y:00F4 P:ENvMXdizc
+		00E921  E0 10        CPX #$10       A:00F4 X:0003 Y:00F4 P:EnvMXdizc
+		00E923  D0 02        BNE $02        A:00F4 X:0003 Y:00F4 P:ENvMXdizc
+		00E927  E4 8A        CPX $8A        A:00F4 X:0003 Y:00F4 P:ENvMXdizc
+		00E929  38           SEC            A:00F4 X:0003 Y:00F4 P:EnvMXdizC
+		00E92A  F0 03        BEQ $03        A:00F4 X:0003 Y:00F4 P:EnvMXdizC
+		00E92C  86 89        STX $89        A:00F4 X:0003 Y:00F4 P:EnvMXdizC
+		00E92E  18           CLC            A:00F4 X:0003 Y:00F4 P:EnvMXdizC
+		00E92F  FA           PLX            A:00F4 X:0003 Y:00F4 P:EnvMXdizc
+		00E930  C6 85        DEC $85        A:00F4 X:00E8 Y:00F4 P:ENvMXdizc
+		00E932  60           RTS            A:00F4 X:00E8 Y:00F4 P:EnvMXdizc
+
+	00E90B  90 04        BCC $04        A:00F4 X:00E8 Y:00F4 P:EnvMXdizc
+	00E911  AC 80 0A     LDY $0A80      A:00F4 X:00E8 Y:00F4 P:EnvMXdizc
+	00E914  C6 85        DEC $85        A:00F4 X:00E8 Y:00E8 P:ENvMXdizc
+	00E916  60           RTS            A:00F4 X:00E8 Y:00E8 P:EnvMXdiZc
+
+005AEF  7A           PLY            A:00F4 X:00E8 Y:00E8 P:EnvMXdiZc
+005AF0  18           CLC            A:00F4 X:00E8 Y:0002 P:EnvMXdizc
+005AF1  60           RTS            A:00F4 X:00E8 Y:0002 P:EnvMXdizc
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+green.init
+005B62
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
