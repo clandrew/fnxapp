@@ -1,4 +1,10 @@
-init
+
+Copy command:
+cd /d D:\repos\fnxapp\util\kernel_hexfile
+d:\64tass\64tass --intel-hex -o kernel_F256jr.hex kernel_F256jr.asm 
+copy /y kernel_F256jr.hex D:\repos\fnxide\bin\Debug\roms\kernel_F256jr.hex
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 005CB5  20 BC 5C     JSR $5CBC							; jsr cia_init
 005CB8  20 D1 5C     JSR $5CD1							; jsr     ps2_init
@@ -64,19 +70,19 @@ ps2_init
 
 005CD1  9C 15 0A     STZ $0A15		stz     ps2_0
 005CD4  9C 16 0A     STZ $0A16		stz     ps2_1
-005CD7  20 55 4C     JSR $4C55		hardware.kbd2.init		; Not the culprit
+005CD7  20 55 4C     JSR $4C55		hardware.kbd2.init		; 
 
-005CDA  20 E1 5C     JSR $5CE1		purple_init			; These two put together are.
+005CDA  20 E1 5C     JSR $5CE1		purple_init			; 
 005CDA  20 EF 5C     JSR $5CEF		green_init
 005CE0  60           RTS
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 purple_init
-005CE1  20 C9 5A     JSR $5AC9		; JSR purple.init			; culprit
+005CE1  20 C9 5A     JSR $5AC9		; JSR purple.init			;
 005CE4  B0 08        BCS $08		bcs _out
 005CE6  8E 15 0A     STX $A15           ps2_0
-005CE9  20 1A 51     JSR $511A          jsr     kernel.device.dev.open		; Not the culprit
+005CE9  20 1A 51     JSR $511A          jsr     kernel.device.dev.open		; 
 005CEC  B0 00        BCS $00		bcs _out	; what is the point of this?
 
 _out
@@ -99,7 +105,9 @@ purple.init
 ; Search sequence: 20 5D 51 B0 23 8A 20 8D 6F E6 85 A9 B9 85 6E A9 5A 85 6F 20 29 51 C6 85 8A A0 02 20 74 44
 ; Cleanup: 7A 18 60
 
-005AC9  20 5D 51     JSR $515D      A:00F8 X:00F0 Y:0000 P:ENvMXdizc <-NOPing this causes hang.		; kernel.device.alloc
+File offset 1AC9 is in memory at 5AC9
+
+005AC9  20 5D 51     JSR $515D      A:00F8 X:00F0 Y:0000 P:ENvMXdizc 	; kernel.device.alloc
 	00515D  38           SEC            A:00F8 X:00F0 Y:0000 P:ENvMXdizc
 	00515E  AE 6C 0A     LDX $0A6C      A:00F8 X:00F0 Y:0000 P:ENvMXdizC
 	005161  F0 09        BEQ $09        A:00F8 X:00E8 Y:0000 P:ENvMXdizC
@@ -113,7 +121,7 @@ purple.init
 005ACC  B0 23        BCS $23        A:00F8 X:00E8 Y:0000 P:ENvMXdizc					bcs     _out
 005ACE  8A           TXA            A:00F8 X:00E8 Y:0000 P:ENvMXdizc
 
-005ACF  20 8D 6F     JSR $6F8D      A:00E8 X:00E8 Y:0000 P:ENvMXdizc <-NOPing this causes brk.		; jsr     hardware.ps2.auto.init
+005ACF  20 8D 6F     JSR $6F8D      A:00E8 X:00E8 Y:0000 P:ENvMXdizc 	; jsr     hardware.ps2.auto.init
 	006F8D  8A           TXA            A:00E8 X:00E8 Y:0000 P:ENvMXdizc
 	006F8E  9D 00 06     STA $0600,X    A:00E8 X:00E8 Y:0000 P:ENvMXdizc
 	006F91  9E 07 06     STZ $0607,X    A:00E8 X:00E8 Y:0000 P:ENvMXdizc
@@ -130,7 +138,7 @@ purple.init
 005AD8  A9 5A        LDA #$5A       A:00B9 X:00E8 Y:0000 P:ENvMXdizc		; sta     kernel.src+1
 005ADA  85 6F        STA $6F        A:005A X:00E8 Y:0000 P:EnvMXdizc
 
-005ADC  20 29 51     JSR $5129      A:005A X:00E8 Y:0000 P:EnvMXdizc <-NOPing this causes brk.	; jsr     kernel.device.install
+005ADC  20 29 51     JSR $5129      A:005A X:00E8 Y:0000 P:EnvMXdizc	; jsr     kernel.device.install
 	005129  48           PHA            A:005A X:00E8 Y:0000 P:EnvMXdizc
 	00512A  5A           PHY            A:005A X:00E8 Y:0000 P:EnvMXdizc
 	00512B  DA           PHX            A:005A X:00E8 Y:0000 P:EnvMXdizc
@@ -179,14 +187,11 @@ purple.init
 005AE1  8A           TXA            A:005A X:00E8 Y:0000 P:EnvMXdiZc
 005AE2  A0 02        LDY #$02       A:00E8 X:00E8 Y:0000 P:ENvMXdizc	; ldy     #\IRQ
 
-005AE4  20 74 44     JSR $4474      A:00E8 X:00E8 Y:0002 P:EnvMXdizc  <--- NOPing this fixes it. Search key: C0 10 B0 03 99 00 0A 60.
-									; But quick note here- there are other callers of this function. Not just us. Can't comment out the body of this whole function because it'll disrupt the other callers.
-									; Writing 0xE8 to 0xA02 is what breaks stuff. (0 is there originally.)
-									; Nothing reads 0xA02 after that.
-									
-									; jsr     irq.install
+005AE4  20 74 44     JSR $4474      A:00E8 X:00E8 Y:0002 P:EnvMXdizc  ; jsr     irq.install
     ; IN:   A -> lsb of a vector in Devices
     ;       Y -> requested IRQ ID
+    Vector low byte is E8
+    IRQ ID is 2
 									
 	004474  C0 10        CPY #$10       A:00E8 X:00E8 Y:0002 P:EnvMXdizc		cpy     #max
 	004476  B0 03        BCS $03        A:00E8 X:00E8 Y:0002 P:ENvMXdizc		bcs     _out
@@ -264,3 +269,221 @@ green.init
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+init
+        ; Just install our vectors.
+    
+005AC9  20 5D 51     JSR $515D      A:00F8 X:00F0 Y:0000 P:ENvMXdizc	jsr     kernel.device.alloc	; Returns device key in X. Allocate device key E8
+005ACC  B0 23        BCS $23        A:00F8 X:00E8 Y:0000 P:ENvMXdizc	bcs     _out
+
+005ACE  8A           TXA            A:00F8 X:00E8 Y:0000 P:ENvMXdizc
+005ACF  20 8D 6F     JSR $6F8D      A:00E8 X:00E8 Y:0000 P:ENvMXdizc	hardware.ps2.auto.init
+
+005AD2  E6 85        INC $85        A:0000 X:00E8 Y:0000 P:EnvMXdiZc
+
+005AD4  A9 B9        LDA #$B9       A:0000 X:00E8 Y:0000 P:EnvMXdizc	lda     #<vectors
+005AD6  85 6E        STA $6E        A:00B9 X:00E8 Y:0000 P:ENvMXdizc	sta     kernel.src+0
+005AD8  A9 5A        LDA #$5A       A:00B9 X:00E8 Y:0000 P:ENvMXdizc	lda     #>vectors
+005ADA  85 6F        STA $6F        A:005A X:00E8 Y:0000 P:EnvMXdizc	sta     kernel.src+1
+005ADC  20 29 51     JSR $5129      A:005A X:00E8 Y:0000 P:EnvMXdizc	jsr     kernel.device.install
+
+; Associate ourselves with the interrupt
+005ADF  C6 85        DEC $85        A:005A X:00E8 Y:0000 P:EnvMXdizc
+005AE1  8A           TXA            A:005A X:00E8 Y:0000 P:EnvMXdiZc
+005AE2  A0 02        LDY #$02       A:00E8 X:00E8 Y:0000 P:ENvMXdizc	ldy     #\IRQ
+005AE4  20 74 44     JSR $4474      A:00E8 X:00E8 Y:0002 P:EnvMXdizc	jsr     irq.install	; Installs vector E8 to slot 2    <---- Commenting this out fixes it.
+
+005AE7  5A           PHY            A:00E8 X:00E8 Y:0002 P:ENvMXdizc
+005AE8  8A           TXA            A:00E8 X:00E8 Y:0002 P:ENvMXdizc
+005AE9  A8           TAY            A:00E8 X:00E8 Y:0002 P:ENvMXdizc
+005AEA  A9 50        LDA #$50       A:00E8 X:00E8 Y:00E8 P:ENvMXdizc	lda     #hardware.ps2_f256_init_str
+005AEC  20 F1 E8     JSR $E8F1      A:0050 X:00E8 Y:00E8 P:EnvMXdizc	jsr     kernel.log.dev_message
+005AEF  7A           PLY            A:00F4 X:00E8 Y:00E8 P:EnvMXdiZc	
+005AF0  18           CLC            A:00F4 X:00E8 Y:0002 P:EnvMXdizc
+005AF1  60           RTS            A:00F4 X:00E8 Y:0002 P:EnvMXdizc
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+The irq.install
+
+005AE4  20 74 44     JSR $4474      A:00E8 X:00E8 Y:0002 P:EnvMXdizc
+004474  C0 10        CPY #$10       A:00E8 X:00E8 Y:0002 P:EnvMXdizc
+004476  B0 03        BCS $03        A:00E8 X:00E8 Y:0002 P:ENvMXdizc
+004478  99 00 0A     STA $0A00,Y    A:00E8 X:00E8 Y:0002 P:ENvMXdizc	Writes E8 to A02 <-- break here
+00447B  60           RTS            A:00E8 X:00E8 Y:0002 P:ENvMXdizc
+
+Writes to effective address  0xA02.
+Device address CA02.
+
+So that 0x0A00 is
+F0 00 E8 00 00 00 00 00
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+5AF2
+
+20 9A 6F A9 02 20 7C 44 08 78 A9 10 8D 40 D6 9C 40 D6 28 5A 8A A8 A9 52 7A 18 60 
+
+dev_open                
+    	    
+005AF2  20 9A 6F     JSR $6F9A      A:00F4 X:00E8 Y:0002 P:EnvMXdizc	jsr     hardware.ps2.auto.open
+005AF5  A9 02        LDA #$02       A:00BC X:00E8 Y:0002 P:ENvMXdizc	lda     #\IRQ
+005AF7  20 7C 44     JSR $447C      A:0002 X:00E8 Y:0002 P:EnvMXdizc	jsr     irq.enable
+
+          ; Flush the port
+005AFA  08           PHP            A:00FA X:00E8 Y:0002 P:ENvMXdizc
+005AFB  78           SEI            A:00FA X:00E8 Y:0002 P:ENvMXdizc
+005AFC  A9 10        LDA #$10       A:00FA X:00E8 Y:0002 P:ENvMXdIzc	lda     #$10<<\PORT
+005AFE  8D 40 D6     STA $D640      A:0010 X:00E8 Y:0002 P:EnvMXdIzc	sta     KBD_MSE_CTRL_REG
+005B01  9C 40 D6     STZ $D640      A:0010 X:00E8 Y:0002 P:EnvMXdIzc	stz     KBD_MSE_CTRL_REG
+005B04  28           PLP            A:0010 X:00E8 Y:0002 P:EnvMXdIzc
+
+          ; Log (TODO: event)
+005B05  5A           PHY            A:0010 X:00E8 Y:0002 P:ENvMXdizc
+005B06  8A           TXA            A:0010 X:00E8 Y:0002 P:ENvMXdizc
+005B07  A8           TAY            A:00E8 X:00E8 Y:0002 P:ENvMXdizc
+005B08  A9 52        LDA #$52       A:00E8 X:00E8 Y:00E8 P:ENvMXdizc	lda     #hardware.ps2_f256_open_str
+005B0A  7A           PLY            A:0052 X:00E8 Y:00E8 P:EnvMXdizc
+005B0B  18           CLC            A:0052 X:00E8 Y:0002 P:EnvMXdizc
+005B0C  60           RTS            A:0052 X:00E8 Y:0002 P:EnvMXdizc
+
+    	    
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+dev_close
+005B0D	A9 02       lda     #\IRQ
+005B0F  4C A6 44    jmp     irq.disable
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+dev_data is at file offset 1B12
+
+File offset 1B12 is in memory at 5B12
+
+_loop
+ 005B12		AD 44 D6   lda     KBD_MS_RD_STATUS				
+ 005B15		89 01      bit     #1<<\PORT
+ 005B17		D0 0A      bne     _done					
+            
+ 005B19		AD 42 D6   lda     READ_SCAN_REG+\PORT
+ 005B1C		DA         phx
+ 005B1D		20 55 71   jsr     hardware.ps2.auto.dev_data			
+ 005B21		80 EF      bra     _loop
+            
+_done
+ 005B22		rts	<-- We never get here.
+            
+This is only called on key press though. It's not called at all on startup.
+This infinite loops.
+        public const int KBD_STATUS_PORT_JR = 0x00_D644;    // JR keyboard status port
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+dev_status
+
+dev_status
+005B24  4C 88 70            jmp $7088     hardware.ps2.auto.dev_status
+
+Is called once during startup.
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+08 78 8D 41 D6 A9 02 8D 40 D6 9C 40 D6 28 60
+
+dev_fetch
+          ; May be called any time; protect registers
+005B27  08            php
+005B28  78            sei
+005B29  8D 41         sta     KBD_MS_WR_DATA_REG
+            lda     #2+6*\PORT
+            sta     KBD_MSE_CTRL_REG
+            stz     KBD_MSE_CTRL_REG
+            plp
+            rts
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+dev_send
+5B36
+39            sec
+60            rts
+            
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+5B38
+
+dev_get
+5A            phy
+
+A0 0E         ldy     #hardware.hid_str
+C9 00         cmp     #kernel.device.get.CLASS
+F0 0F         beq     _found
+        
+            ldy     #hardware.ps2_f256_dev_str
+            cmp     #kernel.device.get.DEVICE
+            beq     _found
+        
+            ldy     #\STR
+            cmp     #kernel.device.get.PORT
+            beq     _found
+        
+            sec
+            bra     _out
+
+_found
+            tya
+            clc        
+_out
+            ply
+            rts
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+00E108  48           PHA            A:0028 X:0028 Y:00FC P:EnvMXdIzc
+00E109  DA           PHX            A:0028 X:0028 Y:00FC P:EnvMXdIzc
+00E10A  5A           PHY            A:0028 X:0028 Y:00FC P:EnvMXdIzc
+00E10B  A5 00        LDA $00        A:0028 X:0028 Y:00FC P:EnvMXdIzc
+00E10D  64 00        STZ $00        A:0080 X:0028 Y:00FC P:ENvMXdIzc
+00E10F  48           PHA            A:0080 X:0028 Y:00FC P:ENvMXdIzc
+00E110  A5 01        LDA $01        A:0080 X:0028 Y:00FC P:ENvMXdIzc
+00E112  48           PHA            A:0000 X:0028 Y:00FC P:EnvMXdIZc
+
+00E113  20 3B 44     JSR $443B      A:0000 X:0028 Y:00FC P:EnvMXdIZc
+
+	00443B  64 01        STZ $01        A:0000 X:0028 Y:00FC P:EnvMXdIZc
+	00443D  AE 60 D6     LDX $D660      A:0000 X:0028 Y:00FC P:EnvMXdIZc
+	004440  F0 11        BEQ $11        A:0000 X:0001 Y:00FC P:EnvMXdIzc
+	004442  BC 00 43     LDY $4300,X    A:0000 X:0001 Y:00FC P:EnvMXdIzc
+	004445  B9 6C 44     LDA $446C,Y    A:0000 X:0001 Y:0000 P:EnvMXdIZc
+	004448  8D 60 D6     STA $D660      A:0001 X:0001 Y:0000 P:EnvMXdIzc
+	00444B  BE 00 0A     LDX $0A00,Y    A:0001 X:0001 Y:0000 P:EnvMXdIzc
+	00444E  20 11 51     JSR $5111      A:0001 X:0000 Y:0000 P:EnvMXdIZc			; At offset 44E in 3b.bin.
+		005111  7C 00 04     JMP ($0400,X)   A:0001 X:0000 Y:0000 P:EnvMXdIZc
+		00443A  60           RTS            A:0001 X:0000 Y:0000 P:EnvMXdIZc
+	004451  80 E8        BRA $E8        A:0001 X:0000 Y:0000 P:EnvMXdIZc
+	00443B  64 01        STZ $01        A:0001 X:0000 Y:0000 P:EnvMXdIZc
+	00443D  AE 60 D6     LDX $D660      A:0001 X:0000 Y:0000 P:EnvMXdIZc
+	004440  F0 11        BEQ $11        A:0001 X:0000 Y:0000 P:EnvMXdIZc
+	004453  64 01        STZ $01        A:0001 X:0000 Y:0000 P:EnvMXdIZc
+	004455  AE 61 D6     LDX $D661      A:0001 X:0000 Y:0000 P:EnvMXdIZc
+	004458  F0 11        BEQ $11        A:0001 X:0000 Y:0000 P:EnvMXdIZc
+	00446B  60           RTS            A:0001 X:0000 Y:0000 P:EnvMXdIZc			
+
+00E116  A5 84        LDA $84        A:0001 X:0000 Y:0000 P:EnvMXdIZc
+00E118  D0 0E        BNE $0E        A:0000 X:0000 Y:0000 P:EnvMXdIZc
+00E11A  A5 83        LDA $83        A:0000 X:0000 Y:0000 P:EnvMXdIZc
+00E11C  F0 0A        BEQ $0A        A:0000 X:0000 Y:0000 P:EnvMXdIZc
+00E128  68           PLA            A:0000 X:0000 Y:0000 P:EnvMXdIZc
+00E129  85 01        STA $01        A:0000 X:0000 Y:0000 P:EnvMXdIZc
+00E12B  68           PLA            A:0000 X:0000 Y:0000 P:EnvMXdIZc
+00E12C  85 00        STA $00        A:0080 X:0000 Y:0000 P:ENvMXdIzc
+00E12E  7A           PLY            A:0080 X:0000 Y:0000 P:ENvMXdIzc
+00E12F  FA           PLX            A:0080 X:0000 Y:00FC P:ENvMXdIzc
+00E130  68           PLA            A:0080 X:0028 Y:00FC P:EnvMXdIzc
+00E131  40           RTI            A:0028 X:0028 Y:00FC P:EnvMXdIzc
+005179  60           RTS            A:0028 X:0028 Y:00FC P:EnvMXdizc

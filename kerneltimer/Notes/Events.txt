@@ -49,5 +49,3 @@ Handling key press event:
 00EB0B  91 F0        STA ($F0),Y    A:0008 X:00C8 Y:0000 P:EnvMXdizc	; Write event.type. 52 and 54 are EXPIRED and TICK. 8 is PRESSED. A is RELEASED. PRSSED was loaded here
 00EB0D  E8           INX            A:0008 X:00C8 Y:0000 P:EnvMXdizc
 
-
-Q: Where *would* it set an event type of 52?
