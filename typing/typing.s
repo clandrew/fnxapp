@@ -285,90 +285,36 @@ PrintScore
     XCE
     setxl
 
-    LDX score
+    LDY score
+    LDX #5
 
-    ;;;;;;;;;;;;;
-
-    STX $DE06   ; Fixed function numerator
-    LDX #10
-    STX $DE04   ; Fixed function denomenator    
+EachDigitToAscii
+    STY $DE06   ; Fixed function numerator
+    LDY #10
+    STY $DE04   ; Fixed function denomenator    
     LDA $DE16   ; Load the remainder
     CLC
     ADC #'0'    ; Turn into ASCII and save to stack
     PHA
-    LDX $DE14   ; Load the quotient
-
-    ;;;;;;;;;;;;;
-    
-    STX $DE06   ; Fixed function numerator
-    LDX #10
-    STX $DE04   ; Fixed function denomenator    
-    LDA $DE16   ; Load the remainder
-    CLC
-    ADC #'0'    ; Turn into ASCII and save to stack
-    PHA
-    LDX $DE14   ; Load the quotient
-    ;;;;;;;;;;;;;
-    
-    STX $DE06   ; Fixed function numerator
-    LDX #10
-    STX $DE04   ; Fixed function denomenator    
-    LDA $DE16   ; Load the remainder
-    CLC
-    ADC #'0'    ; Turn into ASCII and save to stack
-    PHA
-    LDX $DE14   ; Load the quotient
-    ;;;;;;;;;;;;;
-    
-    STX $DE06   ; Fixed function numerator
-    LDX #10
-    STX $DE04   ; Fixed function denomenator    
-    LDA $DE16   ; Load the remainder
-    CLC
-    ADC #'0'    ; Turn into ASCII and save to stack
-    PHA
-    LDX $DE14   ; Load the quotient
-    ;;;;;;;;;;;;;
-    
-    STX $DE06   ; Fixed function numerator
-    LDX #10
-    STX $DE04   ; Fixed function denomenator    
-    LDA $DE16   ; Load the remainder
-    CLC
-    ADC #'0'    ; Turn into ASCII and save to stack
-    PHA
-    LDX $DE14   ; Load the quotient
-    ;;;;;;;;;;;;;
+    LDY $DE14   ; Load the quotient
+    DEX
+    BNE EachDigitToAscii
 
     setaxs    
     SEC      ; Go back to emulation mode
     XCE
     
     LDA #$2 ; Set I/O page to 2
-    STA MMU_IO_CTRL
-    
+    STA MMU_IO_CTRL    
 
-    INY
+    LDY #$22
+    LDX #5
+CopyEachDigit
     PLA
     STA (text_memory_pointer),Y
-
     INY
-    PLA
-    STA (text_memory_pointer),Y
-
-    INY
-    PLA
-    STA (text_memory_pointer),Y
-
-    INY
-    PLA
-    STA (text_memory_pointer),Y
-
-    INY
-    PLA
-    STA (text_memory_pointer),Y
-
-    ; Placeholder
+    DEX
+    BNE CopyEachDigit
 
     RTS
 
