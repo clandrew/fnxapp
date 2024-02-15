@@ -141,6 +141,15 @@ Lock
     LDA #$5
     STA animation_index
 
+    ; Use 816 mode
+    .al
+    .xl
+    REP #$30
+    .as
+    .xs
+    REP #$20 ; Need to do this
+
+
     INC letter_pos
     ;;;;;;;;;;;;;;;;
     LDY letter_pos    ; Y reg contains position of character    
