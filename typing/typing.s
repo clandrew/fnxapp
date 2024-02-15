@@ -153,10 +153,7 @@ Lock
     LDY letter_pos    ; Y reg contains position of character    
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
-    LDA #65                         ; Load the character to print
-    STA (text_memory_pointer),Y
-    INY
-    DEY
+    LDA #32                         ; Load the character to print
     STA (text_memory_pointer),Y
 
     setal
@@ -165,6 +162,14 @@ Lock
     ADC #$28
     STA letter_pos
     ;;;;;;;;;;;
+
+    setas
+    LDY letter_pos    ; Y reg contains position of character    
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL
+    LDA #65                         ; Load the character to print
+    STA (text_memory_pointer),Y
+
 
     setaxs    
     SEC      ; Go back to emulation mode
