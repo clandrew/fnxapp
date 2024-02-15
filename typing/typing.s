@@ -9,6 +9,7 @@
 dst_pointer = $30
 src_pointer = $32
 text_memory_pointer = $38
+letter_pos = $40
 animation_index = $3F
 
 ; Code
@@ -112,6 +113,9 @@ MAIN
     STZ   VIA_PRB
     STZ   VIA_PRA
     
+    STZ animation_index
+    STZ letter_pos
+    
     ; Initialize IRQ
     JSR Init_IRQHandler     
     
@@ -126,31 +130,36 @@ MAIN
 
     ; Print 'A' character in top left
     
+        
+Poll
+
+Lock
+    ; SOF handler will update animation_index behind the scenes.
+    LDA animation_index
+    BNE Lock
+    ; Unblocked. Reset for next frame
+    LDA #$5
+    STA animation_index
+
+    INC letter_pos
     ;;;;;;;;;;;;;;;;
-    LDY #$01    ; Y reg contains position of character
-    
+    LDY letter_pos    ; Y reg contains position of character    
     LDA MMU_IO_CTRL ; Back up I/O page
-    PHA
-    
+    PHA    
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
     LDA #65                         ; Load the character to print
     STA (text_memory_pointer),Y
     INY
-
     LDA #$03 ; Set I/O page to 3
     STA MMU_IO_CTRL
     LDA #$F0 ; Text color
-
     DEY
     STA (text_memory_pointer),Y
-
     PLA
     STA MMU_IO_CTRL ; Restore I/O page
-
     ;;;;;;;;;;;
-        
-Poll
+
     ; Check for key    
     LDA #$00 ; Need to be on I/O page 0
     STA MMU_IO_CTRL
@@ -181,8 +190,8 @@ Poll
     
     JSR PrintAnsiString
 
-Lock
-    JMP Lock
+HardLock
+    JMP HardLock
 
 DoneCheckInput   
     JMP Poll
