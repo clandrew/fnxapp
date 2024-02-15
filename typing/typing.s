@@ -147,26 +147,28 @@ Lock
     ; Use 816 mode
     CLC ; Try entering native mode
     XCE
-    setxl    
+    setxl
     
     ;;;;;;;;;;;;;;;;
-
-
-    LDY letter_pos    ; Y reg contains position of character    
-    LDA #32                         ; Load the character to print
+    ; Print a space to cover up the falling character
+    LDY letter_pos                   
+    LDA #32                        
     STA (text_memory_pointer),Y
 
+    ; Increment the character pos, to move 1 row lower
     setal
     TYA
     CLC
     ADC #$28
     STA letter_pos
-    ;;;;;;;;;;;
-
+    
+    ; Print the fallen character
     setas
-    LDY letter_pos    ; Y reg contains position of character    
+    LDY letter_pos                  ; Y reg contains position of character    
     LDA #65                         ; Load the character to print
     STA (text_memory_pointer),Y
+    ;;;;;;;;;;;
+
 
 
     setaxs    
