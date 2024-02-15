@@ -116,8 +116,10 @@ MAIN
     STZ   VIA_PRA
     
     STZ animation_index
-    STZ score
+    LDA #123
+    STA score
     STZ score+1
+
 
     ; Enable RNG
     LDA #1
@@ -273,24 +275,100 @@ PrintScore
     STA (text_memory_pointer),Y
     INY
     LDA #':'
+    STA (text_memory_pointer),Y    
+    
+    LDA #$0 ; Set I/O page to 0
+    STA MMU_IO_CTRL
+        
+    ; Use 816 mode
+    CLC ; Try entering native mode
+    XCE
+    setxl
+
+    LDX score
+
+    ;;;;;;;;;;;;;
+
+    STX $DE06   ; Fixed function numerator
+    LDX #10
+    STX $DE04   ; Fixed function denomenator    
+    LDA $DE16   ; Load the remainder
+    CLC
+    ADC #'0'    ; Turn into ASCII and save to stack
+    PHA
+    LDX $DE14   ; Load the quotient
+
+    ;;;;;;;;;;;;;
+    
+    STX $DE06   ; Fixed function numerator
+    LDX #10
+    STX $DE04   ; Fixed function denomenator    
+    LDA $DE16   ; Load the remainder
+    CLC
+    ADC #'0'    ; Turn into ASCII and save to stack
+    PHA
+    LDX $DE14   ; Load the quotient
+    ;;;;;;;;;;;;;
+    
+    STX $DE06   ; Fixed function numerator
+    LDX #10
+    STX $DE04   ; Fixed function denomenator    
+    LDA $DE16   ; Load the remainder
+    CLC
+    ADC #'0'    ; Turn into ASCII and save to stack
+    PHA
+    LDX $DE14   ; Load the quotient
+    ;;;;;;;;;;;;;
+    
+    STX $DE06   ; Fixed function numerator
+    LDX #10
+    STX $DE04   ; Fixed function denomenator    
+    LDA $DE16   ; Load the remainder
+    CLC
+    ADC #'0'    ; Turn into ASCII and save to stack
+    PHA
+    LDX $DE14   ; Load the quotient
+    ;;;;;;;;;;;;;
+    
+    STX $DE06   ; Fixed function numerator
+    LDX #10
+    STX $DE04   ; Fixed function denomenator    
+    LDA $DE16   ; Load the remainder
+    CLC
+    ADC #'0'    ; Turn into ASCII and save to stack
+    PHA
+    LDX $DE14   ; Load the quotient
+    ;;;;;;;;;;;;;
+
+    setaxs    
+    SEC      ; Go back to emulation mode
+    XCE
+    
+    LDA #$2 ; Set I/O page to 2
+    STA MMU_IO_CTRL
+    
+
+    INY
+    PLA
+    STA (text_memory_pointer),Y
+
+    INY
+    PLA
+    STA (text_memory_pointer),Y
+
+    INY
+    PLA
+    STA (text_memory_pointer),Y
+
+    INY
+    PLA
+    STA (text_memory_pointer),Y
+
+    INY
+    PLA
     STA (text_memory_pointer),Y
 
     ; Placeholder
-    INY
-    LDA #'0'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #'0'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #'0'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #'0'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #'0'
-    STA (text_memory_pointer),Y
 
     RTS
 
