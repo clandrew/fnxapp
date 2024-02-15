@@ -146,25 +146,11 @@ DoneRand
     LDA #<VKY_TEXT_MEMORY
     STA text_memory_pointer
     LDA #>VKY_TEXT_MEMORY
-    STA text_memory_pointer+1
-
-    ; Print 'A' character in top left
-    
+    STA text_memory_pointer+1    
         
 Poll
 
 Lock
-    ; SOF handler will update animation_index behind the scenes.
-    LDA animation_index
-    BNE Lock
-    ; Unblocked. Reset for next frame
-    LDA #$5
-    STA animation_index    
-
-    JSR LetterFall
-
-    JSR PrintScore
-
     ; Check for key    
     LDA #$00 ; Need to be on I/O page 0
     STA MMU_IO_CTRL
@@ -181,10 +167,24 @@ Lock
     ; Erase the 'A' letter.
     JSR EraseLetter
 
+
 HardLock
     JMP HardLock
+    
+DoneCheckInput
 
-DoneCheckInput   
+    ; SOF handler will update animation_index behind the scenes.
+    LDA animation_index
+    BNE Lock
+    ; Unblocked. Reset for next frame
+    LDA #$9
+    STA animation_index
+
+    JSR LetterFall
+
+    JSR PrintScore
+
+   
     JMP Poll
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
