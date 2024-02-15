@@ -140,10 +140,7 @@ Lock
     BNE Lock
     ; Unblocked. Reset for next frame
     LDA #$5
-    STA animation_index
-    
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL
+    STA animation_index    
 
     JSR LetterFall
 
@@ -151,31 +148,17 @@ Lock
     LDA #$00 ; Need to be on I/O page 0
     STA MMU_IO_CTRL
     
-    ; Space is PB4, PA7
-    LDA #(1 << 4 ^ $FF)
+    ; Check for the letter 'A'
+    ; 'A' is PB2, PA1
+    LDA #(1 << 2 ^ $FF)
     STA VIA_PRB
     LDA VIA_PRA
-    CMP #(1 << 7 ^ $FF)
-    BNE DoneCheckInput
+    CMP #(1 << 1 ^ $FF)
+    BNE DoneCheckInput 
     
-    ; On key press
-
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL
-    
-    ; Put text lower down
-    LDA #(<VKY_TEXT_MEMORY + $80)
-    STA text_memory_pointer
-    LDA #((>VKY_TEXT_MEMORY) + $00)
-    STA text_memory_pointer+1
-
-    LDA #<TX_RESPONSE
-    STA src_pointer
-
-    LDA #>TX_RESPONSE
-    STA src_pointer+1
-    
-    JSR PrintAnsiString
+    ; If they pressed the 'A' key
+    ; Erase the 'A' letter.
+    JSR EraseLetter
 
 HardLock
     JMP HardLock
@@ -184,7 +167,31 @@ DoneCheckInput
     JMP Poll
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+EraseLetter
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL
+
+    ; Use 816 mode
+    CLC ; Try entering native mode
+    XCE
+    setxl
+    
+    ; Print a space to cover up the falling character
+    LDY letter_pos                   
+    LDA #32                        
+    STA (text_memory_pointer),Y
+    
+    setaxs    
+    SEC      ; Go back to emulation mode
+    XCE
+
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LetterFall
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL
+
     ; Use 816 mode
     CLC ; Try entering native mode
     XCE
@@ -207,6 +214,7 @@ LetterFall
     setas
     CPY #$4AF
     BPL FallenToBottom
+    STZ fallen_to_bottom
     
     ; Print the fallen character
     LDY letter_pos                  ; Y reg contains position of character    
