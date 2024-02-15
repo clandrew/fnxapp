@@ -115,7 +115,21 @@ MAIN
     STZ   VIA_PRA
     
     STZ animation_index
-    STZ letter_pos
+
+    ; Enable RNG
+    LDA #1
+    STA $D6A6
+
+    ; Randomize starting letter position. Any column from 0 to 39
+    LDA $D6A4
+    AND #$3F    ; [0..63]
+    CMP #40
+    BMI DoneRand
+    CLC
+    SBC $40
+DoneRand
+
+    STA letter_pos
     
     ; Initialize IRQ
     JSR Init_IRQHandler     
