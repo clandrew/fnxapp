@@ -74,6 +74,12 @@ F256_RESET
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 MAIN
+    CLC ; Try entering native mode
+    XCE
+    .as
+    .xs
+    SEP #$30
+
     LDA #MMU_EDIT_EN
     STA MMU_MEM_CTRL
     STZ MMU_IO_CTRL 
@@ -142,19 +148,13 @@ Lock
     STA animation_index
 
     ; Use 816 mode
-    .al
+    .as
     .xl
     REP #$30
-    .as
-    .xs
-    REP #$20 ; Need to do this
 
-
-    INC letter_pos
+    
     ;;;;;;;;;;;;;;;;
-    LDY letter_pos    ; Y reg contains position of character    
-    LDA MMU_IO_CTRL ; Back up I/O page
-    PHA    
+    LDY letter_pos    ; Y reg contains position of character
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
     LDA #65                         ; Load the character to print
@@ -165,9 +165,14 @@ Lock
     LDA #$F0 ; Text color
     DEY
     STA (text_memory_pointer),Y
-    PLA
-    STA MMU_IO_CTRL ; Restore I/O page
     ;;;;;;;;;;;
+    INY
+    STY letter_pos
+
+    .as
+    .xs
+    SEP #$20 ; Need to do this
+
 
     ; Check for key    
     LDA #$00 ; Need to be on I/O page 0
