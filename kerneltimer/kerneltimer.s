@@ -10,6 +10,7 @@
 dst_pointer = $30
 src_pointer = $32
 animation_index = $34
+target_frame = $35
 text_memory_pointer = $38
 
 ; PGZ header
@@ -79,13 +80,20 @@ ENTRYPOINT
     STZ animation_index     
 
 EachFrame
+    ; First, query the current timer
+    CLC
+    lda     #kernel.args.timer.FRAMES | kernel.args.timer.QUERY
+    sta     kernel.args.timer.units
+    jsr     kernel.Clock.SetTimer   ; Returns frame number in A
+    ADC #60
+    STA target_frame
+
 
     ; Schedule timer here
-_retry
     lda     #kernel.args.timer.FRAMES   ; Measure in frames
     sta     kernel.args.timer.units
 
-    lda     #60                         ; Frame 60
+    lda     target_frame
     sta     kernel.args.timer.absolute
     
     lda     #1                          ; Cookie 1
@@ -105,14 +113,10 @@ Poll
     BRA Poll
     
 TimerTick
-    BRK
-
     ; Clear to color
     LDA animation_index
     STA $D00D ; Background red channel
-    LDA #$00
     STA $D00E ; Background green channel
-    LDA #$FF
     STA $D00F ; Background blue channel  
 
     INC animation_index
