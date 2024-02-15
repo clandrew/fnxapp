@@ -9,8 +9,9 @@
 dst_pointer = $30
 src_pointer = $32
 text_memory_pointer = $38
-letter_pos = $40
+fallen_to_bottom = $3A
 animation_index = $3F
+letter_pos = $40
 
 ; Code
 * = $000000 
@@ -144,37 +145,7 @@ Lock
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
 
-    ; Use 816 mode
-    CLC ; Try entering native mode
-    XCE
-    setxl
-    
-    ;;;;;;;;;;;;;;;;
-    ; Print a space to cover up the falling character
-    LDY letter_pos                   
-    LDA #32                        
-    STA (text_memory_pointer),Y
-
-    ; Increment the character pos, to move 1 row lower
-    setal
-    TYA
-    CLC
-    ADC #$28
-    STA letter_pos
-    
-    ; Print the fallen character
-    setas
-    LDY letter_pos                  ; Y reg contains position of character    
-    LDA #65                         ; Load the character to print
-    STA (text_memory_pointer),Y
-    ;;;;;;;;;;;
-
-
-
-    setaxs    
-    SEC      ; Go back to emulation mode
-    XCE
-
+    JSR LetterFall
 
     ; Check for key    
     LDA #$00 ; Need to be on I/O page 0
@@ -212,6 +183,47 @@ HardLock
 DoneCheckInput   
     JMP Poll
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+LetterFall
+    ; Use 816 mode
+    CLC ; Try entering native mode
+    XCE
+    setxl
+    
+    ;;;;;;;;;;;;;;;;
+    ; Print a space to cover up the falling character
+    LDY letter_pos                   
+    LDA #32                        
+    STA (text_memory_pointer),Y
+
+    ; Increment the character pos, to move 1 row lower
+    setal
+    TYA
+    CLC
+    ADC #$28
+    STA letter_pos
+
+    ; Check if it's fallen to the bottom
+    setas
+    CPY #$4AF
+    BPL FallenToBottom
+    
+    ; Print the fallen character
+    LDY letter_pos                  ; Y reg contains position of character    
+    LDA #65                         ; Load the character to print
+    STA (text_memory_pointer),Y
+    BRA DoneLetterFall
+    ;;;;;;;;;;;
+
+FallenToBottom
+    LDA #1
+    STA fallen_to_bottom
+
+DoneLetterFall
+    setaxs    
+    SEC      ; Go back to emulation mode
+    XCE
+    RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
