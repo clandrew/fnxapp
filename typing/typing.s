@@ -145,6 +145,9 @@ Lock
     CLC ; Try entering native mode
     XCE
     setxl    
+    
+    ;;;;;;;;;;;;;;;;
+
 
     ;;;;;;;;;;;;;;;;
     LDY letter_pos    ; Y reg contains position of character    
@@ -153,9 +156,6 @@ Lock
     LDA #65                         ; Load the character to print
     STA (text_memory_pointer),Y
     INY
-    LDA #$03 ; Set I/O page to 3
-    STA MMU_IO_CTRL
-    LDA #$F0 ; Text color
     DEY
     STA (text_memory_pointer),Y
 
