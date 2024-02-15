@@ -12,6 +12,7 @@ text_memory_pointer = $38
 fallen_to_bottom = $3A
 animation_index = $3F
 letter_pos = $40
+score = $42
 
 ; Code
 * = $000000 
@@ -115,6 +116,8 @@ MAIN
     STZ   VIA_PRA
     
     STZ animation_index
+    STZ score
+    STZ score+1
 
     ; Enable RNG
     LDA #1
@@ -157,6 +160,8 @@ Lock
     STA animation_index    
 
     JSR LetterFall
+
+    JSR PrintScore
 
     ; Check for key    
     LDA #$00 ; Need to be on I/O page 0
@@ -245,6 +250,48 @@ DoneLetterFall
     setaxs    
     SEC      ; Go back to emulation mode
     XCE
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+PrintScore
+    LDY #28
+
+    LDA #'S'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #'C'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #'O'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #'R'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #'E'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #':'
+    STA (text_memory_pointer),Y
+
+    ; Placeholder
+    INY
+    LDA #'0'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #'0'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #'0'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #'0'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #'0'
+    STA (text_memory_pointer),Y
+
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
