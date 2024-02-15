@@ -142,19 +142,19 @@ Lock
     STA animation_index
 
     ; Use 816 mode
-    .al
-    .xl
-    REP #$30
-    .as
-    .xs
-    REP #$20 ; Need to do this
+    CLC ; Try entering native mode
+    XCE
+    setxl
+
+
+    setaxs    
+    SEC      ; Go back to emulation mode
+    XCE
 
 
     INC letter_pos
     ;;;;;;;;;;;;;;;;
     LDY letter_pos    ; Y reg contains position of character    
-    LDA MMU_IO_CTRL ; Back up I/O page
-    PHA    
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
     LDA #65                         ; Load the character to print
@@ -165,8 +165,6 @@ Lock
     LDA #$F0 ; Text color
     DEY
     STA (text_memory_pointer),Y
-    PLA
-    STA MMU_IO_CTRL ; Restore I/O page
     ;;;;;;;;;;;
 
     ; Check for key    
