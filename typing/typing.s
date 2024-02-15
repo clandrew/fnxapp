@@ -144,13 +144,7 @@ Lock
     ; Use 816 mode
     CLC ; Try entering native mode
     XCE
-    setxl
-
-
-    setaxs    
-    SEC      ; Go back to emulation mode
-    XCE
-
+    setxl    
 
     ;;;;;;;;;;;;;;;;
     LDY letter_pos    ; Y reg contains position of character    
@@ -164,9 +158,18 @@ Lock
     LDA #$F0 ; Text color
     DEY
     STA (text_memory_pointer),Y
-    INY
-    STY letter_pos
+
+    setal
+    TYA
+    CLC
+    ADC #$28
+    STA letter_pos
     ;;;;;;;;;;;
+
+    setaxs    
+    SEC      ; Go back to emulation mode
+    XCE
+
 
     ; Check for key    
     LDA #$00 ; Need to be on I/O page 0
