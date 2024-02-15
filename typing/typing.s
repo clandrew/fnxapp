@@ -121,47 +121,28 @@ MAIN
     STA text_memory_pointer+1
 
     ; Print 'A' character in top left
-
-    LDA #<TX_PROMPT
-    STA src_pointer
-
-    LDA #>TX_PROMPT
-    STA src_pointer+1
     
-    JSR PrintAnsiString
-
     ;;;;;;;;;;;;;;;;
-    LDX #$00
-    LDY #$00
+    LDY #$01    ; Y reg contains position of character
     
     LDA MMU_IO_CTRL ; Back up I/O page
     PHA
     
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
-
-PrintAnsiString_EachCharToTextMemory2
-    LDA (src_pointer),y                          ; Load the character to print
-    BEQ PrintAnsiString_DoneStoringToTextMemory2  ; Exit if null term        
-    STA (text_memory_pointer),Y                  ; Store character to text memory
+    LDA #65                         ; Load the character to print
+    STA (text_memory_pointer),Y
     INY
-    BRA PrintAnsiString_EachCharToTextMemory2
-
-PrintAnsiString_DoneStoringToTextMemory2
 
     LDA #$03 ; Set I/O page to 3
     STA MMU_IO_CTRL
-
     LDA #$F0 ; Text color
 
-PrintAnsiString_EachCharToColorMemory2
     DEY
     STA (text_memory_pointer),Y
-    BNE PrintAnsiString_EachCharToColorMemory2
 
     PLA
     STA MMU_IO_CTRL ; Restore I/O page
-
 
     ;;;;;;;;;;;
         
