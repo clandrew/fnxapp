@@ -152,7 +152,6 @@ Lock
     XCE
 
 
-    INC letter_pos
     ;;;;;;;;;;;;;;;;
     LDY letter_pos    ; Y reg contains position of character    
     LDA #$02 ; Set I/O page to 2
@@ -165,6 +164,8 @@ Lock
     LDA #$F0 ; Text color
     DEY
     STA (text_memory_pointer),Y
+    INY
+    STY letter_pos
     ;;;;;;;;;;;
 
     ; Check for key    
