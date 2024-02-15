@@ -140,6 +140,9 @@ Lock
     ; Unblocked. Reset for next frame
     LDA #$5
     STA animation_index
+    
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL
 
     ; Use 816 mode
     CLC ; Try entering native mode
@@ -149,10 +152,7 @@ Lock
     ;;;;;;;;;;;;;;;;
 
 
-    ;;;;;;;;;;;;;;;;
     LDY letter_pos    ; Y reg contains position of character    
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL
     LDA #32                         ; Load the character to print
     STA (text_memory_pointer),Y
 
@@ -165,8 +165,6 @@ Lock
 
     setas
     LDY letter_pos    ; Y reg contains position of character    
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL
     LDA #65                         ; Load the character to print
     STA (text_memory_pointer),Y
 
