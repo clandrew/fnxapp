@@ -8,12 +8,15 @@
 
 dst_pointer = $30
 src_pointer = $32
-text_memory_pointer = $38
-fallen_to_bottom = $3A
-need_score_update = $3B
+text_memory_pointer = $38 ; 16bit
+fallen_to_bottom = $3A  ; unused right now
+need_score_update = $3B ; could be a flag
 animation_index = $3F
-letter_pos = $40
-score = $42
+
+letter0_ascii = $40
+letter0_pos = $41
+
+score = $48
 
 ; Code
 * = $000000 
@@ -133,8 +136,10 @@ MAIN
     CLC
     SBC $40
 DoneRand
-    STA letter_pos
-    STZ letter_pos+1
+    STA letter0_pos
+    STZ letter0_pos+1
+    LDA #66
+    STA letter0_ascii
     
     ; Initialize IRQ
     JSR Init_IRQHandler     
@@ -203,12 +208,13 @@ EraseLetterAndIncrementScore
     STA MMU_IO_CTRL
     
     ; Print a space to cover up the falling character
-    LDY letter_pos ; 16bit type                   
+    LDY letter0_pos ; 16bit type                   
     LDA #32                        
     STA (text_memory_pointer),Y
 
-    STZ letter_pos
-    STZ letter_pos+1
+    STZ letter0_pos
+    STZ letter0_pos+1
+    ; choose random char
 
     LDA #1
     STA need_score_update
@@ -219,11 +225,10 @@ EraseLetterAndIncrementScore
 LetterFall
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
-
     
     ;;;;;;;;;;;;;;;;
     ; Print a space to cover up the falling character
-    LDY letter_pos                   
+    LDY letter0_pos                   
     LDA #32                        
     STA (text_memory_pointer),Y
 
@@ -232,7 +237,7 @@ LetterFall
     TYA
     CLC
     ADC #$28
-    STA letter_pos
+    STA letter0_pos
 
     ; Check if it's fallen to the bottom
     setas
@@ -241,8 +246,8 @@ LetterFall
     STZ fallen_to_bottom
     
     ; Print the fallen character
-    LDY letter_pos                  ; Y reg contains position of character    
-    LDA #65                         ; Load the character to print
+    LDY letter0_pos                  ; Y reg contains position of character    
+    LDA letter0_ascii                ; Load the character to print
     STA (text_memory_pointer),Y
     BRA DoneLetterFall
     ;;;;;;;;;;;
@@ -416,55 +421,6 @@ ClearScreen_ForEach
     PLA
     STA MMU_IO_CTRL ; Restore I/O page
     RTS
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-; Pre-condition: 
-;     text_memory_pointer is set as desired dest address
-;     src_pointer is set as source address
-PrintAnsiString
-    LDX #$00
-    LDY #$00
-    
-    LDA MMU_IO_CTRL ; Back up I/O page
-    PHA
-    
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL
-
-PrintAnsiString_EachCharToTextMemory
-    LDA (src_pointer),y                          ; Load the character to print
-    BEQ PrintAnsiString_DoneStoringToTextMemory  ; Exit if null term        
-    STA (text_memory_pointer),Y                  ; Store character to text memory
-    INY
-    BRA PrintAnsiString_EachCharToTextMemory
-
-PrintAnsiString_DoneStoringToTextMemory
-
-    LDA #$03 ; Set I/O page to 3
-    STA MMU_IO_CTRL
-
-    LDA #$F0 ; Text color
-
-PrintAnsiString_EachCharToColorMemory
-    DEY
-    STA (text_memory_pointer),Y
-    BNE PrintAnsiString_EachCharToColorMemory
-
-    PLA
-    STA MMU_IO_CTRL ; Restore I/O page
-
-    RTS    
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-TX_PROMPT
-.text "Please press the 'space' key."
-.byte 0 ; null term
-
-TX_RESPONSE
-.text "Space key pressed!"
-.byte 0 ; null term
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
