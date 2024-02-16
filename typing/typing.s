@@ -171,7 +171,8 @@ Lock
     CLC ; Try entering native mode
     XCE
     setxl
-    JSR EraseLetterAndIncrementScore ; If they pressed the 'A' key, erase the 'A' letter.
+    JSR EraseLetter ; If they pressed the 'A' key, erase the 'A' letter.
+    JSR PrintScore
     SEC      ; Go back to emulation mode
     XCE    
     CLI ; Enable interrupts again
@@ -193,6 +194,7 @@ DoneCheckInput
     XCE
     setxl
     JSR LetterFall
+    JSR UpdateScore
     JSR PrintScore
     SEC      ; Go back to emulation mode
     XCE    
@@ -212,7 +214,7 @@ NewLetter
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-EraseLetterAndIncrementScore
+EraseLetter
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
     
@@ -269,15 +271,21 @@ DoneLetterFall
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-PrintScore    
+UpdateScore
     LDA need_score_update
-    BEQ PrintScore_DoneScoreUpdate
+    BEQ outline_DoneScoreUpdate
     LDY score
     INY
     STY score
     STZ need_score_update
-PrintScore_DoneScoreUpdate
+outline_DoneScoreUpdate
+    RTS
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+PrintScore    
+    LDA #$2 ; Set I/O page to 2
+    STA MMU_IO_CTRL    
     LDY #28
 
     LDA #'S'
