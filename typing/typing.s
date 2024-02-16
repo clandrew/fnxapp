@@ -198,45 +198,74 @@ DoneCheckInput
     JMP Poll    
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-CheckKeys ; TODO: compact this
+CheckKeys
     LDA letter0_ascii
-    CMP #65
-    BEQ CheckA
-    CMP #66
-    BEQ CheckB
-    CMP #67
-    BEQ CheckC
-    CMP #68
-    BEQ CheckD
-    RTS
-
-CheckA
-    LDA #(1 << 2 ^ $FF) ; 'A' is PB2, PA1
+    CLC
+    SBC #65
+    INA
+    TAY
+    LDA PBMasks,Y
     STA VIA_PRB
     LDA VIA_PRA
-    CMP #(1 << 1 ^ $FF)
+    CMP PAMasks,Y
     RTS
 
-CheckB
-    LDA #(1 << 4 ^ $FF) ; 'B' is PB4, PA3
-    STA VIA_PRB
-    LDA VIA_PRA
-    CMP #(1 << 3 ^ $FF)
-    RTS
+; There isn't much rhyme or reason behind these, so this throws a bunch of data at the problem.
+PAMasks
+    .byte (1 << 1 ^ $FF) ; A
+    .byte (1 << 3 ^ $FF) ; B
+    .byte (1 << 2 ^ $FF) ; C
+    .byte (1 << 2 ^ $FF) ; D
+    .byte (1 << 1 ^ $FF) ; E
+    .byte (1 << 2 ^ $FF) ; F
+    .byte (1 << 3 ^ $FF) ; G
+    .byte (1 << 3 ^ $FF) ; H
+    .byte (1 << 4 ^ $FF) ; I
+    .byte (1 << 4 ^ $FF) ; J
+    .byte (1 << 4 ^ $FF) ; K
+    .byte (1 << 5 ^ $FF) ; L
+    .byte (1 << 4 ^ $FF) ; M
+    .byte (1 << 4 ^ $FF) ; N
+    .byte (1 << 4 ^ $FF) ; O
+    .byte (1 << 5 ^ $FF) ; P
+    .byte (1 << 7 ^ $FF) ; Q
+    .byte (1 << 2 ^ $FF) ; R
+    .byte (1 << 1 ^ $FF) ; S
+    .byte (1 << 1 ^ $FF) ; T
+    .byte (1 << 3 ^ $FF) ; U
+    .byte (1 << 3 ^ $FF) ; V
+    .byte (1 << 1 ^ $FF) ; W
+    .byte (1 << 2 ^ $FF) ; X
+    .byte (1 << 3 ^ $FF) ; Y
+    .byte (1 << 1 ^ $FF) ; Z
 
-CheckC
-    LDA #(1 << 4 ^ $FF) ; 'C' is PB4, PA2
-    STA VIA_PRB
-    LDA VIA_PRA
-    CMP #(1 << 2 ^ $FF)
-    RTS
-
-CheckD
-    LDA #(1 << 2 ^ $FF) ; 'C' is PB2, PA2
-    STA VIA_PRB
-    LDA VIA_PRA
-    CMP #(1 << 2 ^ $FF)
-    RTS
+PBMasks
+    .byte (1 << 2 ^ $FF) ; A
+    .byte (1 << 4 ^ $FF) ; B
+    .byte (1 << 4 ^ $FF) ; C
+    .byte (1 << 2 ^ $FF) ; D
+    .byte (1 << 6 ^ $FF) ; E
+    .byte (1 << 5 ^ $FF) ; F
+    .byte (1 << 2 ^ $FF) ; G
+    .byte (1 << 5 ^ $FF) ; H
+    .byte (1 << 1 ^ $FF) ; I
+    .byte (1 << 2 ^ $FF) ; J
+    .byte (1 << 5 ^ $FF) ; K
+    .byte (1 << 2 ^ $FF) ; L
+    .byte (1 << 4 ^ $FF) ; M
+    .byte (1 << 7 ^ $FF) ; N
+    .byte (1 << 6 ^ $FF) ; O
+    .byte (1 << 1 ^ $FF) ; P
+    .byte (1 << 6 ^ $FF) ; Q
+    .byte (1 << 1 ^ $FF) ; R
+    .byte (1 << 5 ^ $FF) ; S
+    .byte (1 << 6 ^ $FF) ; T
+    .byte (1 << 6 ^ $FF) ; U
+    .byte (1 << 7 ^ $FF) ; V
+    .byte (1 << 1 ^ $FF) ; W
+    .byte (1 << 7 ^ $FF) ; X
+    .byte (1 << 1 ^ $FF) ; Y
+    .byte (1 << 4 ^ $FF) ; Z
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 NewLetter
@@ -246,7 +275,7 @@ NewLetter
     STA letter0_pos
     STZ letter0_pos+1
 
-    LDY #4 ;#26
+    LDY #26
     JSR RandModY16Bit
     TYA
     CLC
