@@ -209,7 +209,12 @@ NewLetter
     TYA
     STA letter0_pos
     STZ letter0_pos+1
-    LDA #66
+
+    LDY #26
+    JSR RandModY16Bit
+    TYA
+    CLC
+    ADC #65
     STA letter0_ascii
     RTS
 
