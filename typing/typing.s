@@ -158,13 +158,8 @@ Lock
     LDA #$00 ; Need to be on I/O page 0
     STA MMU_IO_CTRL
     
-    ; Check for the letter 'A'
-    ; 'A' is PB2, PA1
-    LDA #(1 << 2 ^ $FF)
-    STA VIA_PRB
-    LDA VIA_PRA
-    CMP #(1 << 1 ^ $FF)
-    BNE DoneCheckInput 
+    JSR CheckKeys
+    BNE DoneCheckInput
     
     CLC     ; disable interrupts
     SEI
@@ -201,6 +196,47 @@ DoneCheckInput
     CLI ; Enable interrupts again
    
     JMP Poll    
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+CheckKeys ; TODO: compact this
+    LDA letter0_ascii
+    CMP #65
+    BEQ CheckA
+    CMP #66
+    BEQ CheckB
+    CMP #67
+    BEQ CheckC
+    CMP #68
+    BEQ CheckD
+    RTS
+
+CheckA
+    LDA #(1 << 2 ^ $FF) ; 'A' is PB2, PA1
+    STA VIA_PRB
+    LDA VIA_PRA
+    CMP #(1 << 1 ^ $FF)
+    RTS
+
+CheckB
+    LDA #(1 << 4 ^ $FF) ; 'B' is PB4, PA3
+    STA VIA_PRB
+    LDA VIA_PRA
+    CMP #(1 << 3 ^ $FF)
+    RTS
+
+CheckC
+    LDA #(1 << 4 ^ $FF) ; 'C' is PB4, PA2
+    STA VIA_PRB
+    LDA VIA_PRA
+    CMP #(1 << 2 ^ $FF)
+    RTS
+
+CheckD
+    LDA #(1 << 2 ^ $FF) ; 'C' is PB2, PA2
+    STA VIA_PRB
+    LDA VIA_PRA
+    CMP #(1 << 2 ^ $FF)
+    RTS
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 NewLetter
@@ -210,7 +246,7 @@ NewLetter
     STA letter0_pos
     STZ letter0_pos+1
 
-    LDY #26
+    LDY #4 ;#26
     JSR RandModY16Bit
     TYA
     CLC
