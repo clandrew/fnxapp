@@ -135,6 +135,7 @@ MAIN
 DoneRand
 
     STA letter_pos
+    STZ letter_pos+1
     
     ; Initialize IRQ
     JSR Init_IRQHandler     
