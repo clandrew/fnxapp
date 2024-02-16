@@ -10,6 +10,7 @@ dst_pointer = $30
 src_pointer = $32
 text_memory_pointer = $38
 fallen_to_bottom = $3A
+need_score_update = $3B
 animation_index = $3F
 letter_pos = $40
 score = $42
@@ -119,12 +120,11 @@ MAIN
     LDA #123
     STA score
     STZ score+1
-
+    STZ need_score_update
 
     ; Enable RNG
     LDA #1
     STA $D6A6
-
     ; Randomize starting letter position. Any column from 0 to 39
     LDA $D6A4
     AND #$3F    ; [0..63]
@@ -133,7 +133,6 @@ MAIN
     CLC
     SBC $40
 DoneRand
-
     STA letter_pos
     STZ letter_pos+1
     
@@ -164,14 +163,18 @@ Lock
     CMP #(1 << 1 ^ $FF)
     BNE DoneCheckInput 
     
-    ; If they pressed the 'A' key
-    ; Erase the 'A' letter.
-    JSR EraseLetter
+    CLC     ; disable interrupts
+    SEI
+    CLC ; Try entering native mode
+    XCE
+    setxl
+    JSR EraseLetterAndIncrementScore ; If they pressed the 'A' key, erase the 'A' letter.
+    SEC      ; Go back to emulation mode
+    XCE    
+    CLI ; Enable interrupts again
 
-
-HardLock
-    JMP HardLock
-    
+    JMP DoneCheckInput
+        
 DoneCheckInput
 
     ; SOF handler will update animation_index behind the scenes.
@@ -181,31 +184,34 @@ DoneCheckInput
     LDA #$9
     STA animation_index
 
-    JSR LetterFall
-
-    JSR PrintScore
-
-   
-    JMP Poll
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-EraseLetter
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL
-
-    ; Use 816 mode
+    CLC     ; disable interrupts
+    SEI
     CLC ; Try entering native mode
     XCE
     setxl
+    JSR LetterFall
+    JSR PrintScore
+    SEC      ; Go back to emulation mode
+    XCE    
+    CLI ; Enable interrupts again
+   
+    JMP Poll    
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+EraseLetterAndIncrementScore
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL
     
     ; Print a space to cover up the falling character
-    LDY letter_pos                   
+    LDY letter_pos ; 16bit type                   
     LDA #32                        
     STA (text_memory_pointer),Y
-    
-    setaxs    
-    SEC      ; Go back to emulation mode
-    XCE
+
+    STZ letter_pos
+    STZ letter_pos+1
+
+    LDA #1
+    STA need_score_update
 
     RTS
 
@@ -214,10 +220,6 @@ LetterFall
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
 
-    ; Use 816 mode
-    CLC ; Try entering native mode
-    XCE
-    setxl
     
     ;;;;;;;;;;;;;;;;
     ; Print a space to cover up the falling character
@@ -250,14 +252,19 @@ FallenToBottom
     STA fallen_to_bottom
 
 DoneLetterFall
-    setaxs    
-    SEC      ; Go back to emulation mode
-    XCE
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-PrintScore
+PrintScore    
+    LDA need_score_update
+    BEQ PrintScore_DoneScoreUpdate
+    LDY score
+    INY
+    STY score
+    STZ need_score_update
+PrintScore_DoneScoreUpdate
+
     LDY #28
 
     LDA #'S'
@@ -279,12 +286,7 @@ PrintScore
     STA (text_memory_pointer),Y    
     
     LDA #$0 ; Set I/O page to 0
-    STA MMU_IO_CTRL
-        
-    ; Use 816 mode
-    CLC ; Try entering native mode
-    XCE
-    setxl
+    STA MMU_IO_CTRL        
 
     LDY score
     LDX #5
@@ -300,11 +302,7 @@ EachDigitToAscii
     LDY $DE14   ; Load the quotient
     DEX
     BNE EachDigitToAscii
-
-    setaxs    
-    SEC      ; Go back to emulation mode
-    XCE
-    
+        
     LDA #$2 ; Set I/O page to 2
     STA MMU_IO_CTRL    
 
