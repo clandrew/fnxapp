@@ -119,27 +119,25 @@ MAIN
     STZ   VIA_PRB
     STZ   VIA_PRA
     
+    ; Initialize RNG
+    LDA #1
+    STA $D6A6 
+    
     STZ animation_index
     LDA #123
     STA score
     STZ score+1
     STZ need_score_update
-
-    ; Enable RNG
-    LDA #1
-    STA $D6A6
-    ; Randomize starting letter position. Any column from 0 to 39
-    LDA $D6A4
-    AND #$3F    ; [0..63]
-    CMP #40
-    BMI DoneRand
-    CLC
-    SBC $40
-DoneRand
-    STA letter0_pos
-    STZ letter0_pos+1
-    LDA #66
-    STA letter0_ascii
+    
+    CLC     ; disable interrupts
+    SEI
+    CLC ; Try entering native mode
+    XCE
+    setxl
+    JSR NewLetter
+    SEC      ; Go back to emulation mode
+    XCE    
+    CLI ; Enable interrupts again
     
     ; Initialize IRQ
     JSR Init_IRQHandler     
@@ -201,6 +199,17 @@ DoneCheckInput
     CLI ; Enable interrupts again
    
     JMP Poll    
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+NewLetter
+    LDY #40
+    JSR RandModY16Bit
+    TYA
+    STA letter0_pos
+    STZ letter0_pos+1
+    LDA #66
+    STA letter0_ascii
+    RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 EraseLetterAndIncrementScore
@@ -211,10 +220,9 @@ EraseLetterAndIncrementScore
     LDY letter0_pos ; 16bit type                   
     LDA #32                        
     STA (text_memory_pointer),Y
-
-    STZ letter0_pos
-    STZ letter0_pos+1
-    ; choose random char
+        
+    STZ MMU_IO_CTRL 
+    JSR NewLetter
 
     LDA #1
     STA need_score_update
@@ -290,7 +298,7 @@ PrintScore_DoneScoreUpdate
     LDA #':'
     STA (text_memory_pointer),Y    
     
-    LDA #$0 ; Set I/O page to 0
+    LDA #$0 ; Set I/O page to 0- needed for fixed function math
     STA MMU_IO_CTRL        
 
     LDY score
@@ -319,6 +327,19 @@ CopyEachDigit
     INY
     DEX
     BNE CopyEachDigit
+
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+RandModY16Bit
+    ; Precondition: Y contains the value to mod by.
+    ; Postcondition: Y contains the result. X is scrambled
+
+    LDX $D6A4 ; Load 16bit random value
+
+    STX $DE06   ; Fixed function numerator
+    STY $DE04   ; Fixed function denomenator    
+    LDY $DE16   ; Load the remainder
 
     RTS
 
