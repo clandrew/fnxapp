@@ -346,6 +346,7 @@ FallenToBottom
     BEQ DoneLetterFall ; TODO: Map this to game over
     DEC A
     STA lives
+    JSR NewLetter
 
 DoneLetterFall
     RTS
