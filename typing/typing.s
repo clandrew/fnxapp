@@ -16,6 +16,7 @@ animation_index = $3F
 letter0_ascii = $40
 letter0_pos = $41
 
+lives = $47
 score = $48
 
 ; Code
@@ -128,6 +129,8 @@ MAIN
     STA score
     STZ score+1
     STZ need_score_update
+    LDA #5
+    STA lives
     
     CLC     ; disable interrupts
     SEI
