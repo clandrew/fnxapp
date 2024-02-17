@@ -231,7 +231,7 @@ PAMasks
     .byte (1 << 7 ^ $FF) ; Q
     .byte (1 << 2 ^ $FF) ; R
     .byte (1 << 1 ^ $FF) ; S
-    .byte (1 << 1 ^ $FF) ; T
+    .byte (1 << 2 ^ $FF) ; T
     .byte (1 << 3 ^ $FF) ; U
     .byte (1 << 3 ^ $FF) ; V
     .byte (1 << 1 ^ $FF) ; W
@@ -355,9 +355,44 @@ outline_DoneScoreUpdate
 
 PrintScore    
     LDA #$2 ; Set I/O page to 2
-    STA MMU_IO_CTRL    
-    LDY #28
+    STA MMU_IO_CTRL   
+    
+    LDY #16
+    LDA #'L'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #'I'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #'V'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #'E'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #'S'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #':'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #'*'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #'*'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #'*'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #'*'
+    STA (text_memory_pointer),Y
+    INY
+    LDA #'*'
+    STA (text_memory_pointer),Y
 
+
+    LDY #28
     LDA #'S'
     STA (text_memory_pointer),Y
     INY
