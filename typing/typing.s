@@ -93,8 +93,6 @@ MAIN
     LDA VKY_TXT_CURSOR_CTRL_REG
     AND #$FE
     STA VKY_TXT_CURSOR_CTRL_REG
-    
-    JSR ClearScreen        
              
     ; Clear to magenta
     LDA #$FF
@@ -136,6 +134,7 @@ MAIN
     CLC ; Try entering native mode
     XCE
     setxl
+    JSR ClearScreenNative
     JSR NewLetter
     SEC      ; Go back to emulation mode
     XCE    
@@ -156,7 +155,7 @@ MAIN
 Poll
 
 Lock
-    ; Check for key    
+    ; Check for keypress
     LDA #$00 ; Need to be on I/O page 0
     STA MMU_IO_CTRL
     
@@ -272,6 +271,9 @@ PBMasks
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 NewLetter
+    LDA #$0 ; Set I/O page to 0
+    STA MMU_IO_CTRL
+
     LDY #40
     JSR RandModY16Bit
 
@@ -341,13 +343,37 @@ LetterFall
 
 FallenToBottom
     LDA lives
-    BEQ DoneLetterFall ; TODO: Map this to game over
+    BEQ GameOverScreen
     DEC A
     STA lives
     JSR NewLetter
 
 DoneLetterFall
     RTS
+    
+TX_GAMEOVER .null "G A M E   O V E R"
+
+GameOverScreen
+    JSR ClearScreenNative
+    ; Print string
+    LDX #TX_GAMEOVER
+    STX src_pointer
+    LDY #$C1C4
+    STY dst_pointer    
+GameOverText_ForEach
+    LDA (src_pointer)
+    BEQ GameOverText_Done
+    STA (dst_pointer)
+    INY
+    STY dst_pointer
+    INX
+    STX src_pointer
+    BRA GameOverText_ForEach
+GameOverText_Done
+
+GameOverLock
+    JMP GameOverLock
+
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -526,36 +552,21 @@ IRQ_Handler_Done
     PLP
     RTI
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-ClearScreen
-    LDA MMU_IO_CTRL ; Back up I/O page
-    PHA
-    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ClearScreenNative ; The console size here is 40 wide x 30 high.
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
-    
-    STZ dst_pointer
-    LDA #$C0
-    STA dst_pointer+1
 
-ClearScreen_ForEach
+    LDY #$C000
+    STY dst_pointer    
+ClearScreenNative_ForEach
     LDA #32 ; Character 0
     STA (dst_pointer)
-        
-    CLC
-    LDA dst_pointer
-    ADC #$01
-    STA dst_pointer
-    LDA dst_pointer+1
-    ADC #$00 ; Add carry
-    STA dst_pointer+1
+    INY
+    STY dst_pointer  
+    CPY #$C4B0
+    BNE ClearScreenNative_ForEach
 
-    CMP #$C5
-    BNE ClearScreen_ForEach
-    
-    PLA
-    STA MMU_IO_CTRL ; Restore I/O page
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
