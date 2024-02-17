@@ -343,8 +343,8 @@ LetterFall
 
 FallenToBottom
     LDA lives
-    BEQ GameOverScreen
     DEC A
+    BEQ GameOverScreen
     STA lives
     JSR NewLetter
 
