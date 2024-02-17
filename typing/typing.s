@@ -117,9 +117,28 @@ MAIN
     STZ   VIA_PRB
     STZ   VIA_PRA
     
+    CLC     ; disable interrupts
+    SEI
+    CLC ; Try entering native mode
+    XCE
+    setxl
+    JSR TitleScreenNative
+    SEC      ; Go back to emulation mode
+    XCE    
+    CLI ; Enable interrupts again
+          
+    STZ MMU_IO_CTRL
+TitleScreenLock
+    ; Space is PB4, PA7
+    LDA #(1 << 4 ^ $FF)
+    STA VIA_PRB
+    LDA VIA_PRA
+    CMP #(1 << 7 ^ $FF)
+    BNE TitleScreenLock
+    
     ; Initialize RNG
     LDA #1
-    STA $D6A6 
+    STA $D6A6
     
     STZ animation_index
     LDA #0
@@ -156,8 +175,7 @@ Poll
 
 Lock
     ; Check for keypress
-    LDA #$00 ; Need to be on I/O page 0
-    STA MMU_IO_CTRL
+    STZ MMU_IO_CTRL  ; Need to be on I/O page 0
     
     JSR CheckKeys
     BNE DoneCheckInput
@@ -568,6 +586,62 @@ ClearScreenNative_ForEach
     BNE ClearScreenNative_ForEach
 
     RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+TitleScreenNative
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL    
+    LDY #$C000
+    STY dst_pointer
+    LDX #TX_TITLESCREEN
+    STX src_pointer
+TitleScreenNative_ForEach
+    LDA (src_pointer)
+    STA (dst_pointer)
+    INX
+    STX src_pointer
+    INY
+    STY dst_pointer  
+    CPY #$C4B0
+    BNE TitleScreenNative_ForEach
+    RTS
+
+; TX_TITLESCREEN
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+TX_TITLESCREEN
+.text "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+.text "XF                                    YX"
+.text "X 88888888888                          X"
+.text "X     888                              X"
+.text "X     888     888                      X"
+.text "X     888 888  888 88888b.   .d88b.    X"
+.text 'X     888 888  888 888 "88b d8P  Y8b   X'
+.text "X     888 888  888 888  888 88888888   X"
+.text "X     888 Y88b 888 888 d88P Y8b.       X"
+.text 'X     888  "Y88888 88888P"   "Y8888    X'
+.text "X              888 888                 X"
+.text "X    .d8888b.  888                     X"
+.text "X   d88P  Y88b 888        o            X"
+.text "X   Y88b.      888       ,8b           X"
+.text 'X    "Y888b.   888888   ,888b   888d88 X'
+.text 'X       "Y88b. 888   "Y8888888F"888P"  X'
+.text 'X         "888 888     "F8"YF"  888    X'
+.text "X   Y88b  d88P Y88b.   d8F T8b  888    X"
+.text 'X    "Y8888P"   "Y888 d"     "b 888    X'
+.text "X                                      X"
+.text "X                                      X"
+.text "X                                      X"
+.text "X                                      X"
+.text "X         Press SPACE to start!        X"
+.text "X                                      X"
+.text "X                                      X"
+.text "X                                      X"
+.text "X                                      X"
+.text "Xb                                    dX"
+.text "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
