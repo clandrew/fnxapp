@@ -125,7 +125,7 @@ MAIN
     STA $D6A6 
     
     STZ animation_index
-    LDA #123
+    LDA #0
     STA score
     STZ score+1
     STZ need_score_update
@@ -342,8 +342,10 @@ LetterFall
     ;;;;;;;;;;;
 
 FallenToBottom
-    LDA #1
-    STA fallen_to_bottom
+    LDA lives
+    BEQ DoneLetterFall ; TODO: Map this to game over
+    DEC A
+    STA lives
 
 DoneLetterFall
     RTS
@@ -351,19 +353,29 @@ DoneLetterFall
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 UpdateLives
+    LDA #' '
+    STA TX_LIVES+0
+    STA TX_LIVES+1
+    STA TX_LIVES+2
+    STA TX_LIVES+3   
+    STA TX_LIVES+4    
+    STA TX_LIVES+5
+
     ; Update the display.
     LDY #TX_LIVES
     STY dst_pointer
     setxs
-    LDA lives    
+    LDA lives
+    BEQ UpdateLives_Done
     TAY
-    DEY
+
+    
 UpdateLives_ForEach
+    DEY
     LDA #'*'
     STA (dst_pointer), Y
     CPY #0
     BEQ UpdateLives_Done
-    DEY
     BRA UpdateLives_ForEach
 
 UpdateLives_Done
@@ -376,7 +388,7 @@ UpdateScore
     LDA need_score_update
     BEQ outline_DoneScoreUpdate
     LDY score
-    INY
+    INY ; Increment score
     STY score
     STZ need_score_update
 
@@ -397,8 +409,7 @@ EachDigitToAscii
     PHA
     LDY $DE14   ; Load the quotient
     DEX
-    BNE EachDigitToAscii
-          
+    BNE EachDigitToAscii          
           
     PLA
     STA TX_SCORE
@@ -412,7 +423,7 @@ EachDigitToAscii
     STA TX_SCORE+4
 
 outline_DoneScoreUpdate
-    RTS
+    RTS    
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 TX_HUD .text "LIVES:"
