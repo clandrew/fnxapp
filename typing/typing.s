@@ -9,7 +9,6 @@
 dst_pointer = $30
 src_pointer = $32
 text_memory_pointer = $38 ; 16bit
-fallen_to_bottom = $3A  ; unused right now
 need_score_update = $3B ; could be a flag
 animation_index = $3F
 
@@ -332,7 +331,6 @@ LetterFall
     setas
     CPY #$4AF
     BPL FallenToBottom
-    STZ fallen_to_bottom
     
     ; Print the fallen character
     LDY letter0_pos                  ; Y reg contains position of character    
