@@ -193,6 +193,7 @@ DoneCheckInput
     setxl
     JSR LetterFall
     JSR UpdateScore
+    JSR UpdateLives
     JSR PrintHUD
     SEC      ; Go back to emulation mode
     XCE    
@@ -346,6 +347,28 @@ FallenToBottom
 
 DoneLetterFall
     RTS
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+UpdateLives
+    ; Update the display.
+    LDY #TX_LIVES
+    STY dst_pointer
+    setxs
+    LDA lives    
+    TAY
+    DEY
+UpdateLives_ForEach
+    LDA #'*'
+    STA (dst_pointer), Y
+    CPY #0
+    BEQ UpdateLives_Done
+    DEY
+    BRA UpdateLives_ForEach
+
+UpdateLives_Done
+    setxl
+    RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -393,7 +416,7 @@ outline_DoneScoreUpdate
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 TX_HUD .text "LIVES:"
-TX_LIVES .text "***** SCORE:"
+TX_LIVES .text "      SCORE:"
 TX_SCORE .text "00000"
 
 PrintHUD    
@@ -402,13 +425,13 @@ PrintHUD
     
     LDX #0
     LDY #16
-PrintScore_Loop
+PrintHUD_Loop
     LDA TX_HUD, X
     STA (text_memory_pointer),Y
     INY
     INX
     CPX #23
-    BNE PrintScore_Loop
+    BNE PrintHUD_Loop
 
     RTS
 
