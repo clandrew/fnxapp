@@ -170,7 +170,7 @@ Lock
     XCE
     setxl
     JSR EraseLetter ; If they pressed the 'A' key, erase the 'A' letter.
-    JSR PrintScore
+    JSR PrintHUD
     SEC      ; Go back to emulation mode
     XCE    
     CLI ; Enable interrupts again
@@ -193,7 +193,7 @@ DoneCheckInput
     setxl
     JSR LetterFall
     JSR UpdateScore
-    JSR PrintScore
+    JSR PrintHUD
     SEC      ; Go back to emulation mode
     XCE    
     CLI ; Enable interrupts again
@@ -274,7 +274,12 @@ PBMasks
 NewLetter
     LDY #40
     JSR RandModY16Bit
+
+    ; Move down a row so we don't overlap the HUD
+    CLC
     TYA
+    ADC #$28
+
     STA letter0_pos
     STZ letter0_pos+1
 
@@ -351,69 +356,8 @@ UpdateScore
     INY
     STY score
     STZ need_score_update
-outline_DoneScoreUpdate
-    RTS
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-PrintScore    
-    LDA #$2 ; Set I/O page to 2
-    STA MMU_IO_CTRL   
-    
-    LDY #16
-    LDA #'L'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #'I'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #'V'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #'E'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #'S'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #':'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #'*'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #'*'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #'*'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #'*'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #'*'
-    STA (text_memory_pointer),Y
-
-
-    LDY #28
-    LDA #'S'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #'C'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #'O'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #'R'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #'E'
-    STA (text_memory_pointer),Y
-    INY
-    LDA #':'
-    STA (text_memory_pointer),Y    
-    
+    ; Update the display too.    
     LDA #$0 ; Set I/O page to 0- needed for fixed function math
     STA MMU_IO_CTRL        
 
@@ -431,18 +375,40 @@ EachDigitToAscii
     LDY $DE14   ; Load the quotient
     DEX
     BNE EachDigitToAscii
-        
-    LDA #$2 ; Set I/O page to 2
-    STA MMU_IO_CTRL    
-
-    LDY #$22
-    LDX #5
-CopyEachDigit
+          
+          
     PLA
+    STA TX_SCORE
+    PLA
+    STA TX_SCORE+1    
+    PLA
+    STA TX_SCORE+2
+    PLA
+    STA TX_SCORE+3
+    PLA
+    STA TX_SCORE+4
+
+outline_DoneScoreUpdate
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+TX_HUD .text "LIVES:"
+TX_LIVES .text "***** SCORE:"
+TX_SCORE .text "00000"
+
+PrintHUD    
+    LDA #$2 ; Set I/O page to 2
+    STA MMU_IO_CTRL
+    
+    LDX #0
+    LDY #16
+PrintScore_Loop
+    LDA TX_HUD, X
     STA (text_memory_pointer),Y
     INY
-    DEX
-    BNE CopyEachDigit
+    INX
+    CPX #23
+    BNE PrintScore_Loop
 
     RTS
 
