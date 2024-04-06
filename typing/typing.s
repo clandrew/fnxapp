@@ -378,20 +378,40 @@ GameOverScreen
     STX src_pointer
     LDY #$C1C4
     STY dst_pointer    
-GameOverText_ForEach
+    JSR PrintAscii_ForEach
+
+GameOverLock
+    ; Poll for input xxx
+    JMP GameOverLock
+
+
+;GameOverLock
+    ; Poll for space
+    ; Space is PB4, PA7
+;    LDA #(1 << 4 ^ $FF)
+;    STA VIA_PRB
+;    LDA VIA_PRA
+;    CMP #(1 << 7 ^ $FF)
+;    BNE GameOverLock
+    ; Unlock here
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+PrintAscii
+    ; Precondition: src_pointer, dst_pointer are initialized
+    ;               src_pointer is set to X
+    ;               dst_pointer is set to Y
+    ;               X and Y are in 16 bit mode
+PrintAscii_ForEach
     LDA (src_pointer)
-    BEQ GameOverText_Done
+    BEQ PrintAscii_Done
     STA (dst_pointer)
     INY
     STY dst_pointer
     INX
     STX src_pointer
-    BRA GameOverText_ForEach
-GameOverText_Done
-
-GameOverLock
-    JMP GameOverLock
-
+    BRA PrintAscii_ForEach
+PrintAscii_Done
+    RTS
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -595,18 +615,8 @@ TitleScreenNative
     STY dst_pointer
     LDX #TX_TITLESCREEN
     STX src_pointer
-TitleScreenNative_ForEach
-    LDA (src_pointer)
-    STA (dst_pointer)
-    INX
-    STX src_pointer
-    INY
-    STY dst_pointer  
-    CPY #$C4B0
-    BNE TitleScreenNative_ForEach
+    JSR PrintAscii
     RTS
-
-; TX_TITLESCREEN
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -622,8 +632,8 @@ TX_TITLESCREEN
 .text "X     888 Y88b 888 888 d88P Y8b.       X"
 .text 'X     888  "Y88888 88888P"   "Y8888    X'
 .text "X              888 888                 X"
-.text "X    .d8888b.  888                     X"
-.text "X   d88P  Y88b 888        o            X"
+.text "X    .d8888b.  888 888                 X"
+.text "X   d88P  Y88b 888 888    o            X"
 .text "X   Y88b.      888       ,8b           X"
 .text 'X    "Y888b.   888888   ,888b   888d88 X'
 .text 'X       "Y88b. 888   "Y8888888F"888P"  X'
