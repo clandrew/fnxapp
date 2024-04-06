@@ -128,12 +128,20 @@ MAIN
     enable_int_mode8
           
     STZ MMU_IO_CTRL
-
-    JSR PollSpace
+    JSR PollForSpaceBarPress 
+    
+    ; Initialize IRQ
+    JSR Init_IRQHandler
     
     ; Initialize RNG
     LDA #1
     STA $D6A6
+    
+    ; Initialize text memory pointer
+    LDA #<VKY_TEXT_MEMORY
+    STA text_memory_pointer
+    LDA #>VKY_TEXT_MEMORY
+    STA text_memory_pointer+1    
     
     STZ animation_index
     LDA #0
@@ -141,24 +149,12 @@ MAIN
     STZ score+1
     STZ need_score_update
     LDA #5
-    STA lives
+    STA lives    
     
     disable_int_mode16
     JSR ClearScreenNative
     JSR NewLetter
-    enable_int_mode8
-    
-    ; Initialize IRQ
-    JSR Init_IRQHandler     
-    
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL
-    
-    ; Put text at the top left of the screen
-    LDA #<VKY_TEXT_MEMORY
-    STA text_memory_pointer
-    LDA #>VKY_TEXT_MEMORY
-    STA text_memory_pointer+1    
+    enable_int_mode8 
         
 Poll
 
@@ -372,18 +368,18 @@ GameOverTextDelay
     STY dst_pointer    
     JSR PrintAscii_ForEach
 
-    JSR PollSpace
+    JSR PollForSpaceBarPress
 
 GameOverUnlock ; new game
     JMP GameOverUnlock
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-PollSpace
+PollForSpaceBarPress
     LDA #(1 << 4 ^ $FF)
     STA VIA_PRB
     LDA VIA_PRA
     CMP #(1 << 7 ^ $FF)
-    BNE PollSpace
+    BNE PollForSpaceBarPress
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
