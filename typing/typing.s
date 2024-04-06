@@ -156,7 +156,7 @@ MAIN
     JSR NewLetter
     enable_int_mode8 
         
-Poll
+GameplayLoop
 
 Lock
     ; Check for keypress
@@ -188,7 +188,7 @@ DoneCheckInput
     JSR PrintHUD
     enable_int_mode8
    
-    JMP Poll    
+    JMP GameplayLoop    
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 CheckKeys
