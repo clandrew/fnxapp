@@ -115,26 +115,21 @@ MAIN
     LDA   #$00
     STA   VIA_DDRA
     STZ   VIA_PRB
-    STZ   VIA_PRA
+    STZ   VIA_PRA    
+
+    ;;;;;;;
+    ;JSR Init_IRQHandler 
+    ;disable_int_mode16
+    ;JSR GameOverScreen
+    ;;;;
     
-    CLC     ; disable interrupts
-    SEI
-    CLC ; Try entering native mode
-    XCE
-    setxl
+    disable_int_mode16
     JSR TitleScreenNative
-    SEC      ; Go back to emulation mode
-    XCE    
-    CLI ; Enable interrupts again
+    enable_int_mode8
           
     STZ MMU_IO_CTRL
-TitleScreenLock
-    ; Space is PB4, PA7
-    LDA #(1 << 4 ^ $FF)
-    STA VIA_PRB
-    LDA VIA_PRA
-    CMP #(1 << 7 ^ $FF)
-    BNE TitleScreenLock
+
+    JSR PollSpace
     
     ; Initialize RNG
     LDA #1
@@ -148,16 +143,10 @@ TitleScreenLock
     LDA #5
     STA lives
     
-    CLC     ; disable interrupts
-    SEI
-    CLC ; Try entering native mode
-    XCE
-    setxl
+    disable_int_mode16
     JSR ClearScreenNative
     JSR NewLetter
-    SEC      ; Go back to emulation mode
-    XCE    
-    CLI ; Enable interrupts again
+    enable_int_mode8
     
     ; Initialize IRQ
     JSR Init_IRQHandler     
@@ -180,16 +169,10 @@ Lock
     JSR CheckKeys
     BNE DoneCheckInput
     
-    CLC     ; disable interrupts
-    SEI
-    CLC ; Try entering native mode
-    XCE
-    setxl
+    disable_int_mode16
     JSR EraseLetter ; If they pressed the 'A' key, erase the 'A' letter.
     JSR PrintHUD
-    SEC      ; Go back to emulation mode
-    XCE    
-    CLI ; Enable interrupts again
+    enable_int_mode8
 
     JMP DoneCheckInput
         
@@ -202,18 +185,12 @@ DoneCheckInput
     LDA #$9
     STA animation_index
 
-    CLC     ; disable interrupts
-    SEI
-    CLC ; Try entering native mode
-    XCE
-    setxl
+    disable_int_mode16
     JSR LetterFall
     JSR UpdateScore
     JSR UpdateLives
     JSR PrintHUD
-    SEC      ; Go back to emulation mode
-    XCE    
-    CLI ; Enable interrupts again
+    enable_int_mode8
    
     JMP Poll    
 
@@ -369,31 +346,45 @@ FallenToBottom
 DoneLetterFall
     RTS
     
-TX_GAMEOVER .null "G A M E   O V E R"
+TX_GAMEOVER_MAIN .null "G A M E   O V E R"
+TX_GAMEOVER_PROMPT .null "Press SPACE to try again"
 
 GameOverScreen
     JSR ClearScreenNative
-    ; Print string
-    LDX #TX_GAMEOVER
+
+    LDX #TX_GAMEOVER_MAIN   ; Print string
     STX src_pointer
     LDY #$C1C4
     STY dst_pointer    
     JSR PrintAscii_ForEach
 
-GameOverLock
-    ; Poll for input xxx
-    JMP GameOverLock
+    LDA #60 ; Lock for a few seconds
+    STA animation_index        
+    enable_int_mode8
+GameOverTextDelay
+    LDA animation_index
+    BNE GameOverTextDelay
+    disable_int_mode16
 
+    LDX #TX_GAMEOVER_PROMPT ; Print a prompt for space
+    STX src_pointer
+    LDY #$C260
+    STY dst_pointer    
+    JSR PrintAscii_ForEach
 
-;GameOverLock
-    ; Poll for space
-    ; Space is PB4, PA7
-;    LDA #(1 << 4 ^ $FF)
-;    STA VIA_PRB
-;    LDA VIA_PRA
-;    CMP #(1 << 7 ^ $FF)
-;    BNE GameOverLock
-    ; Unlock here
+    JSR PollSpace
+
+GameOverUnlock ; new game
+    JMP GameOverUnlock
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+PollSpace
+    LDA #(1 << 4 ^ $FF)
+    STA VIA_PRB
+    LDA VIA_PRA
+    CMP #(1 << 7 ^ $FF)
+    BNE PollSpace
+    RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 PrintAscii
