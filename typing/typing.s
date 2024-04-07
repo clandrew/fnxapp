@@ -367,11 +367,22 @@ GameOverTextDelay
     LDY #$C260
     STY dst_pointer    
     JSR PrintAscii_ForEach
-
+    
+    STZ MMU_IO_CTRL
     JSR PollForSpaceBarPress
 
 GameOverUnlock ; new game
-    JMP GameOverUnlock
+    STZ animation_index
+    LDA #0
+    STA score
+    STZ score+1
+    STZ need_score_update
+    LDA #5
+    STA lives    
+    
+    JSR ClearScreenNative
+    JSR NewLetter
+    RTS ; Returns back up to GameplayLoop
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 PollForSpaceBarPress
