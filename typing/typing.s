@@ -94,12 +94,12 @@ MAIN
     AND #$FE
     STA VKY_TXT_CURSOR_CTRL_REG
              
-    ; Clear to magenta
-    LDA #$FF
+    ; Clear
+    LDA #$00
     STA $D00D ; Background red channel
     LDA #$00
     STA $D00E ; Background green channel
-    LDA #$FF
+    LDA #$00
     STA $D00F ; Background blue channel
 
     ; Turn off the border
@@ -116,14 +116,9 @@ MAIN
     STA   VIA_DDRA
     STZ   VIA_PRB
     STZ   VIA_PRA    
-
-    ;;;;;;;
-    ;JSR Init_IRQHandler 
-    ;disable_int_mode16
-    ;JSR GameOverScreen
-    ;;;;
     
     disable_int_mode16
+    JSR ClearScreenCharacterColorsNative
     JSR TitleScreenNative
     enable_int_mode8
           
@@ -152,7 +147,7 @@ MAIN
     STA lives    
     
     disable_int_mode16
-    JSR ClearScreenNative
+    JSR ClearScreenCharactersNative
     JSR NewLetter
     enable_int_mode8 
         
@@ -346,7 +341,7 @@ TX_GAMEOVER_MAIN .null "G A M E   O V E R"
 TX_GAMEOVER_PROMPT .null "Press SPACE to try again"
 
 GameOverScreen
-    JSR ClearScreenNative
+    JSR ClearScreenCharactersNative
 
     LDX #TX_GAMEOVER_MAIN   ; Print string
     STX src_pointer
@@ -380,7 +375,7 @@ GameOverUnlock ; new game
     LDA #5
     STA lives    
     
-    JSR ClearScreenNative
+    JSR ClearScreenCharactersNative
     JSR NewLetter
     RTS ; Returns back up to GameplayLoop
 
@@ -587,9 +582,40 @@ IRQ_Handler_Done
     PLA
     PLP
     RTI
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ClearScreenCharacterColorsNative ; The console size here is 40 wide x 30 high.
+    stz $0001 ;
+
+    ; Set foreground #4 to green
+    LDA #$04
+    STA $D810 
+    lda #$A5
+    STA $D811
+    LDA #$0D
+    sta $D812
+
+    STZ $D854 ; Set background #5 to black
+    STZ $D855
+    STZ $D856
+
+    LDA #$03 ; Set I/O page to 3
+    STA MMU_IO_CTRL
+
+    LDY #$C000
+    STY dst_pointer    
+ClearScreenCharacterColorsNative_ForEach
+    LDA #$45 ; Color 1
+    STA (dst_pointer)
+    INY
+    STY dst_pointer  
+    CPY #$C4B0
+    BNE ClearScreenCharacterColorsNative_ForEach
+
+    RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-ClearScreenNative ; The console size here is 40 wide x 30 high.
+ClearScreenCharactersNative ; The console size here is 40 wide x 30 high.
     LDA #$02 ; Set I/O page to 2
     STA MMU_IO_CTRL
 
