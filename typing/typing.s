@@ -362,9 +362,13 @@ GameOverTextDelay
     LDY #$C260
     STY dst_pointer    
     JSR PrintAscii_ForEach
+
+    ;JMP TestLock2
     
+    enable_int_mode8
     STZ MMU_IO_CTRL
-    JSR PollForSpaceBarPress
+    JSR PollForSpaceBarPress    ; hw runs into trouble here.
+
 
 GameOverUnlock ; new game
     STZ animation_index
@@ -375,6 +379,7 @@ GameOverUnlock ; new game
     LDA #5
     STA lives    
     
+    disable_int_mode16
     JSR ClearScreenCharactersNative
     JSR NewLetter
     RTS ; Returns back up to GameplayLoop
