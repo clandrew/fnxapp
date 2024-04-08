@@ -24,6 +24,7 @@
     <ProjectGuid>{733cae12-e50f-498a-81bf-67a2426bb033}</ProjectGuid>
     <RootNamespace>typing</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>typing.pgz</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -72,7 +73,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetExt>.bin</TargetExt>
+    <TargetExt>.pgz</TargetExt>
     <TargetName>typing</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -177,7 +178,7 @@
   <ItemGroup>
     <CustomBuild Include="typing.s">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">set vcmd=d:\64tass\64tass --long-address --flat -b --m65816 -D TARGETFMT=\"bin\" -o $(TargetDir)typing.bin --list=$(TargetDir)typing.lst --labels=$(TargetDir)typing.lbl $(ProjectDir)typing.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">set vcmd=d:\64tass\64tass --long-address --flat -b --m65816 -D TARGETFMT=\"bin\" -o $(TargetDir)typing.pgz --list=$(TargetDir)typing.lst --labels=$(TargetDir)typing.lbl $(ProjectDir)typing.s
 echo %vcmd%"
 %vcmd%
 echo ==============

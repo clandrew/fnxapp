@@ -18,82 +18,50 @@ letter0_pos = $41
 lives = $47
 score = $48
 
-; Code
-* = $000000 
-        .byte 0
 
-* = $4000
+; PGZ header
+* =  0
+                ; Place the one-byte PGZ signature before the code section
+                .text "Z"           
+                .long MAIN_SEGMENT_START               
+                
+                ; Three-byte segment size. Make sure the size DOESN'T include this metadata.
+                .long MAIN_SEGMENT_END - MAIN_SEGMENT_START 
+
+                ; Note that when your executable is loaded, *only* the data segment after the metadata is loaded into memory. 
+                ; The 'Z' signature above, and the metadata isn't loaded into memory.
+
+
+; Code
 .logical $4000
+MAIN_SEGMENT_START
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-F256_RESET
-    CLC     ; disable interrupts
+ENTRYPOINT    
+    CLC                ; Disable interrupts
     SEI
-    LDX #$FF
-    TXS     ; initialize stack
 
-    ; initialize mmu
-    STZ MMU_MEM_CTRL
-    LDA MMU_MEM_CTRL
-    ORA #MMU_EDIT_EN
-
-    ; enable mmu edit, edit mmu lut 0, activate mmu lut 0
+    LDA #$B3           ; EDIT_EN=true, EDIT_LUT=3, ACT_LUT=3
     STA MMU_MEM_CTRL
+    LDA #$07
+    STA MMU_MEM_BANK_7 ; map the last bank    
+    LDA #$3            ; EDIT_EN=false, EDIT_LUT=0, ACT_LUT=3
+
+    STA MMU_MEM_CTRL    
+
+    ; Initialize graphics mode
     STZ MMU_IO_CTRL
-
-    LDA #$00
-    STA MMU_MEM_BANK_0 ; map $000000 to bank 0
-    INA
-    STA MMU_MEM_BANK_1 ; map $002000 to bank 1
-    INA
-    STA MMU_MEM_BANK_2 ; map $004000 to bank 2
-    INA
-    STA MMU_MEM_BANK_3 ; map $006000 to bank 3
-    INA
-    STA MMU_MEM_BANK_4 ; map $008000 to bank 4
-    INA
-    STA MMU_MEM_BANK_5 ; map $00a000 to bank 5
-    INA
-    STA MMU_MEM_BANK_6 ; map $00c000 to bank 6
-    INA
-    STA MMU_MEM_BANK_7 ; map $00e000 to bank 7
-    LDA MMU_MEM_CTRL
-    AND #~(MMU_EDIT_EN)
-    STA MMU_MEM_CTRL  ; disable mmu edit, use mmu lut 0
-
-                        ; initialize interrupts
-    LDA #$FF            ; mask off all interrupts
-    STA INT_EDGE_REG0
-    STA INT_EDGE_REG1
-    STA INT_MASK_REG0
-    STA INT_MASK_REG1
-
-    LDA INT_PENDING_REG0 ; clear all existing interrupts
-    STA INT_PENDING_REG0
-    LDA INT_PENDING_REG1
-    STA INT_PENDING_REG1
-
-    CLI ; Enable interrupts
-    JMP MAIN
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-MAIN
-    LDA #MMU_EDIT_EN
-    STA MMU_MEM_CTRL
-    STZ MMU_IO_CTRL 
-    STZ MMU_MEM_CTRL    
     LDA #(Mstr_Ctrl_Text_Mode_En|Mstr_Ctrl_Text_Overlay|Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En)
     STA @w MASTER_CTRL_REG_L 
     LDA #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
-    STA @w MASTER_CTRL_REG_H
+    STA @w MASTER_CTRL_REG_H             
 
     ; Disable the cursor
     LDA VKY_TXT_CURSOR_CTRL_REG
     AND #$FE
     STA VKY_TXT_CURSOR_CTRL_REG
-             
+    
     ; Clear
     LDA #$00
     STA $D00D ; Background red channel
@@ -101,7 +69,7 @@ MAIN
     STA $D00E ; Background green channel
     LDA #$00
     STA $D00F ; Background blue channel
-
+    
     ; Turn off the border
     STZ VKY_BRDR_CTRL
     
@@ -115,18 +83,18 @@ MAIN
     LDA   #$00
     STA   VIA_DDRA
     STZ   VIA_PRB
-    STZ   VIA_PRA    
-    
-    disable_int_mode16
-    JSR ClearScreenCharacterColorsNative
-    JSR TitleScreenNative
-    enable_int_mode8
-          
-    STZ MMU_IO_CTRL
-    JSR PollForSpaceBarPress 
+    STZ   VIA_PRA
     
     ; Initialize IRQ
-    JSR Init_IRQHandler
+    JSR Init_IRQHandler ; This program is a bit unhygenic and takes over the machine.
+
+disable_int_mode16
+    JSR ClearScreenCharacterColorsNative
+    JSR TitleScreenNative
+enable_int_mode8
+
+    STZ MMU_IO_CTRL
+    JSR PollForSpaceBarPress
     
     ; Initialize RNG
     LDA #1
@@ -149,8 +117,8 @@ MAIN
     disable_int_mode16
     JSR ClearScreenCharactersNative
     JSR NewLetter
-    enable_int_mode8 
-        
+    enable_int_mode8
+
 GameplayLoop
 
 Lock
@@ -384,33 +352,7 @@ GameOverUnlock ; new game
     JSR NewLetter
     RTS ; Returns back up to GameplayLoop
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-PollForSpaceBarPress
-    LDA #(1 << 4 ^ $FF)
-    STA VIA_PRB
-    LDA VIA_PRA
-    CMP #(1 << 7 ^ $FF)
-    BNE PollForSpaceBarPress
-    RTS
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-PrintAscii
-    ; Precondition: src_pointer, dst_pointer are initialized
-    ;               src_pointer is set to X
-    ;               dst_pointer is set to Y
-    ;               X and Y are in 16 bit mode
-PrintAscii_ForEach
-    LDA (src_pointer)
-    BEQ PrintAscii_Done
-    STA (dst_pointer)
-    INY
-    STY dst_pointer
-    INX
-    STX src_pointer
-    BRA PrintAscii_ForEach
-PrintAscii_Done
-    RTS
-    
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 UpdateLives
@@ -507,18 +449,68 @@ PrintHUD_Loop
 
     RTS
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-RandModY16Bit
-    ; Precondition: Y contains the value to mod by.
-    ; Postcondition: Y contains the result. X is scrambled
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ClearScreenCharactersNative ; The console size here is 40 wide x 30 high.
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL
 
-    LDX $D6A4 ; Load 16bit random value
-
-    STX $DE06   ; Fixed function numerator
-    STY $DE04   ; Fixed function denomenator    
-    LDY $DE16   ; Load the remainder
+    LDY #$C000
+    STY dst_pointer    
+ClearScreenNative_ForEach
+    LDA #32 ; Character 0
+    STA (dst_pointer)
+    INY
+    STY dst_pointer  
+    CPY #$C4B0
+    BNE ClearScreenNative_ForEach
 
     RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+TitleScreenNative
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL    
+    LDY #$C000
+    STY dst_pointer
+    LDX #TX_TITLESCREEN
+    STX src_pointer
+    JSR PrintAscii
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+TX_TITLESCREEN
+.text "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+.text "XF                                    YX"
+.text "X 88888888888                          X"
+.text "X     888                              X"
+.text "X     888     888                      X"
+.text "X     888 888  888 88888b.   .d88b.    X"
+.text 'X     888 888  888 888 "88b d8P  Y8b   X'
+.text "X     888 888  888 888  888 88888888   X"
+.text "X     888 Y88b 888 888 d88P Y8b.       X"
+.text 'X     888  "Y88888 88888P"   "Y8888    X'
+.text "X              888 888                 X"
+.text "X    .d8888b.  888 888                 X"
+.text "X   d88P  Y88b 888 888    o            X"
+.text "X   Y88b.      888       ,8b           X"
+.text 'X    "Y888b.   888888   ,888b   888d88 X'
+.text 'X       "Y88b. 888   "Y8888888F"888P"  X'
+.text 'X         "888 888     "F8"YF"  888    X'
+.text "X   Y88b  d88P Y88b.   d8F T8b  888    X"
+.text 'X    "Y8888P"   "Y888 d"     "b 888    X'
+.text "X                                      X"
+.text "X                                      X"
+.text "X                                      X"
+.text "X                                      X"
+.text "X         Press SPACE to start!        X"
+.text "X                                      X"
+.text "X                                      X"
+.text "X                                      X"
+.text "X                                      X"
+.text "Xb                                    dX"
+.text "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -619,81 +611,51 @@ ClearScreenCharacterColorsNative_ForEach
 
     RTS
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-ClearScreenCharactersNative ; The console size here is 40 wide x 30 high.
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+RandModY16Bit
+    ; Precondition: Y contains the value to mod by.
+    ; Postcondition: Y contains the result. X is scrambled
 
-    LDY #$C000
-    STY dst_pointer    
-ClearScreenNative_ForEach
-    LDA #32 ; Character 0
+    LDX $D6A4 ; Load 16bit random value
+
+    STX $DE06   ; Fixed function numerator
+    STY $DE04   ; Fixed function denomenator    
+    LDY $DE16   ; Load the remainder
+
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+PollForSpaceBarPress
+    LDA #(1 << 4 ^ $FF)
+    STA VIA_PRB
+    LDA VIA_PRA
+    CMP #(1 << 7 ^ $FF)
+    BNE PollForSpaceBarPress
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+PrintAscii
+    ; Precondition: src_pointer, dst_pointer are initialized
+    ;               src_pointer is set to X
+    ;               dst_pointer is set to Y
+    ;               X and Y are in 16 bit mode
+PrintAscii_ForEach
+    LDA (src_pointer)
+    BEQ PrintAscii_Done
     STA (dst_pointer)
     INY
-    STY dst_pointer  
-    CPY #$C4B0
-    BNE ClearScreenNative_ForEach
-
-    RTS
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-TitleScreenNative
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL    
-    LDY #$C000
     STY dst_pointer
-    LDX #TX_TITLESCREEN
+    INX
     STX src_pointer
-    JSR PrintAscii
+    BRA PrintAscii_ForEach
+PrintAscii_Done
     RTS
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-TX_TITLESCREEN
-.text "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-.text "XF                                    YX"
-.text "X 88888888888                          X"
-.text "X     888                              X"
-.text "X     888     888                      X"
-.text "X     888 888  888 88888b.   .d88b.    X"
-.text 'X     888 888  888 888 "88b d8P  Y8b   X'
-.text "X     888 888  888 888  888 88888888   X"
-.text "X     888 Y88b 888 888 d88P Y8b.       X"
-.text 'X     888  "Y88888 88888P"   "Y8888    X'
-.text "X              888 888                 X"
-.text "X    .d8888b.  888 888                 X"
-.text "X   d88P  Y88b 888 888    o            X"
-.text "X   Y88b.      888       ,8b           X"
-.text 'X    "Y888b.   888888   ,888b   888d88 X'
-.text 'X       "Y88b. 888   "Y8888888F"888P"  X'
-.text 'X         "888 888     "F8"YF"  888    X'
-.text "X   Y88b  d88P Y88b.   d8F T8b  888    X"
-.text 'X    "Y8888P"   "Y888 d"     "b 888    X'
-.text "X                                      X"
-.text "X                                      X"
-.text "X                                      X"
-.text "X                                      X"
-.text "X         Press SPACE to start!        X"
-.text "X                                      X"
-.text "X                                      X"
-.text "X                                      X"
-.text "X                                      X"
-.text "Xb                                    dX"
-.text "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+MAIN_SEGMENT_END
 .endlogical
 
-; Write the system vectors
-* = $00FFF8
-.logical $FFF8
-.byte $00
-F256_DUMMYIRQ       ; Abort vector
-    RTI
-
-.word F256_DUMMYIRQ ; nmi
-.word F256_RESET    ; reset
-.word F256_DUMMYIRQ ; irq
-.endlogical
+; Entrypoint segment metadata
+                .long ENTRYPOINT
+                .long 0       ; Dummy value to indicate this segment is for declaring the entrypoint.
