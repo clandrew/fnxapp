@@ -15,9 +15,21 @@ Offset range		Size		Comment
 00:00000-60:0000	6144KB  /  6MB	Largest SNES cartridge, 48 megabits, Star Ocean
 00:00000-FF:FFFF        16384KB / 16MB	Complete 24bit address space
 
+NES CART SIZES
+
+Offset range		Size(KB/MB)	Size(Megabits)		Title
+------------		-------		--------------		-----
+00:0000-00:2000		8KB			-		Galaxian
+00:0000-00:8000		32KB			-		Super Mario Bros, Ice Hockey
+00:0000-01:0000		64KB			-		Metroid
+00:0000-02:0000		128KB			1		Legend of Zelda, Final Fantasy
+00:0000-04:0000		256KB			2		Dragon Warrior III
+00:0000-08:0000		512KB			4		Mega Man 4 through 6
+00:0000-0C:0000		768KB			6		Kirby's Adventure	
+
 SNES CART SIZES
 
-Offset range		Size(KB)	Size(Megabits)		Title
+Offset range		Size(KB/MB)	Size(Megabits)		Title
 ------------		-------		--------------		-----
 00:0000-08:0000		512KB			4		Zoop
 00:0000-10:0000		1024KB  / 1.0MB		8		Lagoon, Star Fox, NHL '94
