@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetExt>.bin</TargetExt>
+    <TargetExt>.pgz</TargetExt>
     <TargetName>kerneltimer</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -98,7 +98,7 @@
     <CustomBuild>
       <Command>
       </Command>
-      <Outputs>$(TargetDir)kerneltimer.bin;$(TargetDir)kerneltimer.lst</Outputs>
+      <Outputs>$(TargetDir)kerneltimer.pgz;$(TargetDir)kerneltimer.lst</Outputs>
     </CustomBuild>
     <PostBuildEvent>
       <Command>
@@ -177,12 +177,12 @@
   <ItemGroup>
     <CustomBuild Include="kerneltimer.s">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">set vcmd=d:\64tass\64tass --long-address --flat -b --m65816 -D TARGETFMT=\"bin\" -o $(TargetDir)kerneltimer.bin --list=$(TargetDir)kerneltimer.lst --labels=$(TargetDir)kerneltimer.lbl $(ProjectDir)kerneltimer.s
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">set vcmd=d:\64tass\64tass --long-address --flat -b --m65816 -D TARGETFMT=\"bin\" -o $(TargetPath) --list=$(TargetDir)kerneltimer.lst --labels=$(TargetDir)kerneltimer.lbl $(ProjectDir)kerneltimer.s
 echo %vcmd%"
 %vcmd%
 echo ==============
 echo Copying result:
-set vcmd=copy /Y $(TargetPath) "$(ProjectDir)..\sd\test\kt.pgz"
+set vcmd=copy /Y $(TargetPath) "$(ProjectDir)..\sd\kt.pgz"
 echo %vcmd%"
 %vcmd%
 </Command>
