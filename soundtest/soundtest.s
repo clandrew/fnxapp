@@ -255,7 +255,7 @@ UpdateToneNative
     STA MMU_IO_CTRL        
 
     LDY tone
-    LDX #5
+    LDX #4
 
 EachDigitToAscii
     STY $DE06   ; Fixed function numerator
@@ -277,8 +277,6 @@ EachDigitToAscii
     STA TX_TONE+2
     PLA
     STA TX_TONE+3
-    PLA
-    STA TX_TONE+4
 
 outline_DoneToneUpdate
     RTS    
@@ -290,13 +288,13 @@ PrintToneStatus
     STA MMU_IO_CTRL
     
     LDX #0
-    LDY #0
+    LDY #40
 PrintToneStatus_Loop
     LDA TX_TONESTATUS, X
     STA (text_memory_pointer),Y
     INY
     INX
-    CPX #19
+    CPX #18
     BNE PrintToneStatus_Loop
 
     RTS
@@ -371,8 +369,7 @@ PrintAscii_Done
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 TX_TONESTATUS .text "Current tone: "
-TX_TONE  .text "00000"
-.byte 0 ; null term
+TX_TONE  .text "0000"
 
 TX_RESPONSE
 .text "Sound playing"
