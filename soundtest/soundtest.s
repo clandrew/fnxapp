@@ -13,6 +13,8 @@ up_arrow_next = $35
 down_arrow_cur = $36
 down_arrow_next = $37
 text_memory_pointer = $38
+
+volume = $3A
 tone = $48
 
 ; Code
@@ -116,6 +118,10 @@ MAIN
     STZ down_arrow_next
     STZ up_arrow_cur
     STZ up_arrow_next
+    STZ volume       
+    LDA #252 
+    STA tone
+    STZ tone+1
     
     ; Initialize matrix keyboard
     LDA #$FF
@@ -129,12 +135,11 @@ MAIN
     STA VIA0_PRA
     STZ VIA0_PRB
         
-    disable_int_mode16        
-    LDX #252 ; Initialize frequency to 252
-    STX tone
-    JSR UpdateToneNative
+    disable_int_mode16 
+    JSR SaveToneValueToAscii
     JSR ClearScreenCharacterColorsNative
     JSR ClearScreenCharactersNative
+    JSR PrintVolumeStatus
     JSR PrintToneStatus
     enable_int_mode8
         
@@ -164,13 +169,16 @@ DownArrow_DonePoll
     BNE DownArrow_DoneAll
     LDA down_arrow_cur
     CMP #$FF
-    BNE DownArrow_DoneAll    
+    BNE DownArrow_DoneAll
     
     disable_int_mode16     ; Advance to next scene here    
     LDX tone
+    CPX #00
+    BEQ AfterToneChanged
     DEX
     STX tone
     JSR OnToneChanged
+AfterToneChanged
 
     enable_int_mode8
     
@@ -220,14 +228,15 @@ UpArrow_DoneAll
 
 OnToneChanged
 
-    JSR UpdateToneNative
+    JSR SaveToneValueToAscii
     JSR PrintToneStatus
     
     LDA #$00 ; Set I/O page to 0
     STA MMU_IO_CTRL
 
-    ; Play sound here
-    lda #$90 ; %10010000 = Channel 1 attenuation = 0, which is the loudest
+    ; Play sound here ; %10010000 = Channel 1 attenuation = 0, which is the loudest
+    LDA volume
+    ORA #$90
     sta $D600 ; Send it to down PSG
 
     ; Grab the lower 4 bits
@@ -250,7 +259,7 @@ OnToneChanged
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-UpdateToneNative
+SaveToneValueToAscii
     LDA #$0 ; Set I/O page to 0- needed for fixed function math
     STA MMU_IO_CTRL        
 
@@ -280,6 +289,24 @@ EachDigitToAscii
 
 outline_DoneToneUpdate
     RTS    
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+PrintVolumeStatus    
+    LDA #$2 ; Set I/O page to 2
+    STA MMU_IO_CTRL
+    
+    LDX #0
+    LDY #0
+PrintVolumeStatus_Loop
+    LDA TX_VOLUMESTATUS, X
+    STA (text_memory_pointer),Y
+    INY
+    INX
+    CPX #18
+    BNE PrintVolumeStatus_Loop
+
+    RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -367,6 +394,9 @@ PrintAscii_Done
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+TX_VOLUMESTATUS .text "Current volume: "
+TX_VOLUME  .text "00"
 
 TX_TONESTATUS .text "Current tone: "
 TX_TONE  .text "0000"
