@@ -13,7 +13,7 @@ up_arrow_next = $35
 down_arrow_cur = $36
 down_arrow_next = $37
 text_memory_pointer = $38
-score = $48
+tone = $48
 
 ; Code
 * = $000000 
@@ -131,11 +131,11 @@ MAIN
         
     disable_int_mode16        
     LDX #252 ; Initialize frequency to 252
-    STX score
-    JSR UpdateScoreNative
+    STX tone
+    JSR UpdateToneNative
     JSR ClearScreenCharacterColorsNative
     JSR ClearScreenCharactersNative
-    JSR PrintHUD
+    JSR PrintToneStatus
     enable_int_mode8
         
 Poll
@@ -167,9 +167,9 @@ DownArrow_DonePoll
     BNE DownArrow_DoneAll    
     
     disable_int_mode16     ; Advance to next scene here    
-    LDX score
+    LDX tone
     DEX
-    STX score
+    STX tone
     JSR OnToneChanged
 
     enable_int_mode8
@@ -203,9 +203,9 @@ UpArrow_DonePoll
     BNE UpArrow_DoneAll    
     
     disable_int_mode16     ; Advance to next scene here    
-    LDX score
+    LDX tone
     INX
-    STX score
+    STX tone
     JSR OnToneChanged
 
     enable_int_mode8
@@ -220,8 +220,8 @@ UpArrow_DoneAll
 
 OnToneChanged
 
-    JSR UpdateScoreNative
-    JSR PrintHUD
+    JSR UpdateToneNative
+    JSR PrintToneStatus
     
     LDA #$00 ; Set I/O page to 0
     STA MMU_IO_CTRL
@@ -231,14 +231,14 @@ OnToneChanged
     sta $D600 ; Send it to down PSG
 
     ; Grab the lower 4 bits
-    LDA score
+    LDA tone
     AND #$0F
     ORA #$80
     sta $D600 ; Send it to down PSG
 
     ; Grab the upper 6 bits
     setal
-    LDA score
+    LDA tone
     LSR
     LSR
     LSR
@@ -250,11 +250,11 @@ OnToneChanged
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-UpdateScoreNative
+UpdateToneNative
     LDA #$0 ; Set I/O page to 0- needed for fixed function math
     STA MMU_IO_CTRL        
 
-    LDY score
+    LDY tone
     LDX #5
 
 EachDigitToAscii
@@ -270,34 +270,34 @@ EachDigitToAscii
     BNE EachDigitToAscii          
           
     PLA
-    STA TX_SCORE
+    STA TX_TONE
     PLA
-    STA TX_SCORE+1    
+    STA TX_TONE+1    
     PLA
-    STA TX_SCORE+2
+    STA TX_TONE+2
     PLA
-    STA TX_SCORE+3
+    STA TX_TONE+3
     PLA
-    STA TX_SCORE+4
+    STA TX_TONE+4
 
-outline_DoneScoreUpdate
+outline_DoneToneUpdate
     RTS    
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-PrintHUD    
+PrintToneStatus    
     LDA #$2 ; Set I/O page to 2
     STA MMU_IO_CTRL
     
     LDX #0
     LDY #0
-PrintHUD_Loop
-    LDA TX_PROMPT, X
+PrintToneStatus_Loop
+    LDA TX_TONESTATUS, X
     STA (text_memory_pointer),Y
     INY
     INX
     CPX #19
-    BNE PrintHUD_Loop
+    BNE PrintToneStatus_Loop
 
     RTS
     
@@ -370,8 +370,8 @@ PrintAscii_Done
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-TX_PROMPT .text "Current tone: "
-TX_SCORE  .text "00000"
+TX_TONESTATUS .text "Current tone: "
+TX_TONE  .text "00000"
 .byte 0 ; null term
 
 TX_RESPONSE
