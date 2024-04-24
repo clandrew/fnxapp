@@ -8,7 +8,12 @@
 
 dst_pointer = $30
 src_pointer = $32
+right_arrow_cur = $34
+right_arrow_next = $35
+left_arrow_cur = $36
+left_arrow_next = $37
 text_memory_pointer = $38
+score = $48
 
 ; Code
 * = $000000 
@@ -85,9 +90,7 @@ MAIN
     LDA VKY_TXT_CURSOR_CTRL_REG
     AND #$FE
     STA VKY_TXT_CURSOR_CTRL_REG
-    
-    JSR ClearScreen        
-             
+                 
     ; Clear to magenta
     LDA #$FF
     STA $D00D ; Background red channel
@@ -103,156 +106,273 @@ MAIN
     STZ TyVKY_BM1_CTRL_REG ; Make sure bitmap 1 is turned off
     STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off
     
-    ; Initialize matrix keyboard
-    LDA   #$FF
-    STA   VIA_DDRB
-    LDA   #$00
-    STA   VIA_DDRA
-    STZ   VIA_PRB
-    STZ   VIA_PRA
-    
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL
-    
-    ; Put text at the top left of the screen
+    ; Initialize text memory pointer
     LDA #<VKY_TEXT_MEMORY
     STA text_memory_pointer
     LDA #>VKY_TEXT_MEMORY
-    STA text_memory_pointer+1
-
-    LDA #<TX_PROMPT
-    STA src_pointer
-
-    LDA #>TX_PROMPT
-    STA src_pointer+1
+    STA text_memory_pointer+1   
     
-    JSR PrintAnsiString
+    STZ left_arrow_cur
+    STZ left_arrow_next
+    STZ right_arrow_cur
+    STZ right_arrow_next
+    
+    ; Initialize matrix keyboard
+    LDA #$FF
+    STA VIA1_DDRA
+    LDA #$00
+    STA VIA1_DDRB
+    STZ VIA1_PRB
+    STZ VIA1_PRA    
+    LDA #$7F
+    STA VIA0_DDRA
+    STA VIA0_PRA
+    STZ VIA0_PRB
+        
+    disable_int_mode16        
+    LDX #252 ; Initialize frequency to 252
+    STX score
+    JSR UpdateScoreNative
+    JSR ClearScreenCharacterColorsNative
+    JSR ClearScreenCharactersNative
+    JSR PrintHUD
+    enable_int_mode8
         
 Poll
-    ; Check for key    
-    LDA #$00 ; Need to be on I/O page 0
-    STA MMU_IO_CTRL
+    JSR HandleLeftArrow
+    JSR HandleRightArrow
+    JMP Poll
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+HandleLeftArrow
+    STZ MMU_IO_CTRL ; Need to be on I/O page 0
+
+    ; Check for left key
+    LDA #(1 << 0 ^ $FF)
+    STA VIA1_PRA
+    LDA VIA1_PRB
+    CMP #(1 << 2 ^ $FF)
+    BNE LeftArrow_NotPressed
+LeftArrow_Pressed
+    LDA #$FF
+    BRA LeftArrow_DonePoll
+LeftArrow_NotPressed
+    LDA #$00
+LeftArrow_DonePoll
+    STA left_arrow_next
+    CMP #$00                ; If the key was pressed and now it's not anymore
+    BNE LeftArrow_DoneAll
+    LDA left_arrow_cur
+    CMP #$FF
+    BNE LeftArrow_DoneAll    
     
-    ; Space is PB4, PA7
-    LDA #(1 << 4 ^ $FF)
-    STA VIA_PRB
-    LDA VIA_PRA
+    disable_int_mode16     ; Advance to next scene here    
+    LDX score
+    DEX
+    STX score
+    JSR OnToneChanged
+
+    enable_int_mode8
+    
+LeftArrow_DoneAll
+    LDA left_arrow_next
+    STA left_arrow_cur
+
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+HandleRightArrow
+    STZ MMU_IO_CTRL ; Need to be on I/O page 0
+
+    ; Check for right key
+    LDA #(1 << 6 ^ $FF)
+    STA VIA1_PRA
+    LDA VIA0_PRB
     CMP #(1 << 7 ^ $FF)
-    BNE DoneCheckInput
+    BNE RightArrow_NotPressed
+RightArrow_Pressed
+    LDA #$FF
+    BRA RightArrow_DonePoll
+RightArrow_NotPressed
+    LDA #$00
+RightArrow_DonePoll
+    STA right_arrow_next
+    CMP #$00                ; If the key was pressed and now it's not anymore
+    BNE RightArrow_DoneAll
+    LDA right_arrow_cur
+    CMP #$FF
+    BNE RightArrow_DoneAll    
     
-    ; On key press
+    disable_int_mode16     ; Advance to next scene here    
+    LDX score
+    INX
+    STX score
+    JSR OnToneChanged
 
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL
+    enable_int_mode8
     
-    ; Put text lower down
-    LDA #(<VKY_TEXT_MEMORY + $80)
-    STA text_memory_pointer
-    LDA #((>VKY_TEXT_MEMORY) + $00)
-    STA text_memory_pointer+1
+RightArrow_DoneAll
+    LDA right_arrow_next
+    STA right_arrow_cur
 
-    LDA #<TX_RESPONSE
-    STA src_pointer
+    RTS
 
-    LDA #>TX_RESPONSE
-    STA src_pointer+1
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+OnToneChanged
+
+    JSR UpdateScoreNative
+    JSR PrintHUD
     
-    JSR PrintAnsiString
-    
-    LDA #$00 ; Set I/O page to 2
+    LDA #$00 ; Set I/O page to 0
     STA MMU_IO_CTRL
 
     ; Play sound here
     lda #$90 ; %10010000 = Channel 1 attenuation = 0, which is the loudest
     sta $D600 ; Send it to left PSG
 
-    lda #$8E ; %10001100 = Set the low 4 bits of the frequency code
-    sta $D600 ; Send it to left PSG
-    
-    lda #$0F ; %00001111 = Set the high 6 bits of the frequency
+    ; Grab the lower 4 bits
+    LDA score
+    AND #$0F
+    ORA #$80
     sta $D600 ; Send it to left PSG
 
-Lock
-    JMP Lock
+    ; Grab the upper 6 bits
+    setal
+    LDA score
+    LSR
+    LSR
+    LSR
+    LSR
+    setas
+    sta $D600 ; Send it to left PSG
 
-DoneCheckInput   
-    JMP Poll
+    RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-ClearScreen
-    LDA MMU_IO_CTRL ; Back up I/O page
+UpdateScoreNative
+    LDA #$0 ; Set I/O page to 0- needed for fixed function math
+    STA MMU_IO_CTRL        
+
+    LDY score
+    LDX #5
+
+EachDigitToAscii
+    STY $DE06   ; Fixed function numerator
+    LDY #10
+    STY $DE04   ; Fixed function denomenator    
+    LDA $DE16   ; Load the remainder
+    CLC
+    ADC #'0'    ; Turn into ASCII and save to stack
     PHA
-    
-    LDA #$02 ; Set I/O page to 2
+    LDY $DE14   ; Load the quotient
+    DEX
+    BNE EachDigitToAscii          
+          
+    PLA
+    STA TX_SCORE
+    PLA
+    STA TX_SCORE+1    
+    PLA
+    STA TX_SCORE+2
+    PLA
+    STA TX_SCORE+3
+    PLA
+    STA TX_SCORE+4
+
+outline_DoneScoreUpdate
+    RTS    
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+PrintHUD    
+    LDA #$2 ; Set I/O page to 2
     STA MMU_IO_CTRL
     
-    STZ dst_pointer
-    LDA #$C0
-    STA dst_pointer+1
+    LDX #0
+    LDY #0
+PrintHUD_Loop
+    LDA TX_PROMPT, X
+    STA (text_memory_pointer),Y
+    INY
+    INX
+    CPX #19
+    BNE PrintHUD_Loop
 
-ClearScreen_ForEach
+    RTS
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ClearScreenCharactersNative ; The console size here is 40 wide x 30 high.
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL
+
+    LDY #$C000
+    STY dst_pointer    
+ClearScreenNative_ForEach
     LDA #32 ; Character 0
     STA (dst_pointer)
-        
-    CLC
-    LDA dst_pointer
-    ADC #$01
-    STA dst_pointer
-    LDA dst_pointer+1
-    ADC #$00 ; Add carry
-    STA dst_pointer+1
+    INY
+    STY dst_pointer  
+    CPY #$C4B0
+    BNE ClearScreenNative_ForEach
 
-    CMP #$C5
-    BNE ClearScreen_ForEach
-    
-    PLA
-    STA MMU_IO_CTRL ; Restore I/O page
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ClearScreenCharacterColorsNative ; The console size here is 40 wide x 30 high.
+    stz MMU_IO_CTRL ; Set I/O page to 0
 
-; Pre-condition: 
-;     text_memory_pointer is set as desired dest address
-;     src_pointer is set as source address
-PrintAnsiString
-    LDX #$00
-    LDY #$00
-    
-    LDA MMU_IO_CTRL ; Back up I/O page
-    PHA
-    
-    LDA #$02 ; Set I/O page to 2
-    STA MMU_IO_CTRL
+    ; Set foreground #4 to black
+    STZ $D810 
+    STZ $D811
+    STZ $D812
 
-PrintAnsiString_EachCharToTextMemory
-    LDA (src_pointer),y                          ; Load the character to print
-    BEQ PrintAnsiString_DoneStoringToTextMemory  ; Exit if null term        
-    STA (text_memory_pointer),Y                  ; Store character to text memory
-    INY
-    BRA PrintAnsiString_EachCharToTextMemory
-
-PrintAnsiString_DoneStoringToTextMemory
+    STZ $D854 ; Set background #5 to black
+    STZ $D855
+    STZ $D856
 
     LDA #$03 ; Set I/O page to 3
     STA MMU_IO_CTRL
 
-    LDA #$F0 ; Text color
+    LDY #$C000
+    STY dst_pointer    
+ClearScreenCharacterColorsNative_ForEach
+    LDA #$45 ; Color 1
+    STA (dst_pointer)
+    INY
+    STY dst_pointer  
+    CPY #$C4B0
+    BNE ClearScreenCharacterColorsNative_ForEach
 
-PrintAnsiString_EachCharToColorMemory
-    DEY
-    STA (text_memory_pointer),Y
-    BNE PrintAnsiString_EachCharToColorMemory
+    RTS
 
-    PLA
-    STA MMU_IO_CTRL ; Restore I/O page
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+PrintAsciiNative
+    ; Precondition: src_pointer, dst_pointer are initialized
+    ;               src_pointer is set to X
+    ;               dst_pointer is set to Y
+    ;               X and Y are in 16 bit mode
+    
+    LDA #$02 ; Set I/O page to 2
+    STA MMU_IO_CTRL
 
-    RTS    
+PrintAscii_ForEach
+    LDA (src_pointer)
+    BEQ PrintAscii_Done
+    STA (dst_pointer)
+    INY
+    STY dst_pointer
+    INX
+    STX src_pointer
+    BRA PrintAscii_ForEach
+PrintAscii_Done
+    RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-TX_PROMPT
-.text "Please the 'space' key to play sound."
+TX_PROMPT .text "Current tone: "
+TX_SCORE  .text "00000"
 .byte 0 ; null term
 
 TX_RESPONSE

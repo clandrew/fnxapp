@@ -77,3 +77,19 @@ MOVE_L      .macro dest, value
             LDA \value+2
             STA \dest+2
             .endm
+
+
+enable_int_mode8 .macro
+            SEC
+            XCE
+            CLI
+            .endm
+
+disable_int_mode16 .macro
+            CLC
+            SEI
+            CLC
+            XCE
+            REP #$10 ; setxl
+            .xl
+            .endm

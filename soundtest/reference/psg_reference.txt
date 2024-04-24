@@ -11,3 +11,7 @@ Command					Meaning
 1  1  0  1 A3 A2 A1 A0			Set tone3 attenuation
 
 1  1  1  0  X FB F1 F0			Set noise type and frequency
+
+Frequency codes go from 0 to 0x3FF (1023).
+
+Attenuation values go from 0 to 0xF (15), where 0 is the loudest.
