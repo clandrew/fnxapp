@@ -61,3 +61,6 @@
 /typing/Debug/
 /typing/Release/
 /sd_archive/*
+/soundtest/.vs/*
+/soundtest/Debug/
+/soundtest/Release/
