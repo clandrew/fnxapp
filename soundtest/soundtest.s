@@ -8,10 +8,10 @@
 
 dst_pointer = $30
 src_pointer = $32
-right_arrow_cur = $34
-right_arrow_next = $35
-left_arrow_cur = $36
-left_arrow_next = $37
+up_arrow_cur = $34
+up_arrow_next = $35
+down_arrow_cur = $36
+down_arrow_next = $37
 text_memory_pointer = $38
 score = $48
 
@@ -112,10 +112,10 @@ MAIN
     LDA #>VKY_TEXT_MEMORY
     STA text_memory_pointer+1   
     
-    STZ left_arrow_cur
-    STZ left_arrow_next
-    STZ right_arrow_cur
-    STZ right_arrow_next
+    STZ down_arrow_cur
+    STZ down_arrow_next
+    STZ up_arrow_cur
+    STZ up_arrow_next
     
     ; Initialize matrix keyboard
     LDA #$FF
@@ -139,32 +139,32 @@ MAIN
     enable_int_mode8
         
 Poll
-    JSR HandleLeftArrow
-    JSR HandleRightArrow
+    JSR HandleDownArrow
+    JSR HandleUpArrow
     JMP Poll
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-HandleLeftArrow
+HandleDownArrow
     STZ MMU_IO_CTRL ; Need to be on I/O page 0
 
-    ; Check for left key
+    ; Check for down key
     LDA #(1 << 0 ^ $FF)
     STA VIA1_PRA
-    LDA VIA1_PRB
-    CMP #(1 << 2 ^ $FF)
-    BNE LeftArrow_NotPressed
-LeftArrow_Pressed
+    LDA VIA0_PRB
+    CMP #(1 << 7 ^ $FF)
+    BNE DownArrow_NotPressed
+DownArrow_Pressed
     LDA #$FF
-    BRA LeftArrow_DonePoll
-LeftArrow_NotPressed
+    BRA DownArrow_DonePoll
+DownArrow_NotPressed
     LDA #$00
-LeftArrow_DonePoll
-    STA left_arrow_next
+DownArrow_DonePoll
+    STA down_arrow_next
     CMP #$00                ; If the key was pressed and now it's not anymore
-    BNE LeftArrow_DoneAll
-    LDA left_arrow_cur
+    BNE DownArrow_DoneAll
+    LDA down_arrow_cur
     CMP #$FF
-    BNE LeftArrow_DoneAll    
+    BNE DownArrow_DoneAll    
     
     disable_int_mode16     ; Advance to next scene here    
     LDX score
@@ -174,34 +174,33 @@ LeftArrow_DonePoll
 
     enable_int_mode8
     
-LeftArrow_DoneAll
-    LDA left_arrow_next
-    STA left_arrow_cur
+DownArrow_DoneAll
+    LDA down_arrow_next
+    STA down_arrow_cur
 
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-HandleRightArrow
-    STZ MMU_IO_CTRL ; Need to be on I/O page 0
-
-    ; Check for right key
-    LDA #(1 << 6 ^ $FF)
+HandleUpArrow
+    STZ MMU_IO_CTRL ; Need to be on I/O page 0    
+    ; Check for up key. PA0, PB7
+    LDA #(1 << 0 ^ $FF)
     STA VIA1_PRA
-    LDA VIA0_PRB
+    LDA VIA1_PRB
     CMP #(1 << 7 ^ $FF)
-    BNE RightArrow_NotPressed
-RightArrow_Pressed
+    BNE UpArrow_NotPressed
+UpArrow_Pressed
     LDA #$FF
-    BRA RightArrow_DonePoll
-RightArrow_NotPressed
+    BRA UpArrow_DonePoll
+UpArrow_NotPressed
     LDA #$00
-RightArrow_DonePoll
-    STA right_arrow_next
+UpArrow_DonePoll
+    STA up_arrow_next
     CMP #$00                ; If the key was pressed and now it's not anymore
-    BNE RightArrow_DoneAll
-    LDA right_arrow_cur
+    BNE UpArrow_DoneAll
+    LDA up_arrow_cur
     CMP #$FF
-    BNE RightArrow_DoneAll    
+    BNE UpArrow_DoneAll    
     
     disable_int_mode16     ; Advance to next scene here    
     LDX score
@@ -211,9 +210,9 @@ RightArrow_DonePoll
 
     enable_int_mode8
     
-RightArrow_DoneAll
-    LDA right_arrow_next
-    STA right_arrow_cur
+UpArrow_DoneAll
+    LDA up_arrow_next
+    STA up_arrow_cur
 
     RTS
 
@@ -229,13 +228,13 @@ OnToneChanged
 
     ; Play sound here
     lda #$90 ; %10010000 = Channel 1 attenuation = 0, which is the loudest
-    sta $D600 ; Send it to left PSG
+    sta $D600 ; Send it to down PSG
 
     ; Grab the lower 4 bits
     LDA score
     AND #$0F
     ORA #$80
-    sta $D600 ; Send it to left PSG
+    sta $D600 ; Send it to down PSG
 
     ; Grab the upper 6 bits
     setal
@@ -245,7 +244,7 @@ OnToneChanged
     LSR
     LSR
     setas
-    sta $D600 ; Send it to left PSG
+    sta $D600 ; Send it to down PSG
 
     RTS
 
