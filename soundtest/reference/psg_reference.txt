@@ -1,0 +1,13 @@
+Command					Meaning
+0  X F9 F8 F7 F6 F5 F4			Set the high six bits of the requency
+
+1  0  0  0 F3 F2 F1 F0			Set tone1 frequency low four bits
+1  0  0  1 A3 A2 A1 A0			Set tone1 attenuation
+
+1  0  1  0 F3 F2 F1 F0			Set tone2 frequency low four bits
+1  0  1  1 A3 A2 A1 A0			Set tone2 attenuation
+
+1  1  0  0 F3 F2 F1 F0			Set tone3 frequency low four bits
+1  1  0  1 A3 A2 A1 A0			Set tone3 attenuation
+
+1  1  1  0  X FB F1 F0			Set noise type and frequency

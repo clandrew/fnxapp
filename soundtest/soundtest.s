@@ -163,15 +163,14 @@ Poll
     STA MMU_IO_CTRL
 
     ; Play sound here
-    lda #$90 ; %10010000 = Channel 1 attenuation = 0
+    lda #$90 ; %10010000 = Channel 1 attenuation = 0, which is the loudest
     sta $D600 ; Send it to left PSG
-    sta $D610 ; Send it to right PSG
+
     lda #$8E ; %10001100 = Set the low 4 bits of the frequency code
     sta $D600 ; Send it to left PSG
-    sta $D610 ; Send it to right PSG
+    
     lda #$0F ; %00001111 = Set the high 6 bits of the frequency
     sta $D600 ; Send it to left PSG
-    sta $D610 ; Send it to right PSG
 
 Lock
     JMP Lock
