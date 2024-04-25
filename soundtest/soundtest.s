@@ -381,12 +381,21 @@ SaveVolumeValueToAscii
     LDA volume
     CMP #10
     BMI VolumeUnderTen
+
+VolumeAtLeastTen
     LDA #'1'
     STA TX_VOLUME
     LDA volume
     SEC
     SBC #10
+    BRA OnesDigit
+
 VolumeUnderTen
+    LDA #'0'
+    STA TX_VOLUME
+    LDA volume
+
+OnesDigit
     CLC
     ADC #'0' 
     STA TX_VOLUME+1
