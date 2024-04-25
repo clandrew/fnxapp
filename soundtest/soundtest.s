@@ -12,9 +12,13 @@ up_arrow_cur = $34
 up_arrow_next = $35
 down_arrow_cur = $36
 down_arrow_next = $37
-text_memory_pointer = $38
+left_arrow_cur = $38
+left_arrow_next = $39
+right_arrow_cur = $3A
+right_arrow_next = $3B
+text_memory_pointer = $3C
 
-volume = $3A
+volume = $46
 tone = $48
 
 ; Code
@@ -146,6 +150,8 @@ MAIN
 Poll
     JSR HandleDownArrow
     JSR HandleUpArrow
+    JSR HandleLeftArrow
+    JSR HandleRightArrow
     JMP Poll
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -171,7 +177,7 @@ DownArrow_DonePoll
     CMP #$FF
     BNE DownArrow_DoneAll
     
-    disable_int_mode16     ; Advance to next scene here    
+    disable_int_mode16   
     LDX tone
     CPX #00
     BEQ AfterToneChanged
@@ -210,7 +216,76 @@ UpArrow_DonePoll
     CMP #$FF
     BNE UpArrow_DoneAll    
     
-    disable_int_mode16     ; Advance to next scene here    
+    disable_int_mode16  
+    INC volume
+    JSR OnVolumeChanged
+
+    enable_int_mode8
+    
+UpArrow_DoneAll
+    LDA up_arrow_next
+    STA up_arrow_cur
+
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+HandleLeftArrow
+    STZ MMU_IO_CTRL ; Need to be on I/O page 0    
+    ; Check for left key. PA0, PB7
+    LDA #(1 << 0 ^ $FF)
+    STA VIA1_PRA
+    LDA VIA1_PRB
+    CMP #(1 << 2 ^ $FF)
+    BNE LeftArrow_NotPressed
+LeftArrow_Pressed
+    LDA #$FF
+    BRA LeftArrow_DonePoll
+LeftArrow_NotPressed
+    LDA #$00
+LeftArrow_DonePoll
+    STA left_arrow_next
+    CMP #$00                ; If the key was pressed and now it's not anymore
+    BNE LeftArrow_DoneAll
+    LDA left_arrow_cur
+    CMP #$FF
+    BNE LeftArrow_DoneAll    
+    
+    disable_int_mode16  
+    LDX tone
+    DEX
+    STX tone
+    JSR OnToneChanged
+
+    enable_int_mode8
+    
+LeftArrow_DoneAll
+    LDA left_arrow_next
+    STA left_arrow_cur
+
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+HandleRightArrow
+    STZ MMU_IO_CTRL ; Need to be on I/O page 0 
+    LDA #(1 << 6 ^ $FF)
+    STA VIA1_PRA
+    LDA VIA0_PRB
+    CMP #(1 << 7 ^ $FF)
+    BNE RightArrow_NotPressed
+RightArrow_Pressed
+    LDA #$FF
+    BRA RightArrow_DonePoll
+RightArrow_NotPressed
+    LDA #$00
+RightArrow_DonePoll
+    STA right_arrow_next
+    CMP #$00                ; If the key was pressed and now it's not anymore
+    BNE RightArrow_DoneAll
+    LDA right_arrow_cur
+    CMP #$FF
+    BNE RightArrow_DoneAll    
+    
+    disable_int_mode16  
     LDX tone
     INX
     STX tone
@@ -218,9 +293,16 @@ UpArrow_DonePoll
 
     enable_int_mode8
     
-UpArrow_DoneAll
-    LDA up_arrow_next
-    STA up_arrow_cur
+RightArrow_DoneAll
+    LDA right_arrow_next
+    STA right_arrow_cur
+
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+OnVolumeChanged
+    JSR SaveVolumeValueToAscii
+    JSR PrintVolumeStatus
 
     RTS
 
@@ -289,6 +371,31 @@ EachDigitToAscii
 
 outline_DoneToneUpdate
     RTS    
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+SaveVolumeValueToAscii
+    LDA #$0 ; Set I/O page to 0- needed for fixed function math
+    STA MMU_IO_CTRL        
+
+    LDA volume
+    CMP #10
+    BPL outline_DoneVolumeUpdate
+Foo
+    ADC #'0'    ; Turn into ASCII and save to stack
+    STA TX_VOLUME+1
+    RTS
+
+outline_DoneVolumeUpdate
+    LDA #'1'
+    STA TX_VOLUME
+    LDA volume
+    SEC
+    SBC #10
+    CLC
+    ADC #'0'    ; Turn into ASCII and save to stack
+    STA TX_VOLUME+1
+    RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
