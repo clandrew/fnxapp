@@ -377,7 +377,7 @@ outline_DoneToneUpdate
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-SaveVolumeValueToAscii
+SaveVolumeValueToAscii ; It would almost be more compact to have a table.
     LDA volume
     CMP #10
     BMI VolumeUnderTen
