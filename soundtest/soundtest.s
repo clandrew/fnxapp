@@ -375,25 +375,17 @@ outline_DoneToneUpdate
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 SaveVolumeValueToAscii
-    LDA #$0 ; Set I/O page to 0- needed for fixed function math
-    STA MMU_IO_CTRL        
-
     LDA volume
     CMP #10
-    BPL outline_DoneVolumeUpdate
-Foo
-    ADC #'0'    ; Turn into ASCII and save to stack
-    STA TX_VOLUME+1
-    RTS
-
-outline_DoneVolumeUpdate
+    BMI VolumeUnderTen
     LDA #'1'
     STA TX_VOLUME
     LDA volume
     SEC
     SBC #10
+VolumeUnderTen
     CLC
-    ADC #'0'    ; Turn into ASCII and save to stack
+    ADC #'0' 
     STA TX_VOLUME+1
     RTS
 
