@@ -175,17 +175,14 @@ DownArrow_DonePoll
     BNE DownArrow_DoneAll
     LDA down_arrow_cur
     CMP #$FF
-    BNE DownArrow_DoneAll
-    
-    disable_int_mode16   
-    LDX tone
-    CPX #00
-    BEQ AfterToneChanged
-    DEX
-    STX tone
-    JSR OnToneChanged
-AfterToneChanged
+    BNE DownArrow_DoneAll    
 
+    disable_int_mode16
+    LDA volume
+    BEQ AfterDecreaseVolume
+    DEC volume
+    JSR OnVolumeChanged
+AfterDecreaseVolume
     enable_int_mode8
     
 DownArrow_DoneAll
@@ -216,10 +213,13 @@ UpArrow_DonePoll
     CMP #$FF
     BNE UpArrow_DoneAll    
     
-    disable_int_mode16  
+    disable_int_mode16
+    LDA volume
+    CMP #15
+    BPL AfterIncreaseVolume
     INC volume
     JSR OnVolumeChanged
-
+AfterIncreaseVolume
     enable_int_mode8
     
 UpArrow_DoneAll
@@ -303,16 +303,19 @@ RightArrow_DoneAll
 OnVolumeChanged
     JSR SaveVolumeValueToAscii
     JSR PrintVolumeStatus
-
+    JSR SetSoundOnDevice
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 OnToneChanged
-
     JSR SaveToneValueToAscii
     JSR PrintToneStatus
-    
+    JSR SetSoundOnDevice
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SetSoundOnDevice
     LDA #$00 ; Set I/O page to 0
     STA MMU_IO_CTRL
 
