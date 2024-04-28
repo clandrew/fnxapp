@@ -143,9 +143,12 @@ MAIN
     JSR SaveToneValueToAscii
     JSR ClearScreenCharacterColorsNative
     JSR ClearScreenCharactersNative
+    JSR PrintHeader
     JSR PrintVolumeStatus
     JSR PrintToneStatus
     enable_int_mode8
+
+    JSR SetSoundOnDevice
         
 Poll
     JSR HandleDownArrow
@@ -402,13 +405,24 @@ OnesDigit
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+PrintHeader
+    LDX #TX_HEADER   ; Print string
+    STX src_pointer
+    LDY #$C000
+    STY dst_pointer    
+    JSR PrintAscii_ForEach
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 PrintVolumeStatus    
     LDA #$2 ; Set I/O page to 2
     STA MMU_IO_CTRL
     
     LDX #0
-    LDY #0
+    LDY #40*5
 PrintVolumeStatus_Loop
     LDA TX_VOLUMESTATUS, X
     STA (text_memory_pointer),Y
@@ -426,7 +440,7 @@ PrintToneStatus
     STA MMU_IO_CTRL
     
     LDX #0
-    LDY #40
+    LDY #40*6
 PrintToneStatus_Loop
     LDA TX_TONESTATUS, X
     STA (text_memory_pointer),Y
@@ -505,6 +519,11 @@ PrintAscii_Done
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+TX_HEADER       .text "***************SOUND TEST***************"
+TX_HEADER2      .text " Press up+down arrows to adjust volume. "
+TX_HEADER3      .text " Press left+right to adjust tone.       "
+.byte 0 ; null term
 
 TX_VOLUMESTATUS .text "Current volume: "
 TX_VOLUME  .text "00"
