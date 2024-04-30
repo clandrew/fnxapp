@@ -21,72 +21,44 @@ text_memory_pointer = $3C
 volume = $46
 tone = $48
 
-; Code
-* = $000000 
-        .byte 0
+; PGZ header
+* =  0
+                ; Place the one-byte PGZ signature before the code section
+                .text "Z"           
+                .long MAIN_SEGMENT_START               
+                
+                ; Three-byte segment size. Make sure the size DOESN'T include this metadata.
+                .long MAIN_SEGMENT_END - MAIN_SEGMENT_START 
 
-* = $4000
+                ; Note that when your executable is loaded, *only* the data segment after the metadata is loaded into memory. 
+                ; The 'Z' signature above, and the metadata isn't loaded into memory.
+
+
+; Code
 .logical $4000
+MAIN_SEGMENT_START
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-F256_RESET
+ENTRYPOINT
     CLC     ; disable interrupts
     SEI
-    LDX #$FF
-    TXS     ; initialize stack
 
-    ; initialize mmu
-    STZ MMU_MEM_CTRL
-    LDA MMU_MEM_CTRL
-    ORA #MMU_EDIT_EN
-
-    ; enable mmu edit, edit mmu lut 0, activate mmu lut 0
+    LDA #$B3           ; EDIT_EN=true, EDIT_LUT=3, ACT_LUT=3
     STA MMU_MEM_CTRL
-    STZ MMU_IO_CTRL
+    LDA #$07
+    STA MMU_MEM_BANK_7 ; map the last bank    
+    LDA #$3            ; EDIT_EN=false, EDIT_LUT=0, ACT_LUT=3
+    
+    STA MMU_MEM_CTRL    
 
-    LDA #$00
-    STA MMU_MEM_BANK_0 ; map $000000 to bank 0
-    INA
-    STA MMU_MEM_BANK_1 ; map $002000 to bank 1
-    INA
-    STA MMU_MEM_BANK_2 ; map $004000 to bank 2
-    INA
-    STA MMU_MEM_BANK_3 ; map $006000 to bank 3
-    INA
-    STA MMU_MEM_BANK_4 ; map $008000 to bank 4
-    INA
-    STA MMU_MEM_BANK_5 ; map $00a000 to bank 5
-    INA
-    STA MMU_MEM_BANK_6 ; map $00c000 to bank 6
-    INA
-    STA MMU_MEM_BANK_7 ; map $00e000 to bank 7
-    LDA MMU_MEM_CTRL
-    AND #~(MMU_EDIT_EN)
-    STA MMU_MEM_CTRL  ; disable mmu edit, use mmu lut 0
-
-                        ; initialize interrupts
-    LDA #$FF            ; mask off all interrupts
-    STA INT_EDGE_REG0
-    STA INT_EDGE_REG1
-    STA INT_MASK_REG0
-    STA INT_MASK_REG1
-
-    LDA INT_PENDING_REG0 ; clear all existing interrupts
-    STA INT_PENDING_REG0
-    LDA INT_PENDING_REG1
-    STA INT_PENDING_REG1
-
-    CLI ; Enable interrupts
     JMP MAIN
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 MAIN
-    LDA #MMU_EDIT_EN
-    STA MMU_MEM_CTRL
-    STZ MMU_IO_CTRL 
-    STZ MMU_MEM_CTRL    
+    ; Initialize graphics mode
+    STZ MMU_IO_CTRL
     LDA #(Mstr_Ctrl_Text_Mode_En|Mstr_Ctrl_Text_Overlay|Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En)
     STA @w MASTER_CTRL_REG_L 
     LDA #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
@@ -139,14 +111,14 @@ MAIN
     STA VIA0_PRA
     STZ VIA0_PRB
         
-    disable_int_mode16 
+    use_mode16 
     JSR SaveToneValueToAscii
     JSR ClearScreenCharacterColorsNative
     JSR ClearScreenCharactersNative
     JSR PrintHeader
     JSR PrintVolumeStatus
     JSR PrintToneStatus
-    enable_int_mode8
+    use_mode8
 
     JSR SetSoundOnDevice
         
@@ -180,13 +152,13 @@ DownArrow_DonePoll
     CMP #$FF
     BNE DownArrow_DoneAll    
 
-    disable_int_mode16
+    use_mode16
     LDA volume
     BEQ AfterDecreaseVolume
     DEC volume
     JSR OnVolumeChanged
 AfterDecreaseVolume
-    enable_int_mode8
+    use_mode8
     
 DownArrow_DoneAll
     LDA down_arrow_next
@@ -216,14 +188,14 @@ UpArrow_DonePoll
     CMP #$FF
     BNE UpArrow_DoneAll    
     
-    disable_int_mode16
+    use_mode16
     LDA volume
     CMP #15
     BPL AfterIncreaseVolume
     INC volume
     JSR OnVolumeChanged
 AfterIncreaseVolume
-    enable_int_mode8
+    use_mode8
     
 UpArrow_DoneAll
     LDA up_arrow_next
@@ -253,13 +225,13 @@ LeftArrow_DonePoll
     CMP #$FF
     BNE LeftArrow_DoneAll    
     
-    disable_int_mode16  
+    use_mode16  
     LDX tone
     DEX
     STX tone
     JSR OnToneChanged
 
-    enable_int_mode8
+    use_mode8
     
 LeftArrow_DoneAll
     LDA left_arrow_next
@@ -288,13 +260,13 @@ RightArrow_DonePoll
     CMP #$FF
     BNE RightArrow_DoneAll    
     
-    disable_int_mode16  
+    use_mode16  
     LDX tone
     INX
     STX tone
     JSR OnToneChanged
 
-    enable_int_mode8
+    use_mode8
     
 RightArrow_DoneAll
     LDA right_arrow_next
@@ -535,18 +507,11 @@ TX_RESPONSE
 .text "Sound playing"
 .byte 0 ; null term
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+MAIN_SEGMENT_END
 .endlogical
 
-; Write the system vectors
-* = $00FFF8
-.logical $FFF8
-.byte $00
-F256_DUMMYIRQ       ; Abort vector
-    RTI
-
-.word F256_DUMMYIRQ ; nmi
-.word F256_RESET    ; reset
-.word F256_DUMMYIRQ ; irq
-.endlogical
+; Entrypoint segment metadata
+                .long ENTRYPOINT
+                .long 0       ; Dummy value to indicate this segment is for declaring the entrypoint.
