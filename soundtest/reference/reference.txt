@@ -1,0 +1,43 @@
+Command					Meaning
+0  X F9 F8 F7 F6 F5 F4			Set the high six bits of the requency
+
+1  0  0  0 F3 F2 F1 F0			Set tone1 frequency low four bits
+1  0  0  1 A3 A2 A1 A0			Set tone1 attenuation
+
+1  0  1  0 F3 F2 F1 F0			Set tone2 frequency low four bits
+1  0  1  1 A3 A2 A1 A0			Set tone2 attenuation
+
+1  1  0  0 F3 F2 F1 F0			Set tone3 frequency low four bits
+1  1  0  1 A3 A2 A1 A0			Set tone3 attenuation
+
+1  1  1  0  X FB F1 F0			Set noise type and frequency
+
+Frequency codes go from 0 to 0x3FF (1023).
+
+Attenuation values go from 0 to 0xF (15), where 0 is the loudest.
+
+*************************
+Deploy command
+
+For .bin (deprecated):
+cd /d D:\repos\FoenixMgr
+python3 FoenixMgr\fnxmgr.py --port COM3 --binary D:\repos\fnxapp\sd\soundtest.bin --address=0000
+python3 FoenixMgr\fnxmgr.py --port COM3 --binary D:\repos\fnxapp\sd\soundtest.bin --address=0000
+
+For .pgz:
+copy /Y D:\repos\fnxapp\sd\soundtest.pgz I:\soundtest.pgz
+
+Copy the pgz file, then from BASIC run
+/- soundtest.pgz
+
+python3 FoenixMgr\fnxmgr.py --run-pgz D:\repos\fnxapp\sd\soundtest.pgz
+
+
+To debug- for ripping memory:
+To read debug info, use
+
+python3 FoenixMgr\fnxmgr.py --port COM3 --stop
+python3 FoenixMgr\fnxmgr.py --port COM3 --dump 44 --count 3
+python3 FoenixMgr\fnxmgr.py --port COM3 --start
+
+***

@@ -18,6 +18,7 @@ right_arrow_cur = $3A
 right_arrow_next = $3B
 text_memory_pointer = $3C
 
+debug = $3E
 volume = $46
 tone = $48
 
@@ -41,17 +42,6 @@ MAIN_SEGMENT_START
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ENTRYPOINT
-    CLC     ; disable interrupts
-    SEI
-
-    LDA #$B3           ; EDIT_EN=true, EDIT_LUT=3, ACT_LUT=3
-    STA MMU_MEM_CTRL
-    LDA #$07
-    STA MMU_MEM_BANK_7 ; map the last bank    
-    LDA #$3            ; EDIT_EN=false, EDIT_LUT=0, ACT_LUT=3
-    
-    STA MMU_MEM_CTRL    
-
     JMP MAIN
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -89,7 +79,7 @@ MAIN
     STA text_memory_pointer
     LDA #>VKY_TEXT_MEMORY
     STA text_memory_pointer+1   
-    
+        
     STZ down_arrow_cur
     STZ down_arrow_next
     STZ up_arrow_cur
@@ -111,14 +101,14 @@ MAIN
     STA VIA0_PRA
     STZ VIA0_PRB
         
-    use_mode16 
+    disable_int_mode16 
     JSR SaveToneValueToAscii
     JSR ClearScreenCharacterColorsNative
     JSR ClearScreenCharactersNative
     JSR PrintHeader
     JSR PrintVolumeStatus
     JSR PrintToneStatus
-    use_mode8
+    enable_int_mode8
 
     JSR SetSoundOnDevice
         
@@ -127,6 +117,7 @@ Poll
     JSR HandleUpArrow
     JSR HandleLeftArrow
     JSR HandleRightArrow
+    INC debug
     JMP Poll
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -152,13 +143,13 @@ DownArrow_DonePoll
     CMP #$FF
     BNE DownArrow_DoneAll    
 
-    use_mode16
+    disable_int_mode16
     LDA volume
     BEQ AfterDecreaseVolume
     DEC volume
     JSR OnVolumeChanged
 AfterDecreaseVolume
-    use_mode8
+    enable_int_mode8
     
 DownArrow_DoneAll
     LDA down_arrow_next
@@ -225,13 +216,13 @@ LeftArrow_DonePoll
     CMP #$FF
     BNE LeftArrow_DoneAll    
     
-    use_mode16  
+    disable_int_mode16  
     LDX tone
     DEX
     STX tone
     JSR OnToneChanged
 
-    use_mode8
+    enable_int_mode8
     
 LeftArrow_DoneAll
     LDA left_arrow_next
@@ -260,13 +251,13 @@ RightArrow_DonePoll
     CMP #$FF
     BNE RightArrow_DoneAll    
     
-    use_mode16  
+    disable_int_mode16  
     LDX tone
     INX
     STX tone
     JSR OnToneChanged
 
-    use_mode8
+    enable_int_mode8
     
 RightArrow_DoneAll
     LDA right_arrow_next
@@ -502,10 +493,6 @@ TX_VOLUME  .text "00"
 
 TX_TONESTATUS .text "Current tone: "
 TX_TONE  .text "0000"
-
-TX_RESPONSE
-.text "Sound playing"
-.byte 0 ; null term
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

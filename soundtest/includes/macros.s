@@ -85,6 +85,21 @@ use_mode8 .macro
             .endm
 
 use_mode16 .macro
+            CLC  
+            XCE
+            REP #$10 ; setxl
+            .xl
+            .endm
+            
+enable_int_mode8 .macro
+            SEC
+            XCE
+            CLI
+            .endm
+
+disable_int_mode16 .macro
+            CLC
+            SEI
             CLC
             XCE
             REP #$10 ; setxl
