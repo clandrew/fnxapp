@@ -17,6 +17,16 @@ Frequency codes go from 0 to 0x3FF (1023).
 Attenuation values go from 0 to 0xF (15), where 0 is the loudest.
 
 *************************
+
+Note			Frequency code
+low D			372
+E			342			
+F			324
+G			282
+low C			412
+C			212
+
+*************************
 Deploy command
 
 For .bin (deprecated):
