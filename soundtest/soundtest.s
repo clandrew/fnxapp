@@ -22,18 +22,7 @@ debug = $3E
 volume = $46
 tone = $48
 
-; PGZ header
-* =  0
-                ; Place the one-byte PGZ signature before the code section
-                .text "Z"           
-                .long MAIN_SEGMENT_START               
-                
-                ; Three-byte segment size. Make sure the size DOESN'T include this metadata.
-                .long MAIN_SEGMENT_END - MAIN_SEGMENT_START 
-
-                ; Note that when your executable is loaded, *only* the data segment after the metadata is loaded into memory. 
-                ; The 'Z' signature above, and the metadata isn't loaded into memory.
-
+* = $4000
 
 ; Code
 .logical $4000
@@ -42,6 +31,53 @@ MAIN_SEGMENT_START
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ENTRYPOINT
+    CLC     ; disable interrupts
+    SEI
+    LDX #$FF
+    TXS     ; initialize stack
+
+    ; initialize mmu
+    STZ MMU_MEM_CTRL
+    LDA MMU_MEM_CTRL
+    ORA #MMU_EDIT_EN
+        ; enable mmu edit, edit mmu lut 0, activate mmu lut 0
+    STA MMU_MEM_CTRL    
+    STZ MMU_IO_CTRL
+
+    LDA #$00
+    STA MMU_MEM_BANK_0 ; map $000000 to bank 0
+    INA
+    STA MMU_MEM_BANK_1 ; map $002000 to bank 1
+    INA
+    STA MMU_MEM_BANK_2 ; map $004000 to bank 2
+    INA
+    STA MMU_MEM_BANK_3 ; map $006000 to bank 3
+    INA
+    STA MMU_MEM_BANK_4 ; map $008000 to bank 4
+    INA
+    STA MMU_MEM_BANK_5 ; map $00a000 to bank 5
+    INA
+    STA MMU_MEM_BANK_6 ; map $00c000 to bank 6
+    INA
+    STA MMU_MEM_BANK_7 ; map $00e000 to bank 7
+    LDA MMU_MEM_CTRL
+    AND #~(MMU_EDIT_EN)
+    STA MMU_MEM_CTRL  ; disable mmu edit, use mmu lut 0
+
+                        ; initialize interrupts
+    LDA #$FF            ; mask off all interrupts
+    STA INT_EDGE_REG0
+    STA INT_EDGE_REG1
+    STA INT_MASK_REG0
+    STA INT_MASK_REG1
+
+    LDA INT_PENDING_REG0 ; clear all existing interrupts
+    STA INT_PENDING_REG0
+    LDA INT_PENDING_REG1
+    STA INT_PENDING_REG1
+
+    CLI ; Enable interrupts
+
     JMP MAIN
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -499,6 +535,14 @@ TX_TONE  .text "0000"
 MAIN_SEGMENT_END
 .endlogical
 
-; Entrypoint segment metadata
-                .long ENTRYPOINT
-                .long 0       ; Dummy value to indicate this segment is for declaring the entrypoint.
+; Write the system vectors
+* = $00FFF8
+.logical $FFF8
+.byte $00
+F256_DUMMYIRQ       ; Abort vector
+    RTI
+
+.word F256_DUMMYIRQ ; nmi
+.word ENTRYPOINT    ; reset
+.word F256_DUMMYIRQ ; irq
+.endlogical

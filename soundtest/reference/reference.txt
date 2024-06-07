@@ -26,6 +26,7 @@ G			282
 low C			412
 C			212
 
+
 *************************
 Deploy command
 
@@ -51,3 +52,5 @@ python3 FoenixMgr\fnxmgr.py --port COM3 --dump 44 --count 3
 python3 FoenixMgr\fnxmgr.py --port COM3 --start
 
 ***
+
+there's a path where you compile quick-and-dirty psos you need immediately, and the 'good' one in the background, and you can technically do all of that today. I don't hear a lot of actually doing this though
