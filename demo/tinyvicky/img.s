@@ -171,19 +171,21 @@ MAIN
 
     ; CPU map part of the bitmap layer
 
-    ;LDA MMU_MEM_CTRL ; Enable editing
-    ;ORA #MMU_EDIT_EN
-    ;STA MMU_MEM_CTRL
+    LDA MMU_MEM_CTRL ; Enable editing
+    ORA #MMU_EDIT_EN
+    STA MMU_MEM_CTRL
 
-    ;STA MMU_MEM_CTRL
-    ;STZ MMU_IO_CTRL
+    LDA #$08 ; Physical address 01:0000
+    STA MMU_MEM_BANK_2 ; map $00e000 to bank 2 (0x4000..0x5FFF)
 
-    ;LDA #$00
-    ;STA MMU_MEM_BANK_7 ; map $00e000 to bank 7
+    LDA MMU_MEM_CTRL    ; Disable editing
+    AND #~(MMU_EDIT_EN)
+    STA MMU_MEM_CTRL
 
-    ;LDA MMU_MEM_CTRL    ; Disable editing
-    ;AND #~(MMU_EDIT_EN)
-    ;STA MMU_MEM_CTRL  
+    LDA #$01
+    STA $4000
+    STA $4001
+    STA $4002
 
 Lock
     JMP Lock
@@ -202,6 +204,7 @@ LutLoop
     INY
     LDA (src_pointer),Y
     STA (dst_pointer),Y
+    INY
     INY
 
     DEX
