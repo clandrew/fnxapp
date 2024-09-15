@@ -292,10 +292,14 @@ MAIN
     LDA #$00
     STA $D00F ; Background blue channel
     
-    STZ TyVKY_BM1_CTRL_REG ; Make sure bitmap 1 is turned off
+    ; Turn off the border
+    STZ VKY_BRDR_CTRL
+    
     STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off    
+
     LDA #$01 
     STA TyVKY_BM0_CTRL_REG ; Make sure bitmap 0 is turned on. Setting no more bits leaves LUT selection to 0
+    STA TyVKY_BM1_CTRL_REG ; Make sure bitmap 1 is turned on
 
     ; Switch to page 1 because the lut lives there
     LDA #1
