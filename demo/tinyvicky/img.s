@@ -175,19 +175,25 @@ MAIN
     ORA #MMU_EDIT_EN
     STA MMU_MEM_CTRL
 
-    LDA #$08 ; Physical address 01:0000
-    STA MMU_MEM_BANK_2 ; map $00e000 to bank 2 (0x4000..0x5FFF)
+    LDA #$19 ; Physical address 02:6000
+    STA MMU_MEM_BANK_2 ; map to bank 2 (0x4000..0x5FFF)
 
     LDA MMU_MEM_CTRL    ; Disable editing
     AND #~(MMU_EDIT_EN)
     STA MMU_MEM_CTRL
 
-    LDA #$01
-    STA $4000
-    STA $4001
-    STA $4002
+    LDA #$00
 
 Lock
+
+DEBUG_ADDR = $51A0
+
+    INA
+    STA DEBUG_ADDR
+    STA DEBUG_ADDR + ($140 * 1)
+    STA DEBUG_ADDR + ($140 * 2)
+    STA DEBUG_ADDR + ($140 * 3)
+    STA DEBUG_ADDR + ($140 * 4)
     JMP Lock
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
