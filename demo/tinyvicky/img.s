@@ -294,14 +294,6 @@ MAIN
     
     ; Turn off the border
     STZ VKY_BRDR_CTRL
-    
-    STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off    
-
-    LDA #$00 
-    STA TyVKY_BM0_CTRL_REG ; Bitmap 0
-
-    LDA #$01 
-    STA TyVKY_BM1_CTRL_REG ; Bitmap 1
 
     ; Switch to page 1 because the lut lives there
     LDA #1
@@ -358,32 +350,37 @@ LutDone
     ; Go back to I/O page 0
     LDA #0
     STA MMU_IO_CTRL 
+    
+    STZ TyVKY_BM2_CTRL_REG ; Disable bitmap 2
+
+    LDA #$01
+    STA TyVKY_BM0_CTRL_REG ; Enable bitmap 0
+
+    LDA #$01 
+    STA TyVKY_BM1_CTRL_REG ; Enable bitmap 1
 
     LDA #$10    ; Set bitmap 0 to layer 0, and bitmap 1 to layer 1
     STA $D002
 
-    ; Now copy graphics data
-    lda #<IMG_START ; Set the low byte of bitmap 1’s address
+    ; Copy graphics data to bitmap 1
+    lda #<IMG_START 
     sta $D109
-    lda #>IMG_START ; Set the middle byte of the bitmap 1’s address
+    lda #>IMG_START
     sta $D10A
-    lda #`IMG_START ; Set the high byte of the bitmap 1’s address
+    lda #`IMG_START 
     sta $D10B
 
-    ;lda #<IMG_START2 ; Set the low byte of bitmap 1’s address
-    ;sta $D101 
-    ;lda #>IMG_START2 ; Set the middle byte of the bitmap 1’s address
-    ;sta $D102
-    ;lda #`IMG_START2 ; Set the high byte of the bitmap 1’s address
-    ;sta $D103
+    ; Copy graphics data to bitmap 0
+    lda #<IMG_START2
+    sta $D101 
+    lda #>IMG_START2 
+    sta $D102
+    lda #`IMG_START2 
+    sta $D103
 
 Lock
     JMP Lock
 
-; String for stylized title
-TX_GAMETITLE
-.text "Test text"
-.byte 0 ; null term
 .endlogical
 
 ; Emitted with 
@@ -393,7 +390,7 @@ TX_GAMETITLE
 * = $10000
 .logical $10000
 .include "rsrc/pixmap.s"
-;.include "rsrc/pixmap2.s"
+.include "rsrc/pixmap2.s"
 .endlogical
 
 ; Write the system vectors
