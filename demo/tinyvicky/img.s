@@ -259,7 +259,7 @@ MAIN
     STA MMU_MEM_CTRL
     STZ MMU_IO_CTRL ;<<<="SetMMUIO"
     STZ MMU_MEM_CTRL
-    LDA #(Mstr_Ctrl_Text_Mode_En|Mstr_Ctrl_Text_Overlay|Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En)
+    LDA #(Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En)
     STA @w MASTER_CTRL_REG_L 
     LDA #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
     STA @w MASTER_CTRL_REG_H
@@ -283,14 +283,6 @@ MAIN
     
     LDA #$70
     STA $48
-
-    LDA #<TX_GAMETITLE
-    STA $30  ; STA TempSrc
-
-    LDA #>TX_GAMETITLE
-    STA $31  ; STA TempSrc+1
-    
-    JSR PrintAnsiString
          
     ; Clear to black
     LDA #$00
