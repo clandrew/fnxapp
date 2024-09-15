@@ -227,3 +227,12 @@
 ;                                                                                       ;DMA_RESERVED_6      = $DF15
 ;                                                                                       ;DMA_RESERVED_7      = $DF16
 ;                                                                                       ;DMA_RESERVED_8      = $DF17
+
+                            VKY_SP0_CTRL = $D900 ; Sprite #0’s control register
+                            VKY_SP0_AD_L = $D901 ; Sprite #0’s pixel data address register
+                            VKY_SP0_AD_M = $D902
+                            VKY_SP0_AD_H = $D903
+                            VKY_SP0_POS_X_L = $D904 ; Sprite #0’s X position register
+                            VKY_SP0_POS_X_H = $D905
+                            VKY_SP0_POS_Y_L = $D906 ; Sprite #0’s Y position register
+                            VKY_SP0_POS_Y_H = $D907

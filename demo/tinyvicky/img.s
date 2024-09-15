@@ -144,6 +144,29 @@ MAIN
 
     JSR FnDraw1HP
 
+    stz MMU_IO_CTRL
+
+    lda #<balls_img_start ; Address = balls_img_start
+    sta VKY_SP0_AD_L
+    lda #>balls_img_start
+    sta VKY_SP0_AD_M
+    lda #`balls_img_start 
+    STA VKY_SP0_AD_H
+
+    lda #200
+    sta VKY_SP0_POS_X_L ; X position
+    lda #0
+    STA VKY_SP0_POS_X_H ;
+
+    lda #200
+    sta VKY_SP0_POS_Y_L ; Y position
+    lda #0
+    STA VKY_SP0_POS_Y_H
+
+    lda #$41 ; Size=16x16, Layer=0, LUT=0, Enabled
+    sta VKY_SP0_CTRL
+
+
 Lock
     JMP Lock
 
@@ -210,6 +233,7 @@ LutDone
 .logical $10000
 .include "rsrc/pixmap_bg.s"
 .include "rsrc/pixmap_hud.s"
+.include "rsrc/sprite_data.s"
 .endlogical
 
 ; Write the system vectors
