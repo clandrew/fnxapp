@@ -15,185 +15,9 @@ CursorColor = $48
 * = $000000 
         .byte 0
 
-* = $E000
-.logical $E000
-ChrOut
-    PHA
-    PHY
-    TAY
-    LDA $01
-    PHA
-    LDA #$02
-    STA $01
-    TYA
-    LDY $49
-    STA ($4B),Y
-    INC $01
-    LDA $48
-    STA ($4B),Y
-    INY
-    CPY #$28
-    BNE ChrOut_Done
-
-    CLC
-    LDA $4B
-    ADC #$28
-    STA $4B
-    BCC LE025
-    INC $4C
-
-LE025
-    LDA $4A
-    INA
-    CMP #$1E
-    BNE LE034
-
-    LDA #$C0
-    STA $4C
-
-    LDA #$00
-    STA $4B
-
-LE034
-    STA $4A
-    LDY #$00
-
-ChrOut_Done
-    STY $49
-    PLA
-    STA $01
-    PLY
-    PLA
-    RTS
-
-ClearScreen
-    PHA
-    PHX
-    LDA MMU_IO_CTRL ; Back up MMU page state
-    PHA
-
-    STZ $E073
-    STZ $4B
-    LDA #$C0
-    STA $E074
-    STA $4C
-    LDA #$02 ; Switch to page 2
-    STA MMU_IO_CTRL
-    LDX #$20
-
-    JSR Fn_E071
-    STZ $E073
-    LDA #$C0
-    STA $E074
-    LDA #$03 ; Switch to page 3
-    STA MMU_IO_CTRL
-    LDX $48
-
-    JSR Fn_E071
-
-    PLA
-    STA MMU_IO_CTRL ; Restore MMU page state
-    PLX
-    PLA
-    RTS
-
-Fn_E071
-    TXA
-    STA $1234
-    INC $E073
-    BNE LE07A
-    INC $E074
-
-LE07A
-    LDA $E073
-    CMP #$C0
-
-    BNE Fn_E071
-
-    LDA $E074
-    CMP #$D2
-
-    BNE Fn_E071
-    RTS
-
-; Procedure: PrintAnsiString
-; parameters:
-;	<TempSrc>	=	word address of string to print
-;	<CursorPointer>	=	word address of screen character/color memory
-PrintAnsiString
-    LDY #$00
-    BRA Print20
-
-Print10
-    CMP #$1B
-    BCC CheckControlCodes
-    JSR ChrOut
-
-NextByte
-    INY
-    BNE Print20
-    INC $31 ; TempSrc+1
-    
-Print20
-    LDA ($30),y ; (TempSrc),y
-    BNE Print10
-    RTS ; Exit if null term
-
-CheckControlCodes
-    CMP #$02            ; ctrl-f/set cursor foreground color
-    BNE CheckControlCodes_Cond0
-    LDA CursorColor
-    AND #$F0
-    STA CursorColor
-    JSR GetNextByte
-    ORA CursorColor
-    STA CursorColor
-    BRA NextByte
-
-CheckControlCodes_Cond0
-    CMP #$03
-    BNE CheckControlCodes_Cond1 
-    JSR $E0E1 ; GetNextByte
-    STA CursorColor
-    BRA NextByte
-    
-CheckControlCodes_Cond1
-    CMP #$06    ; ctrl-f/set cursor foreground color
-    BNE CheckControlCodes_Cond2
-    LDA CursorColor
-    AND #$0F
-    STA CursorColor
-    JSR GetNextByte
-    ASL
-    ASL
-    ASL
-    ASL
-    ORA CursorColor
-    STA CursorColor
-    BRA NextByte
-
-CheckControlCodes_Cond2
-    CMP #$0C
-
-    BNE CheckControlCodes_Cond3 
-    JSR ClearScreen
-    BRA NextByte
-CheckControlCodes_Cond3
-    RTS
-
-GetNextByte
-    INY
-    BNE CheckControlCodes_Cond4
-    INC $31 ; $e6, $31
-
-CheckControlCodes_Cond4
-    LDA ($30), y ; (TempSrc),y
-    RTS    
-.endlogical
-
 ; Entrypoint
-* = $E5D5
-.logical $E5D5
+* = $1000
+.logical $1000
 F256_RESET
     CLC     ; disable interrupts
     SEI
@@ -202,11 +26,11 @@ F256_RESET
 
     ; initialize mmu
     STZ MMU_MEM_CTRL
-    LDA MMU_MEM_CTRL
-    ORA #MMU_EDIT_EN
 
-    ; enable mmu edit, edit mmu lut 0, activate mmu lut 0 ;<<<="UnlockMMU	; enable mmu edit, edit mmu lut 0, activate mmu lut 0"
+    LDA MMU_MEM_CTRL ; Enable editing
+    ORA #MMU_EDIT_EN
     STA MMU_MEM_CTRL
+
     STZ MMU_IO_CTRL
 
     LDA #$00
@@ -244,16 +68,7 @@ F256_RESET
     CLI
     JMP MAIN
 
-.endlogical
 
-* = $E700
-.logical $E700
-.include "rsrc/colors_bg.s"
-.include "rsrc/colors_hud.s"
-.endlogical
-
-* = $EF07
-.logical $EF07
 MAIN
     LDA #MMU_EDIT_EN
     STA MMU_MEM_CTRL
@@ -266,8 +81,6 @@ MAIN
 
     LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK
     STA CursorColor
-
-    JSR ClearScreen
 
     LDA #$00
     STA $49 ; CursorColumn
@@ -310,7 +123,8 @@ MAIN
     STA dst_pointer
     LDA #>VKY_GR_CLUT_0
     STA dst_pointer+1
-    JSR FnCopyLut
+    LDX #47
+    JSR FnCopySmallLut
 
     LDA #<LUT_HUD_START
     STA src_pointer
@@ -320,7 +134,8 @@ MAIN
     STA dst_pointer
     LDA #>VKY_GR_CLUT_1
     STA dst_pointer+1
-    JSR FnCopyLut
+    LDX #11
+    JSR FnCopySmallLut
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     ; Go back to I/O page 0
@@ -354,15 +169,30 @@ MAIN
     lda #`HUD_START 
     sta $D103
 
+    ; CPU map part of the bitmap layer
+
+    ;LDA MMU_MEM_CTRL ; Enable editing
+    ;ORA #MMU_EDIT_EN
+    ;STA MMU_MEM_CTRL
+
+    ;STA MMU_MEM_CTRL
+    ;STZ MMU_IO_CTRL
+
+    ;LDA #$00
+    ;STA MMU_MEM_BANK_7 ; map $00e000 to bank 7
+
+    ;LDA MMU_MEM_CTRL    ; Disable editing
+    ;AND #~(MMU_EDIT_EN)
+    ;STA MMU_MEM_CTRL  
+
 Lock
     JMP Lock
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-FnCopyLut
-    LDX #$00
-LutLoop
+FnCopySmallLut
     LDY #$0
+LutLoop
     
     LDA (src_pointer),Y
     STA (dst_pointer),Y
@@ -372,26 +202,10 @@ LutLoop
     INY
     LDA (src_pointer),Y
     STA (dst_pointer),Y
+    INY
 
-    INX
-    BEQ LutDone     ; When X overflows, exit
-
-    CLC
-    LDA dst_pointer
-    ADC #$04
-    STA dst_pointer
-    LDA dst_pointer+1
-    ADC #$00 ; Add carry
-    STA dst_pointer+1
-    
-    CLC
-    LDA src_pointer
-    ADC #$04
-    STA src_pointer
-    LDA src_pointer+1
-    ADC #$00 ; Add carry
-    STA src_pointer+1
-    BRA LutLoop
+    DEX
+    BNE LutLoop     ; When X overflows, exit
     
 LutDone
     RTS
@@ -401,6 +215,9 @@ LutDone
 ; Emitted with 
 ;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\LagoonRef.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_bg.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_bg.s
 ;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\hud.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_hud.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_hud.s
+
+.include "rsrc/colors_bg.s"
+.include "rsrc/colors_hud.s"
 
 * = $10000
 .logical $10000
