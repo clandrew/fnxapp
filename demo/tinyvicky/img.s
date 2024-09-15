@@ -78,24 +78,6 @@ MAIN
     STA @w MASTER_CTRL_REG_L 
     LDA #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
     STA @w MASTER_CTRL_REG_H
-
-    LDA #$E0 ; #(C64COLOR.LTBLUE<<4) | C64COLOR.BLACK
-    STA CursorColor
-
-    LDA #$00
-    STA $49 ; CursorColumn
-    
-    LDA #$00
-    STA $4A ; CursorLine
-    
-    LDA #$00 ; #<(VKY_TEXT_MEMORY+val(copy('#0',2))*40)
-    STA $4B ; CursorPointer
-
-    LDA #$C0
-    STA $4C
-    
-    LDA #$70
-    STA $48
          
     ; Clear to black
     LDA #$00
@@ -169,6 +151,14 @@ MAIN
     lda #`HUD_START 
     sta $D103
 
+    JSR FnDraw1HP
+
+
+Lock
+    JMP Lock
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FnDraw1HP
     ; CPU map part of the bitmap layer
 
     LDA MMU_MEM_CTRL ; Enable editing
@@ -182,19 +172,17 @@ MAIN
     AND #~(MMU_EDIT_EN)
     STA MMU_MEM_CTRL
 
-    LDA #$00
+    LDA #$01
 
-Lock
+HP_GRAPHIC_IN_BANK = $51A0
 
-DEBUG_ADDR = $51A0
-
-    INA
-    STA DEBUG_ADDR
-    STA DEBUG_ADDR + ($140 * 1)
-    STA DEBUG_ADDR + ($140 * 2)
-    STA DEBUG_ADDR + ($140 * 3)
-    STA DEBUG_ADDR + ($140 * 4)
-    JMP Lock
+    STA HP_GRAPHIC_IN_BANK
+    STA HP_GRAPHIC_IN_BANK + ($140 * 1)
+    STA HP_GRAPHIC_IN_BANK + ($140 * 2)
+    STA HP_GRAPHIC_IN_BANK + ($140 * 3)
+    STA HP_GRAPHIC_IN_BANK + ($140 * 4)
+    
+    RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
