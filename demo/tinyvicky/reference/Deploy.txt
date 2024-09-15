@@ -1,0 +1,3 @@
+cd /d D:\repos\FoenixMgr
+python3 FoenixMgr\fnxmgr.py --port COM3 --address=0000 --boot=RAM
+python3 FoenixMgr\fnxmgr.py --port COM3 --binary D:\repos\fnxapp\sd\soundtest.bin --address=0000
