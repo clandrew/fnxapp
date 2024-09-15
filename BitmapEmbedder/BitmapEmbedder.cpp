@@ -12,9 +12,9 @@ void VerifyHR(HRESULT hr)
 
 void PrintUsage()
 {
-	std::cout << "Usage: BitmapEmbedder [source] [dest pallette source file] [dest image source file] [--halfsize] [--compile-offsets] [-add-transparency]\n";
+	std::cout << "Usage: BitmapEmbedder [source] [dest pallette source file] [dest image source file] [dest image source file label name] [--halfsize] [--compile-offsets] [-add-transparency]\n";
 	std::cout << "For example, \n";
-	std::cout << "    BitmapEmbedder wormhole.bmp colors.s pixmap.s\n";
+	std::cout << "    BitmapEmbedder wormhole.bmp colors.s pixmap.s IMG\n";
 	std::cout << "\n";
 	std::cout << "--halfsize:           Optional parameter. Causes dest image to be half the size of the original.";
 	std::cout << "--compile-offsets:    Optional parameter. Causes explicit compile offsets to be emitted for image data, adding additional ones where the data is longer than one bank.";
@@ -98,10 +98,12 @@ int main(int argc, void** argv)
 	std::string destImageFilenameCmdLine = (char*)argv[3];
 	std::wstring destImageFilename(destImageFilenameCmdLine.begin(), destImageFilenameCmdLine.end());
 
+	std::string destLabelCmdLine = (char*)argv[4];
+
 	bool emitCompileOffsets = false;
 	bool halfsize = false;
 	bool addTransparency = false;
-	for (int i = 4; i < argc; ++i)
+	for (int i = 5; i < argc; ++i)
 	{
 		std::string arg = (char*)argv[i];
 		if (arg == "--halfsize")
@@ -186,7 +188,7 @@ int main(int argc, void** argv)
 		// Dump the palette
 		std::wstring outputFile = destPaletteFilename;
 		std::ofstream out(outputFile);
-		out << "LUT_START\n";
+		out << "LUT_" << destLabelCmdLine << "_START\n";
 		int colorIndex = 0;
 		for (auto it = colors.begin(); it != colors.end() && colorIndex < 256; ++it)
 		{
@@ -213,7 +215,7 @@ int main(int argc, void** argv)
 		}
 
 		out << "\n";
-		out << "LUT_END = *";
+		out << "LUT_" << destLabelCmdLine << "_END = *";
 	}
 
 	if (halfsize)
@@ -248,7 +250,7 @@ int main(int argc, void** argv)
 			}
 			if (lineCount == 0)
 			{
-				out << "IMG_START = *\n";
+				out << destLabelCmdLine << "_START = *\n";
 			}
 
 			int counter = 0;
@@ -278,6 +280,6 @@ int main(int argc, void** argv)
 			lineCount++;
 		}
 
-		out << "IMG_END = *";
+		out << destLabelCmdLine << "_END = *";
 	}
 }

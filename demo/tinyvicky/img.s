@@ -248,16 +248,16 @@ F256_RESET
 
 * = $E700
 .logical $E700
-.include "rsrc/colors.s"
+.include "rsrc/colors_bg.s"
+.include "rsrc/colors_hud.s"
 .endlogical
 
 * = $EF07
 .logical $EF07
-; Main
 MAIN
     LDA #MMU_EDIT_EN
     STA MMU_MEM_CTRL
-    STZ MMU_IO_CTRL ;<<<="SetMMUIO"
+    STZ MMU_IO_CTRL
     STZ MMU_MEM_CTRL
     LDA #(Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En)
     STA @w MASTER_CTRL_REG_L 
@@ -295,24 +295,72 @@ MAIN
     ; Turn off the border
     STZ VKY_BRDR_CTRL
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; LUT copying
+
     ; Switch to page 1 because the lut lives there
     LDA #1
     STA MMU_IO_CTRL
 
-    ; Store a dest pointer in $30-$31
+    ; Source = baked-in data, Dest = register
+    LDA #<LUT_IMG_START
+    STA src_pointer
+    LDA #>LUT_IMG_START
+    STA src_pointer+1
     LDA #<VKY_GR_CLUT_0
     STA dst_pointer
     LDA #>VKY_GR_CLUT_0
     STA dst_pointer+1
+    JSR FnCopyLut
 
-    ; Store a source pointer
-    LDA #<LUT_START
+    LDA #<LUT_HUD_START
     STA src_pointer
-    LDA #>LUT_START
+    LDA #>LUT_HUD_START
     STA src_pointer+1
+    LDA #<VKY_GR_CLUT_1
+    STA dst_pointer
+    LDA #>VKY_GR_CLUT_1
+    STA dst_pointer+1
+    JSR FnCopyLut
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+    ; Go back to I/O page 0
+    LDA #0
+    STA MMU_IO_CTRL 
+    
+    STZ TyVKY_BM2_CTRL_REG ; Disable bitmap 2
+
+    LDA #$03
+    STA TyVKY_BM0_CTRL_REG ; Enable bitmap 0 (HUD), LUT 1
+
+    LDA #$01
+    STA TyVKY_BM1_CTRL_REG ; Enable bitmap 1 (BG), LUT 0
+
+    LDA #$10    ; Set bitmap 0 to layer 0, and bitmap 1 to layer 1
+    STA $D002
+
+    ; Copy graphics data to bitmap 1 (BG)
+    lda #<IMG_START
+    sta $D109
+    lda #>IMG_START
+    sta $D10A
+    lda #`IMG_START 
+    sta $D10B
+
+    ; Copy graphics data to bitmap 0 (HUD)
+    lda #<HUD_START
+    sta $D101 
+    lda #>HUD_START 
+    sta $D102
+    lda #`HUD_START 
+    sta $D103
+
+Lock
+    JMP Lock
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+FnCopyLut
     LDX #$00
-
 LutLoop
     LDY #$0
     
@@ -346,51 +394,18 @@ LutLoop
     BRA LutLoop
     
 LutDone
-
-    ; Go back to I/O page 0
-    LDA #0
-    STA MMU_IO_CTRL 
-    
-    STZ TyVKY_BM2_CTRL_REG ; Disable bitmap 2
-
-    LDA #$01
-    STA TyVKY_BM0_CTRL_REG ; Enable bitmap 0
-
-    LDA #$01 
-    STA TyVKY_BM1_CTRL_REG ; Enable bitmap 1
-
-    LDA #$10    ; Set bitmap 0 to layer 0, and bitmap 1 to layer 1
-    STA $D002
-
-    ; Copy graphics data to bitmap 1
-    lda #<IMG_START 
-    sta $D109
-    lda #>IMG_START
-    sta $D10A
-    lda #`IMG_START 
-    sta $D10B
-
-    ; Copy graphics data to bitmap 0
-    lda #<IMG_START2
-    sta $D101 
-    lda #>IMG_START2 
-    sta $D102
-    lda #`IMG_START2 
-    sta $D103
-
-Lock
-    JMP Lock
+    RTS
 
 .endlogical
 
 ; Emitted with 
-;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\img\tinyvicky\rsrc\LagoonRef.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap.s
-;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\img\tinyvicky\rsrc\upper.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors2.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap2.s
+;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\LagoonRef.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_bg.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_bg.s
+;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\hud.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_hud.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_hud.s
 
 * = $10000
 .logical $10000
-.include "rsrc/pixmap.s"
-.include "rsrc/pixmap2.s"
+.include "rsrc/pixmap_bg.s"
+.include "rsrc/pixmap_hud.s"
 .endlogical
 
 ; Write the system vectors
