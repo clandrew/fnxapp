@@ -297,9 +297,11 @@ MAIN
     
     STZ TyVKY_BM2_CTRL_REG ; Make sure bitmap 2 is turned off    
 
+    LDA #$00 
+    STA TyVKY_BM0_CTRL_REG ; Bitmap 0
+
     LDA #$01 
-    STA TyVKY_BM0_CTRL_REG ; Make sure bitmap 0 is turned on. Setting no more bits leaves LUT selection to 0
-    STA TyVKY_BM1_CTRL_REG ; Make sure bitmap 1 is turned on
+    STA TyVKY_BM1_CTRL_REG ; Bitmap 1
 
     ; Switch to page 1 because the lut lives there
     LDA #1
@@ -357,13 +359,23 @@ LutDone
     LDA #0
     STA MMU_IO_CTRL 
 
+    LDA #$10    ; Set bitmap 0 to layer 0, and bitmap 1 to layer 1
+    STA $D002
+
     ; Now copy graphics data
-    lda #<IMG_START ; Set the low byte of the bitmap’s address
-    sta $D101
-    lda #>IMG_START ; Set the middle byte of the bitmap’s address
-    sta $D102
-    lda #`IMG_START
-    sta $D103
+    lda #<IMG_START ; Set the low byte of bitmap 1’s address
+    sta $D109
+    lda #>IMG_START ; Set the middle byte of the bitmap 1’s address
+    sta $D10A
+    lda #`IMG_START ; Set the high byte of the bitmap 1’s address
+    sta $D10B
+
+    ;lda #<IMG_START2 ; Set the low byte of bitmap 1’s address
+    ;sta $D101 
+    ;lda #>IMG_START2 ; Set the middle byte of the bitmap 1’s address
+    ;sta $D102
+    ;lda #`IMG_START2 ; Set the high byte of the bitmap 1’s address
+    ;sta $D103
 
 Lock
     JMP Lock
@@ -375,11 +387,13 @@ TX_GAMETITLE
 .endlogical
 
 ; Emitted with 
-;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\img\tinyvicky\rsrc\LagoonRef.bmp D:\repos\fnxapp\img\tinyvicky\rsrc\colors.s D:\repos\fnxapp\img\tinyvicky\rsrc\pixmap.s
+;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\img\tinyvicky\rsrc\LagoonRef.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap.s
+;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\img\tinyvicky\rsrc\upper.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors2.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap2.s
 
 * = $10000
 .logical $10000
 .include "rsrc/pixmap.s"
+;.include "rsrc/pixmap2.s"
 .endlogical
 
 ; Write the system vectors
