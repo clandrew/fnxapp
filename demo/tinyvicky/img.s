@@ -6,10 +6,6 @@
 
 dst_pointer = $30
 src_pointer = $32
-column = $34
-bm_bank = $35
-line = $40
-CursorColor = $48
 
 ; Code
 * = $000000 
@@ -70,11 +66,7 @@ F256_RESET
 
 
 MAIN
-    LDA #MMU_EDIT_EN
-    STA MMU_MEM_CTRL
-    STZ MMU_IO_CTRL
-    STZ MMU_MEM_CTRL
-    LDA #(Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En)
+    LDA #(Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En|Mstr_Ctrl_Sprite_En)
     STA @w MASTER_CTRL_REG_L 
     LDA #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
     STA @w MASTER_CTRL_REG_H
@@ -85,10 +77,9 @@ MAIN
     LDA #$00
     STA $D00E ; Background green channel
     LDA #$00
-    STA $D00F ; Background blue channel
+    STA $D00F ; Background blue channel    
     
-    ; Turn off the border
-    STZ VKY_BRDR_CTRL
+    STZ VKY_BRDR_CTRL ; Turn off the border
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; LUT copying
 
@@ -152,7 +143,6 @@ MAIN
     sta $D103
 
     JSR FnDraw1HP
-
 
 Lock
     JMP Lock
