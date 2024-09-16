@@ -163,7 +163,7 @@ MAIN
     lda #0
     STA VKY_SP0_POS_Y_H
 
-    lda #$41 ; Size=16x16, Layer=0, LUT=0, Enabled
+    lda #$1 ; Size=32x32, Layer=0, LUT=0, Enabled
     sta VKY_SP0_CTRL
 
 
