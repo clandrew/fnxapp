@@ -123,7 +123,7 @@ MAIN
     LDA #$01
     STA TyVKY_BM1_CTRL_REG ; Enable bitmap 1 (BG), LUT 0
 
-    LDA #$10    ; Set bitmap 0 to layer 0, and bitmap 1 to layer 1
+    LDA #$14    ; Layer0 = tilemap0, Layer1=bitmap1
     STA $D002
 
     ; Copy graphics data to bitmap 1 (BG)
@@ -172,6 +172,29 @@ MAIN
     sta TILE_MAP_ADDY0_M
     lda #`TLSET_START
     sta TILE_MAP_ADDY0_H
+
+    lda #$01 ; 16x16 tiles, enable
+    sta TyVKY_TL_CTRL0
+
+    lda #84
+    sta TL0_MAP_X_SIZE_L
+    STZ TL0_MAP_X_SIZE_H
+
+    lda #1
+    sta TL0_MAP_Y_SIZE_L
+    STZ TL0_MAP_Y_SIZE_H
+
+    lda #<tile_map ; Point to the tile map
+    sta TL0_START_ADDY_L
+    lda #>tile_map
+    sta TL0_START_ADDY_M
+    lda #`tile_map
+    sta TL0_START_ADDY_H
+
+    stz TL0_MAP_X_POS_L
+    stz TL0_MAP_X_POS_H
+    stz TL0_MAP_Y_POS_L
+    stz TL0_MAP_Y_POS_H
 
 
 Lock
@@ -237,6 +260,7 @@ LutDone
 
 .include "rsrc/colors_bg.s"
 .include "rsrc/colors_hud.s"
+.include "rsrc/tilemap.s"
 
 * = $10000
 .logical $10000
