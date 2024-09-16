@@ -127,30 +127,30 @@ MAIN
     STA $D002
 
     ; Copy graphics data to bitmap 1 (BG)
-    lda #<IMG_START
-    sta $D109
-    lda #>IMG_START
-    sta $D10A
-    lda #`IMG_START 
-    sta $D10B
+    ;lda #<IMG_START
+    ;sta $D109
+    ;lda #>IMG_START
+    ;sta $D10A
+    ;lda #`IMG_START 
+    ;sta $D10B
 
     ; Copy graphics data to bitmap 0 (HUD)
-    lda #<HUD_START
-    sta $D101 
-    lda #>HUD_START 
-    sta $D102
-    lda #`HUD_START 
-    sta $D103
+    ;lda #<HUD_START
+    ;sta $D101 
+    ;lda #>HUD_START 
+    ;sta $D102
+    ;lda #`HUD_START 
+    ;sta $D103
 
     JSR FnDraw1HP
 
     stz MMU_IO_CTRL
 
-    lda #<balls_img_start ; Address = balls_img_start
+    lda #<SPRT_START ; Address = balls_img_start
     sta VKY_SP0_AD_L
-    lda #>balls_img_start
+    lda #>SPRT_START
     sta VKY_SP0_AD_M
-    lda #`balls_img_start 
+    lda #`SPRT_START 
     STA VKY_SP0_AD_H
 
     lda #200
@@ -163,7 +163,7 @@ MAIN
     lda #0
     STA VKY_SP0_POS_Y_H
 
-    lda #$41 ; Size=16x16, Layer=0, LUT=0, Enabled
+    lda #$1 ; Size=32x32, Layer=0, LUT=0, Enabled
     sta VKY_SP0_CTRL
 
 
@@ -223,8 +223,9 @@ LutDone
 .endlogical
 
 ; Emitted with 
-;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\LagoonRef.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_bg.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_bg.s
-;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\hud.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_hud.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_hud.s
+;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\LagoonRef.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_bg.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_bg.s IMG
+;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\hud.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_hud.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_hud.s HUD
+;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\hud.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_sprite.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_sprite.s SPRT
 
 .include "rsrc/colors_bg.s"
 .include "rsrc/colors_hud.s"
@@ -233,7 +234,7 @@ LutDone
 .logical $10000
 .include "rsrc/pixmap_bg.s"
 .include "rsrc/pixmap_hud.s"
-.include "rsrc/sprite_data.s"
+.include "rsrc/pixmap_sprite.s"
 .endlogical
 
 ; Write the system vectors
