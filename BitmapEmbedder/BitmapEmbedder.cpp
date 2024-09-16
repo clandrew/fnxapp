@@ -155,8 +155,6 @@ int main(int argc, void** argv)
 	UINT srcImageWidth, srcImageHeight;
 	VerifyHR(spConverter->GetSize(&srcImageWidth, &srcImageHeight));
 
-	assert(srcImageWidth == 640);
-
 	std::vector<unsigned char> indexedBuffer;
 
 	indexedBuffer.resize(srcImageWidth * srcImageHeight);
@@ -262,6 +260,57 @@ int main(int argc, void** argv)
 				for (int j = 0; j < lineLength; ++j)
 				{
 					int datum = (int)(indexedBuffer[i + j]);
+
+					// Look up datum in remapped palette
+					WICColor c = colors[datum];
+					UINT remapper[]{
+						0xff708800,
+						0xff608010,
+						0xff587000,
+						0xff506000,
+						0xffe0e0e8,
+						0xfff8f8f8,
+						0xffd0d0d0,
+						0xff90a020,
+						0xff58a0e0,
+						0xff70b8f8,
+						0xff4090d0,
+						0xff98d8f8,
+						0xffe8e8e8,
+						0xffc0c0c0,
+						0xffb8b8b8,
+						0xffa8a8b0,
+						0xff989898,
+						0xff788080,
+						0xff686868,
+						0xff709000,
+						0xff405000,
+						0xff505050,
+						0xff404040,
+						0xff181818,
+						0xff282828,
+						0xff201000,
+						0xff080000,
+						0xff382800,
+						0xff585858,
+						0xff403000,
+						0xff304000
+					};
+
+					int remappedDatum = datum;
+					bool found = false;
+					for (int j = 0; j < ARRAYSIZE(remapper); ++j)
+					{
+						if (c == remapper[j])
+						{
+							datum = j + 1;
+							found = true;
+							break;
+						}
+					}
+
+					assert(found);
+
 					if (addTransparency)
 					{
 						datum++;

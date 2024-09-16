@@ -1,9 +1,9 @@
 LUT_IMG_START
 .byte $00, $00, $00, $00
-.byte $00, $88, $70, $00
-.byte $10, $80, $60, $00
-.byte $00, $70, $58, $00
-.byte $00, $60, $50, $00
+.byte $00, $88, $70, $00	; Green in top left. Color $01
+.byte $10, $80, $60, $00	; Next green, Color $02
+.byte $00, $70, $58, $00	; Next green, Color $03
+.byte $00, $60, $50, $00	; Next green, color $04
 .byte $e8, $e0, $e0, $00
 .byte $f8, $f8, $f8, $00
 .byte $d0, $d0, $d0, $00

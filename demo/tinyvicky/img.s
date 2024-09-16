@@ -260,6 +260,8 @@ LutDone
 ;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\sprite.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_sprite.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_sprite.s SPRT
 ;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\Tileset.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_tileset.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_tileset.s TLSET
 
+;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\SingleTile.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_singletile.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_singletile.s SINGLETILE
+
 .include "rsrc/colors_bg.s"
 .include "rsrc/colors_hud.s"
 .include "rsrc/tilemap.s"
