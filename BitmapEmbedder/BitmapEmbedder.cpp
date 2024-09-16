@@ -325,6 +325,46 @@ int main(int argc, void** argv)
 							remappedDatum = 0x38;
 							found = true;
 						}
+						else if (c == 0xff203000)
+						{
+							remappedDatum = 0x39;
+							found = true;
+						}
+						else if (c == 0xff887000)
+						{
+							remappedDatum = 0x3A;
+							found = true;
+						}
+						else if (c == 0xff806800)
+						{
+							remappedDatum = 0x3B;
+							found = true;
+						}
+						else if (c == 0xff786000)
+						{
+							remappedDatum = 0x3C;
+							found = true;
+						}
+						else if (c == 0xff685000)
+						{
+							remappedDatum = 0x3D;
+							found = true;
+						}
+						else if (c == 0xff503800)
+						{
+							remappedDatum = 0x3E;
+							found = true;
+						}
+						else if (c == 0xff685018)
+						{
+							remappedDatum = 0x3F;
+							found = true;
+						}
+						else if (c == 0xff000000)
+						{
+							remappedDatum = 0x0;
+							found = true;
+						}
 					}
 
 					if (!found)
