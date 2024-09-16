@@ -176,7 +176,7 @@ MAIN
     lda #$01 ; 16x16 tiles, enable
     sta TyVKY_TL_CTRL0
 
-    lda #84
+    lda #1
     sta TL0_MAP_X_SIZE_L
     STZ TL0_MAP_X_SIZE_H
 
