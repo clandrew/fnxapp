@@ -146,11 +146,11 @@ MAIN
 
     stz MMU_IO_CTRL
 
-    lda #<balls_img_start ; Address = balls_img_start
+    lda #<SPRITE_DATA_START ; Address = balls_img_start
     sta VKY_SP0_AD_L
-    lda #>balls_img_start
+    lda #>SPRITE_DATA_START
     sta VKY_SP0_AD_M
-    lda #`balls_img_start 
+    lda #`SPRITE_DATA_START 
     STA VKY_SP0_AD_H
 
     lda #200
