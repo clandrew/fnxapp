@@ -58,4 +58,9 @@ LUT_IMG_START
 .byte $f8, $b8, $40, $00	; $34
 .byte $c0, $00, $00, $00	; $35
 
+; Other- colors which appeared in tileset but not in the reference image
+.byte $08, $10, $20, $00    ; $36
+.byte $00, $38, $48, $00    ; $37
+.byte $18, $48, $58, $00    ; $38
+
 LUT_IMG_END = *

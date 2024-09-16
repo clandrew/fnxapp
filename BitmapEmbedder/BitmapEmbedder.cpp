@@ -303,13 +303,34 @@ int main(int argc, void** argv)
 					{
 						if (c == remapper[j])
 						{
-							datum = j + 1;
+							remappedDatum = j + 1;
 							found = true;
 							break;
 						}
 					}
+					if (!found)
+					{
+						if (c == 0xff201008)
+						{
+							remappedDatum = 0x36;
+							found = true;
+						}
+						else if (c == 0xff483800)
+						{
+							remappedDatum = 0x37;
+							found = true;
+						}
+						else if (c == 0xff584818)
+						{
+							remappedDatum = 0x38;
+							found = true;
+						}
+					}
 
-					assert(found);
+					if (!found)
+					{
+						__debugbreak();
+					}
 
 					if (addTransparency)
 					{
@@ -319,7 +340,7 @@ int main(int argc, void** argv)
 					{
 						out << ", ";
 					}
-					out << "$" << std::setfill('0') << std::setw(2) << std::hex << datum;
+					out << "$" << std::setfill('0') << std::setw(2) << std::hex << remappedDatum;
 					firstInLine = false;
 					counter++;
 				}
