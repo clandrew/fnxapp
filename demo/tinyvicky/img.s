@@ -232,6 +232,8 @@ HP_GRAPHIC_IN_BANK = $51A0
 FnCopySmallLut
     LDY #$0
 LutLoop
+    ; If we can switch into 16bit mode it would be nice to simplify this code,
+    ; and straightforwardly save memory by not storing unused alpha in the colors.
     
     LDA (src_pointer),Y
     STA (dst_pointer),Y
