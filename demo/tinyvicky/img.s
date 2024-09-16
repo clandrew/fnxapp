@@ -66,7 +66,7 @@ F256_RESET
 
 
 MAIN
-    LDA #(Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En|Mstr_Ctrl_Sprite_En)
+    LDA #(Mstr_Ctrl_Graph_Mode_En|Mstr_Ctrl_Bitmap_En|Mstr_Ctrl_Sprite_En|Mstr_Ctrl_TileMap_En)
     STA @w MASTER_CTRL_REG_L 
     LDA #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
     STA @w MASTER_CTRL_REG_H
@@ -144,9 +144,8 @@ MAIN
 
     JSR FnDraw1HP
 
-    stz MMU_IO_CTRL
-
-    lda #<SPRITE_DATA_START ; Address = balls_img_start
+    ; Initialize sprite
+    lda #<SPRITE_DATA_START 
     sta VKY_SP0_AD_L
     lda #>SPRITE_DATA_START
     sta VKY_SP0_AD_M
@@ -165,6 +164,14 @@ MAIN
 
     lda #$1 ; Size=32x32, Layer=0, LUT=0, Enabled
     sta VKY_SP0_CTRL
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lda #<TLSET_START
+    sta TILE_MAP_ADDY0_L
+    lda #>TLSET_START
+    sta TILE_MAP_ADDY0_M
+    lda #`TLSET_START
+    sta TILE_MAP_ADDY0_H
 
 
 Lock
@@ -225,6 +232,8 @@ LutDone
 ; Emitted with 
 ;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\LagoonRef.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_bg.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_bg.s IMG
 ;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\hud.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_hud.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_hud.s HUD
+;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\sprite.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_sprite.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_sprite.s SPRT
+;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\Tileset.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_tileset.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_tileset.s TLSET
 
 .include "rsrc/colors_bg.s"
 .include "rsrc/colors_hud.s"
@@ -234,6 +243,7 @@ LutDone
 .include "rsrc/pixmap_bg.s"
 .include "rsrc/pixmap_hud.s"
 .include "rsrc/sprite_data.s"
+.include "rsrc/pixmap_tileset.s"
 .endlogical
 
 ; Write the system vectors
