@@ -120,10 +120,10 @@ MAIN
     LDA #$03
     STA TyVKY_BM0_CTRL_REG ; Enable bitmap 0 (HUD), LUT 1
 
-    LDA #$01
+    LDA #$00
     STA TyVKY_BM1_CTRL_REG ; Enable bitmap 1 (BG), LUT 0
 
-    LDA #$14    ; Layer0 = tilemap0, Layer1=bitmap1
+    LDA #$40    ; Tilemap below, HUD on top
     STA $D002
 
     ; Copy graphics data to bitmap 1 (BG)
