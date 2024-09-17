@@ -126,14 +126,6 @@ MAIN
     LDA #$40    ; Tilemap below, HUD on top
     STA $D002
 
-    ; Copy graphics data to bitmap 1 (BG)
-    lda #<IMG_START
-    sta $D109
-    lda #>IMG_START
-    sta $D10A
-    lda #`IMG_START 
-    sta $D10B
-
     ; Copy graphics data to bitmap 0 (HUD)
     lda #<HUD_START
     sta $D101 
@@ -208,22 +200,32 @@ FnDraw1HP
     ORA #MMU_EDIT_EN
     STA MMU_MEM_CTRL
 
-    LDA #$19 ; Physical address 02:6000
+    LDA #$10; Location of portion of HUD bitmap
     STA MMU_MEM_BANK_2 ; map to bank 2 (0x4000..0x5FFF)
 
     LDA MMU_MEM_CTRL    ; Disable editing
     AND #~(MMU_EDIT_EN)
     STA MMU_MEM_CTRL
 
+    LDA #$00
+    STA dst_pointer
+    LDA #$40
+    STA dst_pointer+1
+
+FillLoop
     LDA #$01
+    STA (dst_pointer)
 
-HP_GRAPHIC_IN_BANK = $51A0
+    CLC
+    LDA dst_pointer
+    ADC #$01
+    STA dst_pointer
+    LDA dst_pointer+1
+    ADC #$00 ; Adds carry
+    STA dst_pointer+1
 
-    STA HP_GRAPHIC_IN_BANK
-    STA HP_GRAPHIC_IN_BANK + ($140 * 1)
-    STA HP_GRAPHIC_IN_BANK + ($140 * 2)
-    STA HP_GRAPHIC_IN_BANK + ($140 * 3)
-    STA HP_GRAPHIC_IN_BANK + ($140 * 4)
+    CMP #$60
+    BNE FillLoop    
     
     RTS
 
@@ -268,7 +270,6 @@ LutDone
 
 * = $10000
 .logical $10000
-.include "rsrc/pixmap_bg.s"
 .include "rsrc/pixmap_hud.s"
 .include "rsrc/sprite_data.s"
 .include "rsrc/pixmap_tileset.s"
