@@ -81,6 +81,113 @@ std::vector<unsigned char> MakeHalfsize(std::vector<unsigned char> indexedBuffer
 	return result;
 }
 
+byte RemapColorToArbitraryPalette(WICColor c)
+{
+	switch (c)
+	{
+		// On Foenix platform, transparency is reserved for index 0. Black and magenta are used for transparency here
+		case 0xff000000: return 0x0;
+		case 0xffff00ff: return 0x0;
+
+		case 0xff708800: return 0x1;
+		case 0xff608010: return 0x2;
+		case 0xff587000: return 0x3;
+		case 0xff506000: return 0x4;
+		case 0xffe0e0e8: return 0x5;
+		case 0xfff8f8f8: return 0x6;
+		case 0xffd0d0d0: return 0x7;
+		case 0xff90a020: return 0x8;
+		case 0xff58a0e0: return 0x9;
+		case 0xff70b8f8: return 0xA;
+		case 0xff4090d0: return 0xB;
+		case 0xff98d8f8: return 0xC;
+		case 0xffe8e8e8: return 0xD;
+		case 0xffc0c0c0: return 0xE;
+		case 0xffb8b8b8: return 0xF;
+		case 0xffa8a8b0: return 0x10;
+		case 0xff989898: return 0x11;
+		case 0xff788080: return 0x12;
+		case 0xff686868: return 0x13;
+		case 0xff709000: return 0x14;
+		case 0xff405000: return 0x15;
+		case 0xff505050: return 0x16;
+		case 0xff404040: return 0x17;
+		case 0xff181818: return 0x18;
+		case 0xff282828: return 0x19;
+
+		case 0xff201000: return 0x20;
+		case 0xff080000: return 0x21;
+		case 0xff382800: return 0x22;
+		case 0xff585858: return 0x23;
+		case 0xff403000: return 0x24;
+		case 0xff304000: return 0x25;
+			
+		// Sprite
+		case 0x402800: return 0x26;
+		case 0x583800: return 0x27;
+		case 0x703800: return 0x28;
+		case 0x081008: return 0x29;
+		case 0xa87038: return 0x2A;
+		case 0x005008: return 0x2B;
+		case 0xe0a070: return 0x2C;
+		case 0xd09058: return 0x2D;
+		case 0x485860: return 0x2E;
+		case 0xa8b8c8: return 0x2F;
+		case 0x788090: return 0x30;
+		case 0x086018: return 0x31;
+		case 0x002068: return 0x32;
+		case 0x004090: return 0x33;
+
+		// 34 and 35 unused for some reason.
+
+		// Appears in tileset but not in reference image
+		case 0xff201008: return 0x36;
+		case 0xff483800: return 0x37;
+		case 0xff584818: return 0x38;
+		case 0xff203000: return 0x39;
+		case 0xff887000: return 0x3A;
+		case 0xff806800: return 0x3B;
+		case 0xff786000: return 0x3C;
+		case 0xff685000: return 0x3D;
+		case 0xff503800: return 0x3E;
+		case 0xff685018: return 0x3F;
+
+		// HUD should be appended at the end. HUD uses its own dedicated LUT currently, 
+		// but we could put it onto the same LUT because we have the luxury of 256 colors.
+
+
+		default:
+		{
+			assert(false); // Unrecognized color
+			return 0x0;
+		}
+	}
+
+/*
+
+.byte $08, $50, $00, $00	; $25
+.byte $70, $a0, $e0, $00	; $26
+.byte $58, $90, $d0, $00	; $27
+.byte $60, $58, $48, $00	; $28
+.byte $c8, $b8, $a8, $00	; $29
+.byte $90, $80, $78, $00	; $2A
+.byte $18, $60, $08, $00	; $2B
+.byte $68, $20, $00, $00	; $2C
+.byte $90, $40, $00, $00	; $2D
+
+; For HUD
+.byte $f8, $f8, $f8, $00	; $2E
+.byte $00, $58, $58, $00	; $2F
+.byte $00, $c0, $c8, $00	; $30
+.byte $00, $f8, $f8, $00	; $31
+.byte $00, $80, $80, $00	; $32
+.byte $f8, $f8, $a8, $00	; $33
+.byte $f8, $b8, $40, $00	; $34
+.byte $c0, $00, $00, $00	; $35
+*/
+	
+}
+
 int main(int argc, void** argv)
 {
 	if (argc < 4)
@@ -261,122 +368,9 @@ int main(int argc, void** argv)
 				{
 					int datum = (int)(indexedBuffer[i + j]);
 
-					// Look up datum in remapped palette
-					WICColor c = colors[datum];
-					UINT remapper[]{
-						0xff708800,
-						0xff608010,
-						0xff587000,
-						0xff506000,
-						0xffe0e0e8,
-						0xfff8f8f8,
-						0xffd0d0d0,
-						0xff90a020,
-						0xff58a0e0,
-						0xff70b8f8,
-						0xff4090d0,
-						0xff98d8f8,
-						0xffe8e8e8,
-						0xffc0c0c0,
-						0xffb8b8b8,
-						0xffa8a8b0,
-						0xff989898,
-						0xff788080,
-						0xff686868,
-						0xff709000,
-						0xff405000,
-						0xff505050,
-						0xff404040,
-						0xff181818,
-						0xff282828,
-						0xff201000,
-						0xff080000,
-						0xff382800,
-						0xff585858,
-						0xff403000,
-						0xff304000
-					};
+					WICColor c = colors[datum]; // 0-0x35
 
-					int remappedDatum = datum;
-					bool found = false;
-					for (int j = 0; j < ARRAYSIZE(remapper); ++j)
-					{
-						if (c == remapper[j])
-						{
-							remappedDatum = j + 1;
-							found = true;
-							break;
-						}
-					}
-					if (!found)
-					{
-						if (c == 0xff201008)
-						{
-							remappedDatum = 0x36;
-							found = true;
-						}
-						else if (c == 0xff483800)
-						{
-							remappedDatum = 0x37;
-							found = true;
-						}
-						else if (c == 0xff584818)
-						{
-							remappedDatum = 0x38;
-							found = true;
-						}
-						else if (c == 0xff203000)
-						{
-							remappedDatum = 0x39;
-							found = true;
-						}
-						else if (c == 0xff887000)
-						{
-							remappedDatum = 0x3A;
-							found = true;
-						}
-						else if (c == 0xff806800)
-						{
-							remappedDatum = 0x3B;
-							found = true;
-						}
-						else if (c == 0xff786000)
-						{
-							remappedDatum = 0x3C;
-							found = true;
-						}
-						else if (c == 0xff685000)
-						{
-							remappedDatum = 0x3D;
-							found = true;
-						}
-						else if (c == 0xff503800)
-						{
-							remappedDatum = 0x3E;
-							found = true;
-						}
-						else if (c == 0xff685018)
-						{
-							remappedDatum = 0x3F;
-							found = true;
-						}
-						else if (c == 0xff000000)
-						{
-							remappedDatum = 0x0;
-							found = true;
-						}
-						else if (c == 0xffff00ff)
-						{
-							remappedDatum = 0x0;
-							found = true;
-						}
-						//
-					}
-
-					if (!found)
-					{
-						__debugbreak();
-					}
+					datum = RemapColorToArbitraryPalette(c);
 
 					if (addTransparency)
 					{
@@ -386,7 +380,7 @@ int main(int argc, void** argv)
 					{
 						out << ", ";
 					}
-					out << "$" << std::setfill('0') << std::setw(2) << std::hex << remappedDatum;
+					out << "$" << std::setfill('0') << std::setw(2) << std::hex << datum;
 					firstInLine = false;
 					counter++;
 				}
