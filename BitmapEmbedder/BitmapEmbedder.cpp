@@ -154,6 +154,13 @@ byte RemapColorToArbitraryPalette(WICColor c)
 
 		// HUD should be appended at the end. HUD uses its own dedicated LUT currently, 
 		// but we could put it onto the same LUT because we have the luxury of 256 colors.
+		case 0xff585800: return 0x40;
+		case 0xffc8c000: return 0x41;
+		case 0xfff8f800: return 0x42;
+		case 0xff808000: return 0x43;
+		case 0xffa8f8f8: return 0x44;
+		case 0xff40b8f8: return 0x45;
+		case 0xff0000c0: return 0x46;
 
 
 		default:
@@ -164,26 +171,6 @@ byte RemapColorToArbitraryPalette(WICColor c)
 	}
 
 /*
-
-.byte $08, $50, $00, $00	; $25
-.byte $70, $a0, $e0, $00	; $26
-.byte $58, $90, $d0, $00	; $27
-.byte $60, $58, $48, $00	; $28
-.byte $c8, $b8, $a8, $00	; $29
-.byte $90, $80, $78, $00	; $2A
-.byte $18, $60, $08, $00	; $2B
-.byte $68, $20, $00, $00	; $2C
-.byte $90, $40, $00, $00	; $2D
-
-; For HUD
-.byte $f8, $f8, $f8, $00	; $2E
-.byte $00, $58, $58, $00	; $2F
-.byte $00, $c0, $c8, $00	; $30
-.byte $00, $f8, $f8, $00	; $31
-.byte $00, $80, $80, $00	; $32
-.byte $f8, $f8, $a8, $00	; $33
-.byte $f8, $b8, $40, $00	; $34
-.byte $c0, $00, $00, $00	; $35
 */
 	
 }
