@@ -268,19 +268,89 @@ LutLoop
     ; If we can switch into 16bit mode it would be nice to simplify this code,
     ; and straightforwardly save memory by not storing unused alpha in the colors.
     
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    LDA (src_pointer),Y
-    STA (dst_pointer),Y
-    INY
-    INY
+
+    ; 0
+    LDA (src_pointer)
+    STA (dst_pointer)
+
+    CLC
+    LDA src_pointer
+    ADC #$01
+    STA src_pointer
+    LDA src_pointer+1
+    ADC #$00
+    STA src_pointer+1
+
+    CLC
+    LDA dst_pointer
+    ADC #$01
+    STA dst_pointer
+    LDA dst_pointer+1
+    ADC #$00
+    STA dst_pointer+1
+
+    ; 1
+    LDA (src_pointer)
+    STA (dst_pointer)
+
+    CLC
+    LDA src_pointer
+    ADC #$01
+    STA src_pointer
+    LDA src_pointer+1
+    ADC #$00
+    STA src_pointer+1
+
+    CLC
+    LDA dst_pointer
+    ADC #$01
+    STA dst_pointer
+    LDA dst_pointer+1
+    ADC #$00
+    STA dst_pointer+1
+
+    ; 2
+    LDA (src_pointer)
+    STA (dst_pointer)
+
+    CLC
+    LDA src_pointer
+    ADC #$01
+    STA src_pointer
+    LDA src_pointer+1
+    ADC #$00
+    STA src_pointer+1
+
+    CLC
+    LDA dst_pointer
+    ADC #$01
+    STA dst_pointer
+    LDA dst_pointer+1
+    ADC #$00
+    STA dst_pointer+1
+
+    ; 3
+    LDA (src_pointer)
+    STA (dst_pointer)
+
+    CLC
+    LDA src_pointer
+    ADC #$01
+    STA src_pointer
+    LDA src_pointer+1
+    ADC #$00
+    STA src_pointer+1
+
+    CLC
+    LDA dst_pointer
+    ADC #$01
+    STA dst_pointer
+    LDA dst_pointer+1
+    ADC #$00
+    STA dst_pointer+1
 
     DEX
-    BNE LutLoop     ; When X overflows, exit
+    BNE LutLoop 
     
 LutDone
     RTS
