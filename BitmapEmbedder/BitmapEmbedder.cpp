@@ -365,6 +365,12 @@ int main(int argc, void** argv)
 							remappedDatum = 0x0;
 							found = true;
 						}
+						else if (c == 0xffff00ff)
+						{
+							remappedDatum = 0x0;
+							found = true;
+						}
+						//
 					}
 
 					if (!found)

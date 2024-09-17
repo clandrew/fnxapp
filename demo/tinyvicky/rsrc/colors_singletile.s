@@ -1,4 +1,5 @@
 LUT_SINGLETILE_START
+.byte $00, $00, $00, $00
 .byte $e0, $a0, $58, $00
 .byte $f8, $b8, $70, $00
 .byte $f8, $d8, $98, $00
@@ -14,7 +15,7 @@ LUT_SINGLETILE_START
 .byte $00, $10, $20, $00
 .byte $00, $00, $08, $00
 .byte $00, $30, $40, $00
-.byte $00, $00, $00, $00
+.byte $ff, $00, $ff, $00
 .byte $00, $60, $50, $00
 .byte $28, $28, $28, $00
 .byte $18, $18, $18, $00
@@ -41,7 +42,6 @@ LUT_SINGLETILE_START
 .byte $00, $50, $68, $00
 .byte $00, $38, $50, $00
 .byte $18, $50, $68, $00
-.byte $FF, $00, $FF, 0
 .byte $FF, $00, $FF, 0
 .byte $FF, $00, $FF, 0
 .byte $FF, $00, $FF, 0
