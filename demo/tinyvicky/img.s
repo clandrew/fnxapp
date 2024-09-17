@@ -207,14 +207,45 @@ FnDraw1HP
     AND #~(MMU_EDIT_EN)
     STA MMU_MEM_CTRL
 
-    LDA #$00
+    ; Start address: 0x45A0    
+    LDA #$A0
     STA dst_pointer
-    LDA #$40
+    LDA #$45
     STA dst_pointer+1
 
+    LDA #5    ; Current HP value [0-128]
+
+    TAX
 FillLoop
+    LDA dst_pointer
+    PHA  
+    LDA dst_pointer+1
+    PHA  
+
+    LDY #$5
+ForEachPixelWithinColumn
     LDA #$01
     STA (dst_pointer)
+
+    DEY
+    BMI DoneFillingColumn
+
+    CLC
+    LDA dst_pointer
+    ADC #$40
+    STA dst_pointer
+    LDA dst_pointer+1
+    ADC #$01 ; Adds carry
+    STA dst_pointer+1
+
+    BRA ForEachPixelWithinColumn
+
+DoneFillingColumn
+
+    PLA
+    STA dst_pointer+1
+    PLA
+    STA dst_pointer
 
     CLC
     LDA dst_pointer
@@ -224,7 +255,7 @@ FillLoop
     ADC #$00 ; Adds carry
     STA dst_pointer+1
 
-    CMP #$60
+    DEX
     BNE FillLoop    
     
     RTS
