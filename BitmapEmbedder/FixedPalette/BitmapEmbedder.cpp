@@ -231,7 +231,5 @@ int main(int argc, void** argv)
 
 			lineCount++;
 		}
-
-		out << destLabelCmdLine << "_END = *";
 	}
 }
