@@ -72,10 +72,11 @@ byte RemapColorToArbitraryPalette(WICColor c)
 		case 0xff806800: return 0x25;
 			
 		// Sprite
-		case 0xff402800: return 0x26;
-		case 0xff583800: return 0x27;
-		case 0xff703800: return 0x28;
-		case 0xff081008: return 0x29;
+		case 0xff402800: return 0x34;
+		case 0xff583800: return 0x35;
+		case 0xff703800: return 0x36;
+		case 0xff081008: return 0x37;
+
 		case 0xffa87038: return 0x2A;
 		case 0xff005008: return 0x2B;
 		case 0xffe0a070: return 0x2C;

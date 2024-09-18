@@ -58,10 +58,11 @@ LUT_IMG_START
 .byte $68, $20, $00		; $32
 .byte $90, $40, $00		; $33
 
-.byte $00, $00, $00		; $34	- unused
-.byte $00, $00, $00		; $35
-.byte $00, $00, $00    ; $36
-.byte $00, $00, $00    ; $37
+; For sprite. Redundant with other 4. Ultimately want to use these, not the first group
+.byte $00, $28, $40		; $34	- unused
+.byte $00, $38, $58		; $35
+.byte $00, $38, $70    ; $36
+.byte $08, $10, $08    ; $37
 
 ; Blank, unused
 .byte $00, $00, $00    ; $38
