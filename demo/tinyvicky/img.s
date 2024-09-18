@@ -96,7 +96,7 @@ MAIN
     STA dst_pointer
     LDA #>VKY_GR_CLUT_0
     STA dst_pointer+1
-    LDX #$47
+    LDX #$3F
     JSR FnCopySmallLut
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
