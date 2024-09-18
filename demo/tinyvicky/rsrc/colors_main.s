@@ -34,13 +34,13 @@ LUT_IMG_START
 .byte $00, $30, $40		; $1E
 .byte $00, $40, $30		; $1F
 				
-
-.byte $00, $00, $00		; 0x20	- unused
-.byte $00, $00, $00
-.byte $00, $00, $00
-.byte $00, $00, $00
-.byte $00, $00, $00
-.byte $00, $00, $00
+; Tileset, contd, redundant with below. Ultimately want to use this one, not the other one.
+.byte $08, $10, $20
+.byte $00, $38, $48
+.byte $18, $48, $58
+.byte $00, $30, $20
+.byte $00, $70, $88 
+.byte $00, $68, $80 
 
 ; For sprite
 .byte $00, $28, $40		; $26
@@ -65,10 +65,10 @@ LUT_IMG_START
 .byte $08, $10, $20    ; $36
 .byte $00, $38, $48    ; $37
 .byte $18, $48, $58    ; $38
-.byte $00, $30, $20    ; $39	; Dark green 203000
-
+.byte $00, $30, $20    ; $39
 .byte $00, $70, $88    ; $3A
 .byte $00, $68, $80    ; $3B
+
 .byte $00, $60, $78    ; $3C
 .byte $00, $50, $68    ; $3D
 .byte $00, $38, $50    ; $3E
