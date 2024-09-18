@@ -96,7 +96,7 @@ MAIN
     STA dst_pointer
     LDA #>VKY_GR_CLUT_0
     STA dst_pointer+1
-    LDX #$3A
+    LDX #$47
     JSR FnCopySmallLut
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -250,24 +250,24 @@ DoneFillingColumn
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 FnCopySmallLut
-    LDY #$0
+    NOP
 LutLoop
-    ; If we can switch into 16bit mode it would be nice to simplify this code,
-    ; and straightforwardly save memory by not storing unused alpha in the colors.    
-    CPY #$35
-    BNE AfterCondBrk
-    NOP
-    NOP
-    NOP
+    LDY #$0
 
-AfterCondBrk
-    ; 0
-    LDA (src_pointer)
-    STA (dst_pointer)
+    LDA (src_pointer), y
+    STA (dst_pointer), y
+    INY
+
+    LDA (src_pointer), y
+    STA (dst_pointer), y
+    INY
+
+    LDA (src_pointer), y
+    STA (dst_pointer), y
 
     CLC
     LDA src_pointer
-    ADC #$01
+    ADC #$04
     STA src_pointer
     LDA src_pointer+1
     ADC #$00
@@ -275,54 +275,13 @@ AfterCondBrk
 
     CLC
     LDA dst_pointer
-    ADC #$01
-    STA dst_pointer
-    LDA dst_pointer+1
-    ADC #$00
-    STA dst_pointer+1
-
-    ; 1
-    LDA (src_pointer)
-    STA (dst_pointer)
-
-    CLC
-    LDA src_pointer
-    ADC #$01
-    STA src_pointer
-    LDA src_pointer+1
-    ADC #$00
-    STA src_pointer+1
-
-    CLC
-    LDA dst_pointer
-    ADC #$01
-    STA dst_pointer
-    LDA dst_pointer+1
-    ADC #$00
-    STA dst_pointer+1
-
-    ; 2
-    LDA (src_pointer)
-    STA (dst_pointer)
-
-    CLC
-    LDA src_pointer
-    ADC #$02
-    STA src_pointer
-    LDA src_pointer+1
-    ADC #$00
-    STA src_pointer+1
-
-    CLC
-    LDA dst_pointer
-    ADC #$02
+    ADC #$04
     STA dst_pointer
     LDA dst_pointer+1
     ADC #$00
     STA dst_pointer+1
 
     DEX
-    INY
     BNE LutLoop 
     
 LutDone
