@@ -152,8 +152,7 @@ byte RemapColorToArbitraryPalette(WICColor c)
 		case 0xff503800: return 0x3E;
 		case 0xff685018: return 0x3F;
 
-		// HUD should be appended at the end. HUD uses its own dedicated LUT currently, 
-		// but we could put it onto the same LUT because we have the luxury of 256 colors.
+		// HUD colors
 		case 0xff585800: return 0x40;
 		case 0xffc8c000: return 0x41;
 		case 0xfff8f800: return 0x42;

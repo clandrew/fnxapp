@@ -1,4 +1,4 @@
-LUT_IMG_START				; Loaded into memory at .11f6
+LUT_IMG_START				
 .byte $00, $00, $00
 .byte $00, $88, $70		; Green in top left. Color $01
 .byte $10, $80, $60		; Next green, Color $02
@@ -35,12 +35,12 @@ LUT_IMG_START				; Loaded into memory at .11f6
 .byte $00, $40, $30		; $1F
 				
 
-.byte $00, $10, $20		; 0x20
-.byte $00, $00, $08
-.byte $00, $28, $38
-.byte $58, $58, $58
-.byte $00, $30, $40
-.byte $00, $40, $30
+.byte $00, $00, $00		; 0x20	- unused
+.byte $00, $00, $00
+.byte $00, $00, $00
+.byte $00, $00, $00
+.byte $00, $00, $00
+.byte $00, $00, $00
 
 ; For sprite
 .byte $00, $28, $40		; $26
@@ -58,7 +58,7 @@ LUT_IMG_START				; Loaded into memory at .11f6
 .byte $68, $20, $00		; $32
 .byte $90, $40, $00		; $33
 
-.byte $00, $00, $00		; $34
+.byte $00, $00, $00		; $34	- unused
 .byte $00, $00, $00		; $35
 
 ; Other- colors which appeared in tileset but not in the reference image
