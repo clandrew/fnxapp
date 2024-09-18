@@ -70,12 +70,6 @@ byte RemapColorToArbitraryPalette(WICColor c)
 		case 0xff203000: return 0x23;
 		case 0xff887000: return 0x24;
 		case 0xff806800: return 0x25;
-			
-		// Sprite
-		case 0xff402800: return 0x34;
-		case 0xff583800: return 0x35;
-		case 0xff703800: return 0x36;
-		case 0xff081008: return 0x37;
 
 		case 0xffa87038: return 0x2A;
 		case 0xff005008: return 0x2B;
@@ -88,7 +82,11 @@ byte RemapColorToArbitraryPalette(WICColor c)
 		case 0xff002068: return 0x32;
 		case 0xff004090: return 0x33;
 
-		// 34 and 35 unused for some reason.
+			// Sprite
+		case 0xff402800: return 0x34;
+		case 0xff583800: return 0x35;
+		case 0xff703800: return 0x36;
+		case 0xff081008: return 0x37;
 
 		// Appears in tileset but not in reference image
 		case 0xff786000: return 0x3C;
