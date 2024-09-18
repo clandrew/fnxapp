@@ -34,7 +34,7 @@ LUT_IMG_START
 .byte $00, $30, $40		; $1E
 .byte $00, $40, $30		; $1F
 				
-; Tileset, contd, redundant with below. 
+; Tileset, contd
 .byte $08, $10, $20		; $20
 .byte $00, $38, $48		; $21
 .byte $18, $48, $58		; $22
@@ -42,11 +42,13 @@ LUT_IMG_START
 .byte $00, $70, $88		; $24 
 .byte $00, $68, $80		; $25 
 
+; Ultimately want to use these for tileset, not below
+.byte $00, $60, $78    ; $26
+.byte $00, $50, $68    ; $27
+.byte $00, $38, $50    ; $28
+.byte $18, $50, $68    ; $29
+
 ; For sprite
-.byte $00, $00, $00		; $26
-.byte $00, $00, $00		; $27
-.byte $00, $00, $00		; $28
-.byte $00, $00, $00		; $29
 .byte $38, $70, $a8		; $2A
 .byte $08, $50, $00		; $2B
 .byte $70, $a0, $e0		; $2C
@@ -57,9 +59,7 @@ LUT_IMG_START
 .byte $18, $60, $08		; $31
 .byte $68, $20, $00		; $32
 .byte $90, $40, $00		; $33
-
-; For sprite. Redundant with other 4. Ultimately want to use these, not the first group
-.byte $00, $28, $40		; $34	- unused
+.byte $00, $28, $40		; $34
 .byte $00, $38, $58		; $35
 .byte $00, $38, $70    ; $36
 .byte $08, $10, $08    ; $37
