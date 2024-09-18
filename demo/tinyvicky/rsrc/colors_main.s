@@ -1,4 +1,4 @@
-LUT_IMG_START
+LUT_IMG_START				; Loaded into memory at .11f6
 .byte $00, $00, $00, $00
 .byte $00, $88, $70, $00	; Green in top left. Color $01
 .byte $10, $80, $60, $00	; Next green, Color $02
@@ -15,6 +15,7 @@ LUT_IMG_START
 .byte $e8, $e8, $e8, $00
 .byte $c0, $c0, $c0, $00
 .byte $b8, $b8, $b8, $00
+
 .byte $b0, $a8, $a8, $00	; 0x10
 .byte $98, $98, $98, $00
 .byte $80, $80, $78, $00
@@ -25,6 +26,14 @@ LUT_IMG_START
 .byte $40, $40, $40, $00
 .byte $18, $18, $18, $00
 .byte $28, $28, $28, $00
+
+.byte $00, $10, $20, $00	; $1A
+.byte $00, $00, $08, $00	; $1B
+.byte $00, $28, $38, $00	; $1C
+.byte $58, $58, $58, $00	; $1D
+.byte $00, $30, $40, $00	; $1E
+.byte $00, $40, $30, $00	; $1F
+				
 
 .byte $00, $10, $20, $00	; 0x20
 .byte $00, $00, $08, $00
@@ -48,6 +57,9 @@ LUT_IMG_START
 .byte $18, $60, $08, $00	; $31
 .byte $68, $20, $00, $00	; $32
 .byte $90, $40, $00, $00	; $33
+
+.byte $00, $00, $00, $00	; $34
+.byte $00, $00, $00, $00	; $35
 
 ; Other- colors which appeared in tileset but not in the reference image
 .byte $08, $10, $20, $00    ; $36
