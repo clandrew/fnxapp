@@ -98,30 +98,17 @@ MAIN
     STA dst_pointer+1
     LDX #$3A
     JSR FnCopySmallLut
-
-    LDA #<LUT_HUD_START
-    STA src_pointer
-    LDA #>LUT_HUD_START
-    STA src_pointer+1
-    LDA #<VKY_GR_CLUT_1
-    STA dst_pointer
-    LDA #>VKY_GR_CLUT_1
-    STA dst_pointer+1
-    LDX #11
-    JSR FnCopySmallLut
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     ; Go back to I/O page 0
     LDA #0
     STA MMU_IO_CTRL 
     
+    STZ TyVKY_BM1_CTRL_REG ; Disable bitmap 1
     STZ TyVKY_BM2_CTRL_REG ; Disable bitmap 2
 
-    LDA #$03
-    STA TyVKY_BM0_CTRL_REG ; Enable bitmap 0 (HUD), LUT 1
-
-    LDA #$00
-    STA TyVKY_BM1_CTRL_REG ; Enable bitmap 1 (BG), LUT 0
+    LDA #$01
+    STA TyVKY_BM0_CTRL_REG ; Enable bitmap 0 (HUD), LUT 0
 
     LDA #$40    ; Tilemap below, HUD on top
     STA $D002
@@ -350,7 +337,6 @@ LutDone
 
 
 .include "rsrc/colors_main.s"
-.include "rsrc/colors_hud.s"
 .include "rsrc/tilemap.s"
 
 * = $10000
