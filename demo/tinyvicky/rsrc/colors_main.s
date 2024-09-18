@@ -34,13 +34,13 @@ LUT_IMG_START
 .byte $00, $30, $40		; $1E
 .byte $00, $40, $30		; $1F
 				
-; Tileset, contd, redundant with below. Ultimately want to use this one, not the other one.
-.byte $08, $10, $20
-.byte $00, $38, $48
-.byte $18, $48, $58
-.byte $00, $30, $20
-.byte $00, $70, $88 
-.byte $00, $68, $80 
+; Tileset, contd, redundant with below. 
+.byte $08, $10, $20		; $20
+.byte $00, $38, $48		; $21
+.byte $18, $48, $58		; $22
+.byte $00, $30, $20		; $23
+.byte $00, $70, $88		; $24 
+.byte $00, $68, $80		; $25 
 
 ; For sprite
 .byte $00, $28, $40		; $26
@@ -60,15 +60,16 @@ LUT_IMG_START
 
 .byte $00, $00, $00		; $34	- unused
 .byte $00, $00, $00		; $35
+.byte $00, $00, $00    ; $36
+.byte $00, $00, $00    ; $37
 
-; Other- colors which appeared in tileset but not in the reference image
-.byte $08, $10, $20    ; $36
-.byte $00, $38, $48    ; $37
-.byte $18, $48, $58    ; $38
-.byte $00, $30, $20    ; $39
-.byte $00, $70, $88    ; $3A
-.byte $00, $68, $80    ; $3B
+; Blank, unused
+.byte $00, $00, $00    ; $38
+.byte $00, $00, $00    ; $39
+.byte $00, $00, $00    ; $3A
+.byte $00, $00, $00    ; $3B
 
+; Tileset, cont'd
 .byte $00, $60, $78    ; $3C
 .byte $00, $50, $68    ; $3D
 .byte $00, $38, $50    ; $3E
