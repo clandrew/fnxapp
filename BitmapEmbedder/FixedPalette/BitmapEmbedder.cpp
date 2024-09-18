@@ -28,6 +28,7 @@ byte RemapColorToArbitraryPalette(WICColor c)
 		// On Foenix platform, transparency is reserved for index 0. Black and magenta are used for transparency here
 		case 0xff000000: return 0x0;
 		case 0xffff00ff: return 0x0;
+		case 0xffffffff: return 0x0;
 
 		// For tileset
 		case 0xff708800: return 0x1;
@@ -81,17 +82,30 @@ byte RemapColorToArbitraryPalette(WICColor c)
 		case 0xff005008: return 0x2B;
 		case 0xffe0a070: return 0x2C;
 		case 0xffd09058: return 0x2D;
-		case 0xff485860: return 0x2E;
-		case 0xffa8b8c8: return 0x2F;
-		case 0xff788090: return 0x30;
+
+		case 0xff485860: 
+		case 0xff435259:
+			return 0x2E;
+
+		case 0xffa8b8c8: 
+		case 0xff9cabba:
+			return 0x2F;
+
+		case 0xff788090: 
+		case 0xff6c7381:
+			return 0x30;
+
 		case 0xff086018: return 0x31;
 		case 0xff002068: return 0x32;
 		case 0xff004090: return 0x33;
 		case 0xff402800: return 0x34;
 		case 0xff583800: return 0x35;
 		case 0xff703800: return 0x36;
-		case 0xff081008: return 0x37;
 
+		// This is the "fake black." mapped to 2 different possible values apparently depending on where it was captured from
+		case 0xff081008: 
+		case 0xff070e07: 
+			return 0x37;
 
 		// HUD colors
 		case 0xff585800: return 0x38;
@@ -213,6 +227,9 @@ int main(int argc, void** argv)
 					int datum = (int)(indexedBuffer[i + j]);
 
 					WICColor c = colors[datum]; // 0-0x35
+					
+					int x = i % srcImageWidth + j;
+					int y = i / srcImageWidth;
 
 					datum = RemapColorToArbitraryPalette(c);
 

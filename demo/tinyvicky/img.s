@@ -3,6 +3,7 @@
 .include "includes/TinyVicky_Def.asm"
 .include "includes/interrupt_def.asm"
 .include "includes/f256jr_registers.asm"
+.include "includes/f256k_registers.asm"
 
 dst_pointer = $30
 src_pointer = $32
@@ -71,6 +72,23 @@ MAIN
     LDA #(Mstr_Ctrl_Text_XDouble|Mstr_Ctrl_Text_YDouble)
     STA @w MASTER_CTRL_REG_H
          
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Initialize matrix keyboard
+    LDA #$FF
+    STA VIA1_DDRA
+    LDA #$00
+    STA VIA1_DDRB
+
+    STZ VIA1_PRB
+    STZ VIA1_PRA
+    
+    LDA #$7F
+    STA VIA0_DDRA
+    STA VIA0_PRA
+    STZ VIA0_PRB
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
     ; Clear to black
     LDA #$00
     STA $D00D ; Background red channel
@@ -121,7 +139,9 @@ MAIN
     lda #`HUD_START 
     sta $D103
 
-    JSR FnDraw1HP
+    JSR FnDrawHPBar
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     ; Initialize sprite
     lda #<SPRITE_DATA_START 
@@ -177,10 +197,41 @@ MAIN
 
 
 Lock
+    ; Poll right arrow
+    LDA #(1 << 6 ^ $FF)
+    STA VIA1_PRA
+    LDA VIA0_PRB
+    CMP #(1 << 7 ^ $FF)
+    BNE RightArrow_DonePoll
+RightArrow_Pressed
+    lda #<SPRITE_FACING_EAST 
+    sta VKY_SP0_AD_L
+    lda #>SPRITE_FACING_EAST
+    sta VKY_SP0_AD_M
+    lda #`SPRITE_FACING_EAST 
+    STA VKY_SP0_AD_H    
+RightArrow_DonePoll
+
+    ; Poll down arrow
+    LDA #(1 << 0 ^ $FF)
+    STA VIA1_PRA
+    LDA VIA0_PRB
+    CMP #(1 << 7 ^ $FF)
+    BNE DownArrow_DonePoll
+DownArrow_Pressed
+    lda #<SPRITE_FACING_SOUTH 
+    sta VKY_SP0_AD_L
+    lda #>SPRITE_FACING_SOUTH
+    sta VKY_SP0_AD_M
+    lda #`SPRITE_FACING_SOUTH 
+    STA VKY_SP0_AD_H    
+DownArrow_DonePoll
+
     JMP Lock
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FnDraw1HP
+FnDrawHPBar
     ; CPU map part of the bitmap layer
 
     LDA MMU_MEM_CTRL ; Enable editing
@@ -291,7 +342,8 @@ LutDone
 
 ; Emitted with 
 ;     D:\repos\fnxapp\BitmapEmbedder\FixedPalette\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\hud.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_hud.s HUD
-;     D:\repos\fnxapp\BitmapEmbedder\FixedPalette\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\sprite.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_sprite.s SPRT
+;     D:\repos\fnxapp\BitmapEmbedder\FixedPalette\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\sprite0.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_sprite.s SPRT
+;     D:\repos\fnxapp\BitmapEmbedder\FixedPalette\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\sprite1.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_sprite.s SPRT
 ;     D:\repos\fnxapp\BitmapEmbedder\FixedPalette\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\Tileset.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_tileset.s TLSET
 
 
