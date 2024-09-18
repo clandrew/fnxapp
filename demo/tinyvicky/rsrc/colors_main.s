@@ -41,8 +41,6 @@ LUT_IMG_START
 .byte $00, $30, $20		; $23
 .byte $00, $70, $88		; $24 
 .byte $00, $68, $80		; $25 
-
-; Ultimately want to use these for tileset, not below
 .byte $00, $60, $78    ; $26
 .byte $00, $50, $68    ; $27
 .byte $00, $38, $50    ; $28
@@ -69,12 +67,10 @@ LUT_IMG_START
 .byte $00, $00, $00    ; $39
 .byte $00, $00, $00    ; $3A
 .byte $00, $00, $00    ; $3B
-
-; Tileset, cont'd
-.byte $00, $60, $78    ; $3C
-.byte $00, $50, $68    ; $3D
-.byte $00, $38, $50    ; $3E
-.byte $18, $50, $68    ; $3F
+.byte $00, $00, $00    ; $3C
+.byte $00, $00, $00    ; $3D
+.byte $00, $00, $00    ; $3E
+.byte $00, $00, $00    ; $3F
 
 ; HUD
 .byte $00, $58, $58		; $40

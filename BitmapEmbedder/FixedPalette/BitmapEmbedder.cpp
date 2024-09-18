@@ -71,6 +71,11 @@ byte RemapColorToArbitraryPalette(WICColor c)
 		case 0xff887000: return 0x24;
 		case 0xff806800: return 0x25;
 
+		case 0xff786000: return 0x26;
+		case 0xff685000: return 0x27;
+		case 0xff503800: return 0x28;
+		case 0xff685018: return 0x29;
+
 		case 0xffa87038: return 0x2A;
 		case 0xff005008: return 0x2B;
 		case 0xffe0a070: return 0x2C;
@@ -89,10 +94,6 @@ byte RemapColorToArbitraryPalette(WICColor c)
 		case 0xff081008: return 0x37;
 
 		// Appears in tileset but not in reference image
-		case 0xff786000: return 0x3C;
-		case 0xff685000: return 0x3D;
-		case 0xff503800: return 0x3E;
-		case 0xff685018: return 0x3F;
 
 		// HUD colors
 		case 0xff585800: return 0x40;
