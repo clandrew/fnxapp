@@ -267,7 +267,7 @@ LutLoop
 
     CLC
     LDA src_pointer
-    ADC #$04
+    ADC #$03
     STA src_pointer
     LDA src_pointer+1
     ADC #$00
