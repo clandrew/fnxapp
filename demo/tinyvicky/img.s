@@ -290,9 +290,9 @@ LutDone
 .endlogical
 
 ; Emitted with 
-;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\hud.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_hud.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_hud.s HUD
-;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\sprite.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_sprite.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_sprite.s SPRT
-;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\Tileset.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_main.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_tileset.s TLSET
+;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\hud.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_hud.unused.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_hud.s HUD_UNUSED
+;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\sprite.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_sprite.unused.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_sprite.s SPRT_UNUSED
+;     D:\repos\fnxapp\BitmapEmbedder\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\Tileset.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\colors_main.s D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_tileset.s IMG
 
 
 .include "rsrc/colors_main.s"

@@ -21,66 +21,6 @@ void PrintUsage()
 	std::cout << "--add-transparency:   Optional parameter. Inserts a color at palette index 0, and emits image data with no pixel of palette index 0.";
 }
 
-std::vector<unsigned char> MakeHalfsizeWithPadding(std::vector<unsigned char> indexedBuffer, int imageWidth, int imageHeight)
-{
-	// Assumption: this is a 1byte per pixel image.
-	std::vector<unsigned char> result;
-
-	int rowCount = 0;
-	for (int y = 0; y < imageHeight; ++y)
-	{
-		if (y % 2 == 1)
-			continue;
-
-		std::vector<unsigned char> row;
-		for (int x = 0; x < imageWidth; ++x)
-		{
-			if (x % 2 == 1)
-				continue;
-
-			int i = y * imageWidth + x;
-			row.push_back(indexedBuffer[i]);
-		}
-		while (row.size() < imageWidth)
-		{
-			row.push_back(0);
-		}
-
-		result.insert(result.end(), row.begin(), row.end());
-		rowCount++;
-	}
-
-	std::vector<unsigned char> emptyRow(imageWidth, 0);
-	while (rowCount < imageHeight)
-	{
-		result.insert(result.end(), emptyRow.begin(), emptyRow.end());
-		rowCount++;
-	}
-
-	return result;
-}
-
-std::vector<unsigned char> MakeHalfsize(std::vector<unsigned char> indexedBuffer, int imageWidth, int imageHeight)
-{
-	// Assumption: this is a 1byte per pixel image.
-	std::vector<unsigned char> result;
-
-	for (int i = 0; i < indexedBuffer.size(); ++i)
-	{
-		int x = i % imageWidth;
-		int y = i / imageWidth;
-
-		if (x % 2 == 1)
-			continue;
-
-		if (y % 2 == 1)
-			continue;
-
-		result.push_back(indexedBuffer[i]);
-	}
-	return result;
-}
-
 byte RemapColorToArbitraryPalette(WICColor c)
 {
 	switch (c)
@@ -89,6 +29,7 @@ byte RemapColorToArbitraryPalette(WICColor c)
 		case 0xff000000: return 0x0;
 		case 0xffff00ff: return 0x0;
 
+		// For tileset
 		case 0xff708800: return 0x1;
 		case 0xff608010: return 0x2;
 		case 0xff587000: return 0x3;
@@ -121,6 +62,14 @@ byte RemapColorToArbitraryPalette(WICColor c)
 		case 0xff585858: return 0x1D;
 		case 0xff403000: return 0x1E;
 		case 0xff304000: return 0x1F;
+
+		// Tileset, cont'd
+		case 0xff201008: return 0x20;
+		case 0xff483800: return 0x21;
+		case 0xff584818: return 0x22;
+		case 0xff203000: return 0x23;
+		case 0xff887000: return 0x24;
+		case 0xff806800: return 0x25;
 			
 		// Sprite
 		case 0xff402800: return 0x26;
@@ -141,12 +90,6 @@ byte RemapColorToArbitraryPalette(WICColor c)
 		// 34 and 35 unused for some reason.
 
 		// Appears in tileset but not in reference image
-		case 0xff201008: return 0x36;
-		case 0xff483800: return 0x37;
-		case 0xff584818: return 0x38;
-		case 0xff203000: return 0x39;
-		case 0xff887000: return 0x3A;
-		case 0xff806800: return 0x3B;
 		case 0xff786000: return 0x3C;
 		case 0xff685000: return 0x3D;
 		case 0xff503800: return 0x3E;
@@ -168,9 +111,6 @@ byte RemapColorToArbitraryPalette(WICColor c)
 			return 0x0;
 		}
 	}
-
-/*
-*/
 	
 }
 
@@ -185,33 +125,10 @@ int main(int argc, void** argv)
 	std::string sourceFilenameCmdLine = (char*)argv[1];
 	std::wstring sourceFilename(sourceFilenameCmdLine.begin(), sourceFilenameCmdLine.end());
 
-	std::string destPaletteFilenameCmdLine = (char*)argv[2];
-	std::wstring destPaletteFilename(destPaletteFilenameCmdLine.begin(), destPaletteFilenameCmdLine.end());
-
-	std::string destImageFilenameCmdLine = (char*)argv[3];
+	std::string destImageFilenameCmdLine = (char*)argv[2];
 	std::wstring destImageFilename(destImageFilenameCmdLine.begin(), destImageFilenameCmdLine.end());
 
-	std::string destLabelCmdLine = (char*)argv[4];
-
-	bool emitCompileOffsets = false;
-	bool halfsize = false;
-	bool addTransparency = false;
-	for (int i = 5; i < argc; ++i)
-	{
-		std::string arg = (char*)argv[i];
-		if (arg == "--halfsize")
-		{
-			halfsize = true;
-		}
-		else if (arg == "--compile-offsets")
-		{
-			emitCompileOffsets = true;
-		}
-		else if (arg == "--add-transparency")
-		{
-			addTransparency = true;
-		}
-	}
+	std::string destLabelCmdLine = (char*)argv[3];
 
 	ComPtr<IWICImagingFactory> m_wicImagingFactory;
 
@@ -269,50 +186,6 @@ int main(int argc, void** argv)
 	UINT uiActualColorCount = 0;
 	VerifyHR(spPalette->GetColors(uiColorCount, colors.data(), &uiActualColorCount));
 
-	if (addTransparency)
-	{
-		WICColor transparentPlaceholder = 0x563412;
-		colors.insert(colors.begin(), transparentPlaceholder);
-	}
-
-	{
-		// Dump the palette
-		std::wstring outputFile = destPaletteFilename;
-		std::ofstream out(outputFile);
-		out << "LUT_" << destLabelCmdLine << "_START\n";
-		int colorIndex = 0;
-		for (auto it = colors.begin(); it != colors.end() && colorIndex < 256; ++it)
-		{
-			UINT rgb = *it;
-
-			int b = rgb & 0xFF;
-			rgb >>= 8;
-			int g = rgb & 0xFF;
-			rgb >>= 8;
-			int r = rgb & 0xFF;
-			rgb >>= 8;
-
-			out << ".byte $" 
-				<< std::setfill('0') << std::setw(2) << std::hex << b << ", $" 
-				<< std::setfill('0') << std::setw(2) << std::hex << g << ", $" 
-				<< std::setfill('0') << std::setw(2) << std::hex << r << ", $00\n";
-
-			++colorIndex;
-		}
-		int fillerColors = 256 - colors.size();
-		for (int i = 0; i < fillerColors; ++i)
-		{
-			out << ".byte $FF, $00, $FF, 0\n";
-		}
-
-		out << "\n";
-		out << "LUT_" << destLabelCmdLine << "_END = *";
-	}
-
-	if (halfsize)
-	{
-		indexedBuffer = MakeHalfsize(indexedBuffer, srcImageWidth, srcImageHeight);
-	}
 	{
 		// Dump the image data
 		std::wstring outputFile = destImageFilename;
@@ -326,19 +199,6 @@ int main(int argc, void** argv)
 		assert(indexedBuffer.size() % lineLength == 0);
 		for (int i = 0; i < indexedBuffer.size(); i += lineLength)
 		{
-			if (emitCompileOffsets)
-			{
-				if (lineCount % 4096 == 0)
-				{
-					out << "* = $";
-					if (lineCount == 0)
-					{
-						out << "0";
-					}
-					out << bank << "0000\n";
-					bank++;
-				}
-			}
 			if (lineCount == 0)
 			{
 				out << destLabelCmdLine << "_START = *\n";
@@ -358,10 +218,6 @@ int main(int argc, void** argv)
 
 					datum = RemapColorToArbitraryPalette(c);
 
-					if (addTransparency)
-					{
-						datum++;
-					}
 					if (!firstInLine)
 					{
 						out << ", ";
