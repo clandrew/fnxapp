@@ -233,13 +233,27 @@ DownArrow_DonePoll
     CMP #(1 << 2 ^ $FF)
     BNE LeftArrow_DonePoll
 LeftArrow_Pressed
-    lda #<SPRITE_FACING_WEST
+    lda #<SPRITE_FACING_WEST_START
     sta VKY_SP0_AD_L
-    lda #>SPRITE_FACING_WEST
+    lda #>SPRITE_FACING_WEST_START
     sta VKY_SP0_AD_M
-    lda #`SPRITE_FACING_WEST
+    lda #`SPRITE_FACING_WEST_START
     STA VKY_SP0_AD_H    
 LeftArrow_DonePoll
+ 
+    LDA #(1 << 0 ^ $FF)
+    STA VIA1_PRA
+    LDA VIA1_PRB
+    CMP #(1 << 7 ^ $FF)
+    BNE UpArrow_DonePoll
+UpArrow_Pressed
+    lda #<SPRITE_FACING_NORTH_START
+    sta VKY_SP0_AD_L
+    lda #>SPRITE_FACING_NORTH_START
+    sta VKY_SP0_AD_M
+    lda #`SPRITE_FACING_NORTH_START
+    STA VKY_SP0_AD_H    
+UpArrow_DonePoll
 
     JMP Lock
 
