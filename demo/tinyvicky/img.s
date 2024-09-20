@@ -227,6 +227,20 @@ DownArrow_Pressed
     STA VKY_SP0_AD_H    
 DownArrow_DonePoll
 
+    LDA #(1 << 0 ^ $FF)
+    STA VIA1_PRA
+    LDA VIA1_PRB
+    CMP #(1 << 2 ^ $FF)
+    BNE LeftArrow_DonePoll
+LeftArrow_Pressed
+    lda #<SPRITE_FACING_WEST
+    sta VKY_SP0_AD_L
+    lda #>SPRITE_FACING_WEST
+    sta VKY_SP0_AD_M
+    lda #`SPRITE_FACING_WEST
+    STA VKY_SP0_AD_H    
+LeftArrow_DonePoll
+
     JMP Lock
 
 
@@ -342,8 +356,12 @@ LutDone
 
 ; Emitted with 
 ;     D:\repos\fnxapp\BitmapEmbedder\FixedPalette\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\hud.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_hud.s HUD
-;     D:\repos\fnxapp\BitmapEmbedder\FixedPalette\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\sprite0.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_sprite.s SPRT
-;     D:\repos\fnxapp\BitmapEmbedder\FixedPalette\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\sprite1.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_sprite.s SPRT
+
+;     D:\repos\fnxapp\BitmapEmbedder\FixedPalette\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\sprite0.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_sprite.s SPRITE_FACING_SOUTH
+;     D:\repos\fnxapp\BitmapEmbedder\FixedPalette\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\sprite1.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_sprite.s SPRITE_FACING_EAST
+;     D:\repos\fnxapp\BitmapEmbedder\FixedPalette\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\sprite2.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_sprite.s SPRITE_FACING_WEST
+;     D:\repos\fnxapp\BitmapEmbedder\FixedPalette\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\sprite3.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_sprite.s SPRITE_FACING_NORTH
+
 ;     D:\repos\fnxapp\BitmapEmbedder\FixedPalette\x64\Release\BitmapEmbedder.exe D:\repos\fnxapp\demo\tinyvicky\rsrc\Tileset.bmp D:\repos\fnxapp\demo\tinyvicky\rsrc\pixmap_tileset.s TLSET
 
 
