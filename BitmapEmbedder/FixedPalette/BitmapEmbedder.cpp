@@ -26,7 +26,10 @@ byte RemapColorToArbitraryPalette(WICColor c)
 	switch (c)
 	{
 		// On Foenix platform, transparency is reserved for index 0. Black and magenta are used for transparency here
-		case 0xff000000: return 0x0;
+		case 0xff000000: 
+			__debugbreak();
+			return 0x0;
+
 		case 0xffff00ff: return 0x0;
 		case 0xffffffff: return 0x0;
 
@@ -168,7 +171,7 @@ int main(int argc, void** argv)
 
 	VerifyHR(spConverter->Initialize(
 		spSource.Get(),
-		GUID_WICPixelFormat8bppIndexed,
+		GUID_WICPixelFormat32bppBGR,
 		WICBitmapDitherTypeNone,
 		NULL,
 		0.f,
@@ -177,29 +180,17 @@ int main(int argc, void** argv)
 	UINT srcImageWidth, srcImageHeight;
 	VerifyHR(spConverter->GetSize(&srcImageWidth, &srcImageHeight));
 
-	std::vector<unsigned char> indexedBuffer;
+	std::vector<UINT> colorBuffer;
 
-	indexedBuffer.resize(srcImageWidth * srcImageHeight);
+	colorBuffer.resize(srcImageWidth * srcImageHeight);
 	VerifyHR(spConverter->CopyPixels(
 		NULL,
-		srcImageWidth,
-		static_cast<UINT>(indexedBuffer.size()),
-		reinterpret_cast<BYTE*>(indexedBuffer.data())));
-
-	ComPtr<IWICPalette > spPalette;
-	VerifyHR(m_wicImagingFactory->CreatePalette(&spPalette));
-	VerifyHR(spConverter->CopyPalette(spPalette.Get()));
-
-	UINT uiColorCount = 0;
-	VerifyHR(spPalette->GetColorCount(&uiColorCount));
-
-	std::vector<WICColor> colors;
-	colors.resize(uiColorCount);
-	UINT uiActualColorCount = 0;
-	VerifyHR(spPalette->GetColors(uiColorCount, colors.data(), &uiActualColorCount));
+		srcImageWidth*4,
+		static_cast<UINT>(colorBuffer.size() * sizeof(UINT)),
+		reinterpret_cast<BYTE*>(colorBuffer.data())));
 
 	{
-		// Dump the image data
+		// Dump the recolorized, indexed image data
 		std::wstring outputFile = destImageFilename;
 		std::ofstream out(outputFile);
 
@@ -208,8 +199,7 @@ int main(int argc, void** argv)
 		int bank = 2;
 		int lineLength = 16; // Emit 16 bytes per line
 		int lineCount = 0;
-		assert(indexedBuffer.size() % lineLength == 0);
-		for (int i = 0; i < indexedBuffer.size(); i += lineLength)
+		for (int i = 0; i < colorBuffer.size(); i += lineLength)
 		{
 			if (lineCount == 0)
 			{
@@ -224,9 +214,9 @@ int main(int argc, void** argv)
 
 				for (int j = 0; j < lineLength; ++j)
 				{
-					int datum = (int)(indexedBuffer[i + j]);
+					UINT datum = (int)(colorBuffer[i + j]);
 
-					WICColor c = colors[datum]; // 0-0x35
+					WICColor c(datum);
 					
 					int x = i % srcImageWidth + j;
 					int y = i / srcImageWidth;
