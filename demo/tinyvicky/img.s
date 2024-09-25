@@ -7,6 +7,7 @@
 
 dst_pointer = $30
 src_pointer = $32
+scrolltile  = $34   ; Could overlay this
 
 ; Code
 * = $000000 
@@ -195,6 +196,8 @@ MAIN
     stz TL0_MAP_Y_POS_L
     stz TL0_MAP_Y_POS_H
 
+    JSR Init_IRQHandler
+
 
 Lock
     ; Poll right arrow
@@ -324,6 +327,98 @@ DoneFillingColumn
     DEX
     BNE FillLoop    
     
+    RTS
+
+
+Init_IRQHandler   ; Assumption: IO state has been previously set
+    ; Disable IRQ handling
+    SEI
+
+    LDA #<IRQ_Handler
+    STA $FFFE ; VECTOR_IRQ
+    LDA #>IRQ_Handler
+    STA $FFFF ; (VECTOR_IRQ)+1
+
+    ; Mask off all but start-of-frame
+    LDA #$FF
+    STA INT_MASK_REG1
+    AND #~(JR0_INT00_SOF)
+    STA INT_MASK_REG0
+
+    ; Re-enable interrupt handling    
+    CLI
+
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+IRQ_Handler
+    PHP
+    PHA
+    PHX
+    PHY
+    
+    ; Save the I/O page
+    LDA MMU_IO_CTRL
+    PHA
+
+    ; Switch to I/O page 0
+    STZ MMU_IO_CTRL
+
+    ; Check for start-of-frame flag
+    LDA #JR0_INT00_SOF
+    BIT INT_PENDING_REG0
+    BEQ IRQ_Handler_Done
+    
+    ; Clear the flag for start-of-frame
+    STA INT_PENDING_REG0        
+
+    ; Advance frame
+    JSR OnSOF
+
+IRQ_Handler_Done
+    ; Restore the I/O page
+    PLA
+    STA MMU_IO_CTRL
+    
+    PLY
+    PLX
+    PLA
+    PLP
+    RTI
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+OnSOF
+    JSR ScrollRight
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ ScrollRight
+    LDA $D208
+    AND #$0F    ; Select just the lower
+    INA         ; Inc the lower
+    CMP #$10
+    BEQ ScrollRight_NextTile
+
+; Simple case- save new value without scrambling the upper bits
+    STA scrolltile
+    LDA $D208
+    AND #$F0
+    ORA scrolltile
+    STA $D208
+    RTS
+
+; Complicated case- increment this 10bit number
+ScrollRight_NextTile
+    LDA $D208
+    CLC
+    ADC #$10
+    STA $D208
+    LDA $D209
+    ADC #$00
+    CMP #$40
+    BEQ ScrollRight_Done ; Check for hard limit before saving
+    STA $D209
+ScrollRight_Done
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
