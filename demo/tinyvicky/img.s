@@ -196,7 +196,16 @@ MAIN
     stz TL0_MAP_Y_POS_L
     stz TL0_MAP_Y_POS_H
 
-    JSR Init_IRQHandler
+    JSR Init_IRQHandlers
+    
+
+    ; Live in native mode
+    NOP
+    NOP
+    NOP
+    NOP
+    CLC
+    XCE
 
 
 Lock
@@ -330,14 +339,14 @@ DoneFillingColumn
     RTS
 
 
-Init_IRQHandler   ; Assumption: IO state has been previously set
+Init_IRQHandlers   ; Assumption: IO state has been previously set
     ; Disable IRQ handling
     SEI
 
-    LDA #<IRQ_Handler
-    STA $FFFE ; VECTOR_IRQ
-    LDA #>IRQ_Handler
-    STA $FFFF ; (VECTOR_IRQ)+1
+    LDA #<IRQ_Handler_Native
+    STA $FFEE ; VECTOR_IRQ
+    LDA #>IRQ_Handler_Native
+    STA $FFEF ; (VECTOR_IRQ)+1
 
     ; Mask off all but start-of-frame
     LDA #$FF
@@ -352,7 +361,7 @@ Init_IRQHandler   ; Assumption: IO state has been previously set
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-IRQ_Handler
+IRQ_Handler_Native
     PHP
     PHA
     PHX
@@ -368,7 +377,7 @@ IRQ_Handler
     ; Check for start-of-frame flag
     LDA #JR0_INT00_SOF
     BIT INT_PENDING_REG0
-    BEQ IRQ_Handler_Done
+    BEQ IRQ_Handler_Native_Done
     
     ; Clear the flag for start-of-frame
     STA INT_PENDING_REG0        
@@ -376,7 +385,7 @@ IRQ_Handler
     ; Advance frame
     JSR OnSOF
 
-IRQ_Handler_Done
+IRQ_Handler_Native_Done
     ; Restore the I/O page
     PLA
     STA MMU_IO_CTRL
@@ -389,35 +398,30 @@ IRQ_Handler_Done
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 OnSOF
+    SEI ; disable interrupts
+    .al
+    .xl
+    REP #$30    ; 16bit A,X,Y
+
     JSR ScrollRight
+
+    .as
+    .xs
+    SEP #$30 ; Go back to 8bit A,X,Y
+    CLI ; Enable interrupts again
+
+    RTS
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ScrollRight
-    LDA $D208
-    AND #$0F    ; Select just the lower
-    INA         ; Inc the lower
-    CMP #$10
-    BEQ ScrollRight_NextTile
-
-; Simple case- save new value without scrambling the upper bits
-    STA scrolltile
-    LDA $D208
-    AND #$F0
-    ORA scrolltile
-    STA $D208
-    RTS
-
-; Complicated case- increment this 10bit number
-ScrollRight_NextTile
-    LDA $D208
     CLC
-    ADC #$10
+    LDA $D208
+    ADC @w #$0001
+    CMP @w #$018F
+    BEQ ScrollRight_Done
+
     STA $D208
-    LDA $D209
-    ADC #$00
-    CMP #$40
-    BEQ ScrollRight_Done ; Check for hard limit before saving
-    STA $D209
+
 ScrollRight_Done
     RTS
 
