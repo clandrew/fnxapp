@@ -211,64 +211,6 @@ MAIN
     XCE
 
 Lock
-    ; Poll right arrow
-    LDA #(1 << 6 ^ $FF)
-    STA VIA1_PRA
-    LDA VIA0_PRB
-    CMP #(1 << 7 ^ $FF)
-    BNE RightArrow_DonePoll2
-RightArrow_Pressed2
-    lda #<SPRITE_FACING_EAST 
-    sta VKY_SP0_AD_L
-    lda #>SPRITE_FACING_EAST
-    sta VKY_SP0_AD_M
-    lda #`SPRITE_FACING_EAST 
-    STA VKY_SP0_AD_H    
-RightArrow_DonePoll2
-
-    ; Poll down arrow
-    LDA #(1 << 0 ^ $FF)
-    STA VIA1_PRA
-    LDA VIA0_PRB
-    CMP #(1 << 7 ^ $FF)
-    BNE DownArrow_DonePoll2
-DownArrow_Pressed2
-    lda #<SPRITE_FACING_SOUTH 
-    sta VKY_SP0_AD_L
-    lda #>SPRITE_FACING_SOUTH
-    sta VKY_SP0_AD_M
-    lda #`SPRITE_FACING_SOUTH 
-    STA VKY_SP0_AD_H    
-DownArrow_DonePoll2
-
-    LDA #(1 << 0 ^ $FF)
-    STA VIA1_PRA
-    LDA VIA1_PRB
-    CMP #(1 << 2 ^ $FF)
-    BNE LeftArrow_DonePoll2
-LeftArrow_Pressed2
-    lda #<SPRITE_FACING_WEST_START
-    sta VKY_SP0_AD_L
-    lda #>SPRITE_FACING_WEST_START
-    sta VKY_SP0_AD_M
-    lda #`SPRITE_FACING_WEST_START
-    STA VKY_SP0_AD_H    
-LeftArrow_DonePoll2
- 
-    LDA #(1 << 0 ^ $FF)
-    STA VIA1_PRA
-    LDA VIA1_PRB
-    CMP #(1 << 7 ^ $FF)
-    BNE UpArrow_DonePoll2
-UpArrow_Pressed2
-    lda #<SPRITE_FACING_NORTH_START
-    sta VKY_SP0_AD_L
-    lda #>SPRITE_FACING_NORTH_START
-    sta VKY_SP0_AD_M
-    lda #`SPRITE_FACING_NORTH_START
-    STA VKY_SP0_AD_H    
-UpArrow_DonePoll2
-
     JMP Lock
 
 
@@ -411,6 +353,12 @@ OnSOF
     CMP #(1 << 7 ^ $FF)
     BNE RightArrow_DonePoll
 RightArrow_Pressed
+    lda #<SPRITE_FACING_EAST 
+    sta VKY_SP0_AD_L
+    lda #>SPRITE_FACING_EAST
+    sta VKY_SP0_AD_M
+    lda #`SPRITE_FACING_EAST 
+    STA VKY_SP0_AD_H    
     LDA key_cur
     ORA #$01
     STA key_cur
@@ -423,6 +371,12 @@ RightArrow_DonePoll
     CMP #(1 << 7 ^ $FF)
     BNE DownArrow_DonePoll
 DownArrow_Pressed
+    lda #<SPRITE_FACING_SOUTH 
+    sta VKY_SP0_AD_L
+    lda #>SPRITE_FACING_SOUTH
+    sta VKY_SP0_AD_M
+    lda #`SPRITE_FACING_SOUTH 
+    STA VKY_SP0_AD_H    
 DownArrow_DonePoll
 
     LDA #(1 << 0 ^ $FF)
@@ -431,6 +385,12 @@ DownArrow_DonePoll
     CMP #(1 << 2 ^ $FF)
     BNE LeftArrow_DonePoll
 LeftArrow_Pressed
+    lda #<SPRITE_FACING_WEST_START
+    sta VKY_SP0_AD_L
+    lda #>SPRITE_FACING_WEST_START
+    sta VKY_SP0_AD_M
+    lda #`SPRITE_FACING_WEST_START
+    STA VKY_SP0_AD_H    
     LDA key_cur
     ORA #$04
     STA key_cur
@@ -442,6 +402,12 @@ LeftArrow_DonePoll
     CMP #(1 << 7 ^ $FF)
     BNE UpArrow_DonePoll
 UpArrow_Pressed
+    lda #<SPRITE_FACING_NORTH_START
+    sta VKY_SP0_AD_L
+    lda #>SPRITE_FACING_NORTH_START
+    sta VKY_SP0_AD_M
+    lda #`SPRITE_FACING_NORTH_START
+    STA VKY_SP0_AD_H    
 UpArrow_DonePoll
 
 
