@@ -7,7 +7,7 @@
 
 dst_pointer = $30
 src_pointer = $32
-scrolltile  = $34   ; Could overlay this
+key_cur  = $34 
 
 ; Code
 * = $000000 
@@ -196,17 +196,19 @@ MAIN
     stz TL0_MAP_Y_POS_L
     stz TL0_MAP_Y_POS_H
 
+    ; Initial tile scroll position #$26
+    LDA #(($26 << 4) & $FF)
+    STA TL0_MAP_X_POS_L
+    LDA #(($26 >> 4) & $FF)
+    STA TL0_MAP_X_POS_H
+
     JSR Init_IRQHandlers
-    
 
     ; Live in native mode
     NOP
     NOP
-    NOP
-    NOP
     CLC
     XCE
-
 
 Lock
     ; Poll right arrow
@@ -214,58 +216,58 @@ Lock
     STA VIA1_PRA
     LDA VIA0_PRB
     CMP #(1 << 7 ^ $FF)
-    BNE RightArrow_DonePoll
-RightArrow_Pressed
+    BNE RightArrow_DonePoll2
+RightArrow_Pressed2
     lda #<SPRITE_FACING_EAST 
     sta VKY_SP0_AD_L
     lda #>SPRITE_FACING_EAST
     sta VKY_SP0_AD_M
     lda #`SPRITE_FACING_EAST 
     STA VKY_SP0_AD_H    
-RightArrow_DonePoll
+RightArrow_DonePoll2
 
     ; Poll down arrow
     LDA #(1 << 0 ^ $FF)
     STA VIA1_PRA
     LDA VIA0_PRB
     CMP #(1 << 7 ^ $FF)
-    BNE DownArrow_DonePoll
-DownArrow_Pressed
+    BNE DownArrow_DonePoll2
+DownArrow_Pressed2
     lda #<SPRITE_FACING_SOUTH 
     sta VKY_SP0_AD_L
     lda #>SPRITE_FACING_SOUTH
     sta VKY_SP0_AD_M
     lda #`SPRITE_FACING_SOUTH 
     STA VKY_SP0_AD_H    
-DownArrow_DonePoll
+DownArrow_DonePoll2
 
     LDA #(1 << 0 ^ $FF)
     STA VIA1_PRA
     LDA VIA1_PRB
     CMP #(1 << 2 ^ $FF)
-    BNE LeftArrow_DonePoll
-LeftArrow_Pressed
+    BNE LeftArrow_DonePoll2
+LeftArrow_Pressed2
     lda #<SPRITE_FACING_WEST_START
     sta VKY_SP0_AD_L
     lda #>SPRITE_FACING_WEST_START
     sta VKY_SP0_AD_M
     lda #`SPRITE_FACING_WEST_START
     STA VKY_SP0_AD_H    
-LeftArrow_DonePoll
+LeftArrow_DonePoll2
  
     LDA #(1 << 0 ^ $FF)
     STA VIA1_PRA
     LDA VIA1_PRB
     CMP #(1 << 7 ^ $FF)
-    BNE UpArrow_DonePoll
-UpArrow_Pressed
+    BNE UpArrow_DonePoll2
+UpArrow_Pressed2
     lda #<SPRITE_FACING_NORTH_START
     sta VKY_SP0_AD_L
     lda #>SPRITE_FACING_NORTH_START
     sta VKY_SP0_AD_M
     lda #`SPRITE_FACING_NORTH_START
     STA VKY_SP0_AD_H    
-UpArrow_DonePoll
+UpArrow_DonePoll2
 
     JMP Lock
 
@@ -399,17 +401,93 @@ IRQ_Handler_Native_Done
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 OnSOF
     SEI ; disable interrupts
+
+    STZ key_cur
+
+    ; Poll right arrow
+    LDA #(1 << 6 ^ $FF)
+    STA VIA1_PRA
+    LDA VIA0_PRB
+    CMP #(1 << 7 ^ $FF)
+    BNE RightArrow_DonePoll
+RightArrow_Pressed
+    LDA key_cur
+    ORA #$01
+    STA key_cur
+RightArrow_DonePoll
+
+    ; Poll down arrow
+    LDA #(1 << 0 ^ $FF)
+    STA VIA1_PRA
+    LDA VIA0_PRB
+    CMP #(1 << 7 ^ $FF)
+    BNE DownArrow_DonePoll
+DownArrow_Pressed
+DownArrow_DonePoll
+
+    LDA #(1 << 0 ^ $FF)
+    STA VIA1_PRA
+    LDA VIA1_PRB
+    CMP #(1 << 2 ^ $FF)
+    BNE LeftArrow_DonePoll
+LeftArrow_Pressed
+    LDA key_cur
+    ORA #$04
+    STA key_cur
+LeftArrow_DonePoll
+ 
+    LDA #(1 << 0 ^ $FF)
+    STA VIA1_PRA
+    LDA VIA1_PRB
+    CMP #(1 << 7 ^ $FF)
+    BNE UpArrow_DonePoll
+UpArrow_Pressed
+UpArrow_DonePoll
+
+
+    LDA key_cur
+    AND #$01
+    BNE MoveRight
+    LDA key_cur
+    AND #$04
+    BNE MoveLeft
+    BRA Skip
+
+MoveRight
     .al
     .xl
     REP #$30    ; 16bit A,X,Y
-
     JSR ScrollRight
-
     .as
     .xs
     SEP #$30 ; Go back to 8bit A,X,Y
-    CLI ; Enable interrupts again
+    BRA Skip
 
+MoveLeft
+    .al
+    .xl
+    REP #$30    ; 16bit A,X,Y
+    JSR ScrollLeft
+    .as
+    .xs
+    SEP #$30 ; Go back to 8bit A,X,Y
+    BRA Skip
+
+
+Skip
+    CLI ; Enable interrupts again
+    RTS
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ ScrollLeft
+    SEC
+    LDA $D208
+    SBC @w #$0001
+    CMP @w #$025F
+    BEQ ScrollLeft_Done
+    STA $D208
+
+ScrollLeft_Done
     RTS
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -417,9 +495,8 @@ OnSOF
     CLC
     LDA $D208
     ADC @w #$0001
-    CMP @w #$018F
+    CMP @w #$0440
     BEQ ScrollRight_Done
-
     STA $D208
 
 ScrollRight_Done
