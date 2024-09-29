@@ -376,7 +376,10 @@ DownArrow_Pressed
     lda #>SPRITE_FACING_SOUTH
     sta VKY_SP0_AD_M
     lda #`SPRITE_FACING_SOUTH 
-    STA VKY_SP0_AD_H    
+    STA VKY_SP0_AD_H       
+    LDA key_cur
+    ORA #$02
+    STA key_cur
 DownArrow_DonePoll
 
     LDA #(1 << 0 ^ $FF)
@@ -407,68 +410,125 @@ UpArrow_Pressed
     lda #>SPRITE_FACING_NORTH_START
     sta VKY_SP0_AD_M
     lda #`SPRITE_FACING_NORTH_START
-    STA VKY_SP0_AD_H    
+    STA VKY_SP0_AD_H       
+    LDA key_cur
+    ORA #$08
+    STA key_cur
 UpArrow_DonePoll
-
 
     LDA key_cur
     AND #$01
-    BNE MoveRight
+    BEQ SOFSkip1
+    JSR ScrollRight
+    BRA DoneSOF
+SOFSkip1
+
+    LDA key_cur
+    AND #$02
+    BEQ SOFSkip2
+    JSR ScrollDown
+    BRA DoneSOF
+SOFSkip2
+
     LDA key_cur
     AND #$04
-    BNE MoveLeft
-    BRA Skip
-
-MoveRight
-    .al
-    .xl
-    REP #$30    ; 16bit A,X,Y
-    JSR ScrollRight
-    .as
-    .xs
-    SEP #$30 ; Go back to 8bit A,X,Y
-    BRA Skip
-
-MoveLeft
-    .al
-    .xl
-    REP #$30    ; 16bit A,X,Y
+    BEQ SOFSkip3
     JSR ScrollLeft
-    .as
-    .xs
-    SEP #$30 ; Go back to 8bit A,X,Y
-    BRA Skip
+    BRA DoneSOF
+SOFSkip3
 
+    LDA key_cur
+    AND #$08
+    BEQ SOFSkip4
+    JSR ScrollUp
+    BRA DoneSOF
+SOFSkip4
 
-Skip
+DoneSOF
     CLI ; Enable interrupts again
     RTS
-    
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
- ScrollLeft
-    SEC
-    LDA $D208
-    SBC @w #$0001
-    CMP @w #$025F
-    BEQ ScrollLeft_Done
-    STA $D208
 
-ScrollLeft_Done
-    RTS
-    
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ScrollRight
+    .al
+    .xl
+    REP #$30    ; 16bit A,X,Y
     CLC
     LDA $D208
-    ADC @w #$0001
+    ADC @w #$0010
     CMP @w #$0440
-    BEQ ScrollRight_Done
+    ;BEQ ScrollRight_Done
     STA $D208
 
 ScrollRight_Done
+    .as
+    .xs
+    SEP #$30 ; Go back to 8bit A,X,Y
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ ScrollDown
+    .al
+    .xl
+    REP #$30    ; 16bit A,X,Y
+    CLC
+    LDA $D20A
+    ADC @w #$0010
+    AND @w #$0FFF
+    ;CMP @w #$0440
+    ;BEQ ScrollDown_Done
+    STA $D20A
+
+ScrollDown_Done
+    .as
+    .xs
+    SEP #$30 ; Go back to 8bit A,X,Y
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+ ScrollLeft
+    .al
+    .xl
+    REP #$30    ; 16bit A,X,Y
+
+    SEC
+    LDA $D208
+    SBC @w #$0010
+    CMP @w #$025F
+    ;BEQ ScrollLeft_Done
+    STA $D208
+
+ScrollLeft_Done
+    .as
+    .xs
+    SEP #$30 ; Go back to 8bit A,X,Y
+    RTS
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ ScrollUp
+    .al
+    .xl
+    REP #$30    ; 16bit A,X,Y
+
+    SEC
+    LDA $D20A
+    SBC @w #$0010
+    AND @w #$0FFF
+    ;CMP @w #$025F
+    ;BEQ ScrollUp_Done
+    STA $D20A
+
+ScrollUp_Done
+    .as
+    .xs
+    SEP #$30 ; Go back to 8bit A,X,Y
+    RTS
+    
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 FnCopySmallLut
     NOP
